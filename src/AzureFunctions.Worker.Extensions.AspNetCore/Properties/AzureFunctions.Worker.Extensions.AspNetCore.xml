@@ -1,0 +1,216 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>AzureFunctions.Worker.Extensions.AspNetCore</name>
+    </assembly>
+    <members>
+        <member name="T:AzureFunctions.Worker.Extensions.AspNetCore.AspNetCoreFunctionMetadataProvider">
+            <summary>
+            Wraps built-in <see cref="T:Microsoft.Azure.Functions.Worker.Core.FunctionMetadata.IFunctionMetadataProvider"/> provider to return custom <see cref="T:AzureFunctions.Worker.Extensions.AspNetCore.AspNetCoreFunctionMetadata"/>.
+            </summary>
+            <param name="functionMetadataProvider">Built-in <see cref="T:Microsoft.Azure.Functions.Worker.Core.FunctionMetadata.IFunctionMetadataProvider"/></param>
+            <param name="modelBinderFactory">Model binder factory</param>
+            <param name="modelMetadataProvider">Model metadata provider</param>
+            <param name="applicationModelProviders">Application model providers</param>
+        </member>
+        <member name="M:AzureFunctions.Worker.Extensions.AspNetCore.AspNetCoreFunctionMetadataProvider.#ctor(Microsoft.Azure.Functions.Worker.Core.FunctionMetadata.IFunctionMetadataProvider,Microsoft.AspNetCore.Mvc.ModelBinding.IModelBinderFactory,Microsoft.AspNetCore.Mvc.ModelBinding.IModelMetadataProvider,System.Collections.Generic.IEnumerable{Microsoft.AspNetCore.Mvc.ApplicationModels.IApplicationModelProvider})">
+            <summary>
+            Wraps built-in <see cref="T:Microsoft.Azure.Functions.Worker.Core.FunctionMetadata.IFunctionMetadataProvider"/> provider to return custom <see cref="T:AzureFunctions.Worker.Extensions.AspNetCore.AspNetCoreFunctionMetadata"/>.
+            </summary>
+            <param name="functionMetadataProvider">Built-in <see cref="T:Microsoft.Azure.Functions.Worker.Core.FunctionMetadata.IFunctionMetadataProvider"/></param>
+            <param name="modelBinderFactory">Model binder factory</param>
+            <param name="modelMetadataProvider">Model metadata provider</param>
+            <param name="applicationModelProviders">Application model providers</param>
+        </member>
+        <member name="M:AzureFunctions.Worker.Extensions.AspNetCore.AspNetCoreFunctionMetadataProvider.EntryPointRegex">
+            <remarks>
+            Pattern:<br/>
+            <code>^(?&lt;typeName&gt;.*)\\.(?&lt;methodName&gt;\\S*)$</code><br/>
+            Explanation:<br/>
+            <code>
+            ○ Match if at the beginning of the string.<br/>
+            ○ "typeName" capture group.<br/>
+                ○ Match a character other than '\n' greedily any number of times.<br/>
+            ○ Match '.'.<br/>
+            ○ "methodName" capture group.<br/>
+                ○ Match any character other than a whitespace character atomically any number of times.<br/>
+            ○ Match if at the end of the string or if before an ending newline.<br/>
+            </code>
+            </remarks>
+        </member>
+        <member name="T:AzureFunctions.Worker.Extensions.AspNetCore.AspNetCoreFunctionMetadata">
+            <summary>
+            Extends built-in <see cref="T:Microsoft.Azure.Functions.Worker.Core.FunctionMetadata.DefaultFunctionMetadata"/> with AspNetCore metadata.
+            </summary>
+        </member>
+        <member name="P:AzureFunctions.Worker.Extensions.AspNetCore.AspNetCoreFunctionMetadata.TargetMethod">
+            <summary>
+            Function target <see cref="T:System.Reflection.MethodInfo"/> that will be executed.
+            </summary>
+        </member>
+        <member name="P:AzureFunctions.Worker.Extensions.AspNetCore.AspNetCoreFunctionMetadata.ReturnDataType">
+            <summary>
+            Gets function result type. If type is wrapped in <see cref="T:System.Threading.Tasks.Task`1"/> then it unwraps underlying type.
+            </summary>
+        </member>
+        <member name="P:AzureFunctions.Worker.Extensions.AspNetCore.AspNetCoreFunctionMetadata.CustomAttributes">
+            <summary>
+            Collection of custom attributes provided on <see cref="P:AzureFunctions.Worker.Extensions.AspNetCore.AspNetCoreFunctionMetadata.TargetMethod"/> level and it's declaring type level.
+            </summary>
+        </member>
+        <member name="P:AzureFunctions.Worker.Extensions.AspNetCore.AspNetCoreFunctionMetadata.ActionDescriptor">
+            <summary>
+            AspNetCore action descriptor that contains information about parameter binding or api explorer descriptions
+            </summary>
+        </member>
+        <member name="P:AzureFunctions.Worker.Extensions.AspNetCore.AspNetCoreFunctionMetadata.AspNetCoreParameters">
+            <summary>
+            Collection of AspNetCore function parameters and their binding metadata
+            </summary>
+        </member>
+        <member name="T:AzureFunctions.Worker.Extensions.AspNetCore.AspNetCoreParameterBindingInfo">
+            <summary>
+            Provides information about AspNetCore function parameters and their binding metadata
+            </summary>
+            <param name="ModelBinder">Model binder</param>
+            <param name="ModelMetadata">Model metadata</param>
+            <param name="Parameter">Parameter descriptor</param>
+        </member>
+        <member name="M:AzureFunctions.Worker.Extensions.AspNetCore.AspNetCoreParameterBindingInfo.#ctor(Microsoft.AspNetCore.Mvc.ModelBinding.IModelBinder,Microsoft.AspNetCore.Mvc.ModelBinding.ModelMetadata,Microsoft.AspNetCore.Mvc.Abstractions.ParameterDescriptor)">
+            <summary>
+            Provides information about AspNetCore function parameters and their binding metadata
+            </summary>
+            <param name="ModelBinder">Model binder</param>
+            <param name="ModelMetadata">Model metadata</param>
+            <param name="Parameter">Parameter descriptor</param>
+        </member>
+        <member name="P:AzureFunctions.Worker.Extensions.AspNetCore.AspNetCoreParameterBindingInfo.ModelBinder">
+            <summary>Model binder</summary>
+        </member>
+        <member name="P:AzureFunctions.Worker.Extensions.AspNetCore.AspNetCoreParameterBindingInfo.ModelMetadata">
+            <summary>Model metadata</summary>
+        </member>
+        <member name="P:AzureFunctions.Worker.Extensions.AspNetCore.AspNetCoreParameterBindingInfo.Parameter">
+            <summary>Parameter descriptor</summary>
+        </member>
+        <member name="T:AzureFunctions.Worker.Extensions.AspNetCore.Internal.AspNetCoreFunctionEndpointDataSource">
+            <summary>
+            Decorates existing endpoints provided by default <see cref="T:Microsoft.AspNetCore.Routing.EndpointDataSource"/>
+            with AspNetCore metadata like <see cref="T:Microsoft.AspNetCore.Authorization.IAuthorizeData"/> etc.
+            </summary>
+            <param name="endpointDataSource">Worker default endpoint data source</param>
+            <param name="metadataProvider">AspNetCore Function metadata provider</param>
+        </member>
+        <member name="M:AzureFunctions.Worker.Extensions.AspNetCore.Internal.AspNetCoreFunctionEndpointDataSource.#ctor(Microsoft.AspNetCore.Routing.EndpointDataSource,AzureFunctions.Worker.Extensions.AspNetCore.AspNetCoreFunctionMetadataProvider)">
+            <summary>
+            Decorates existing endpoints provided by default <see cref="T:Microsoft.AspNetCore.Routing.EndpointDataSource"/>
+            with AspNetCore metadata like <see cref="T:Microsoft.AspNetCore.Authorization.IAuthorizeData"/> etc.
+            </summary>
+            <param name="endpointDataSource">Worker default endpoint data source</param>
+            <param name="metadataProvider">AspNetCore Function metadata provider</param>
+        </member>
+        <member name="T:AzureFunctions.Worker.Extensions.AspNetCore.Internal.AspNetCoreIntegrationMiddleware">
+            <summary>
+            Worker middleware that integrates AspNetCore middlewares into the execution pipeline
+            </summary>
+            <param name="httpContextAccessor">Http context accessor</param>
+            <param name="actionResultTypeMapper">AspNetCore ActionResult type mapper</param>
+            <param name="parameterBinder">AspNetCore parameter binder</param>
+            <param name="metadataProvider">AspNetCore function metadata provider</param>
+        </member>
+        <member name="M:AzureFunctions.Worker.Extensions.AspNetCore.Internal.AspNetCoreIntegrationMiddleware.#ctor(Microsoft.AspNetCore.Http.IHttpContextAccessor,Microsoft.AspNetCore.Mvc.Infrastructure.IActionResultTypeMapper,AzureFunctions.Worker.Extensions.AspNetCore.Internal.AspNetCoreFunctionParameterBinder,AzureFunctions.Worker.Extensions.AspNetCore.AspNetCoreFunctionMetadataProvider)">
+            <summary>
+            Worker middleware that integrates AspNetCore middlewares into the execution pipeline
+            </summary>
+            <param name="httpContextAccessor">Http context accessor</param>
+            <param name="actionResultTypeMapper">AspNetCore ActionResult type mapper</param>
+            <param name="parameterBinder">AspNetCore parameter binder</param>
+            <param name="metadataProvider">AspNetCore function metadata provider</param>
+        </member>
+        <member name="T:AzureFunctions.Worker.Extensions.AspNetCore.Internal.AspNetCoreProxyMiddleware">
+            <summary>
+            Worker middleware that integrates AspNetCore middlewares into the execution pipeline
+            </summary>
+            <param name="aspnetMiddleware">AspNetCore Application pipeline request delegate</param>
+        </member>
+        <member name="M:AzureFunctions.Worker.Extensions.AspNetCore.Internal.AspNetCoreProxyMiddleware.#ctor(Microsoft.AspNetCore.Http.RequestDelegate)">
+            <summary>
+            Worker middleware that integrates AspNetCore middlewares into the execution pipeline
+            </summary>
+            <param name="aspnetMiddleware">AspNetCore Application pipeline request delegate</param>
+        </member>
+        <member name="T:AzureFunctions.Worker.Extensions.AspNetCore.Internal.StartupFilter">
+            <summary>
+            Startup filter that modifies existing Worker.Extensions.Http.AspNetCore extension.
+            <list type="number">
+            <item><description>
+            Replaces existing <see cref="T:Microsoft.AspNetCore.Routing.EndpointDataSource"/> with <see cref="T:AzureFunctions.Worker.Extensions.AspNetCore.Internal.AspNetCoreFunctionEndpointDataSource"/>
+            </description></item>
+            </list>
+            </summary>
+        </member>
+        <member name="T:Microsoft.Extensions.DependencyInjection.WorkerExtensions">
+            <summary>
+            Worker extensions to provide improved AspNetCore integration
+            </summary>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.WorkerExtensions.AddAspNetCoreIntegration(Microsoft.Azure.Functions.Worker.IFunctionsWorkerApplicationBuilder)">
+            <summary>
+            Enables AspNetCore function parameter binding and exposes AspNetCore related Function metadata
+            </summary>
+            <param name="worker">FunctionsWorker ApplicationBuilder</param>
+            <returns>Mvc builder</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.WorkerExtensions.UseAspNetCoreMiddleware(Microsoft.Azure.Functions.Worker.IFunctionsWorkerApplicationBuilder,System.Action{Microsoft.AspNetCore.Builder.IApplicationBuilder})">
+            <summary>
+            Provides ability to register AspNetCore Middleware as Worker Middleware.
+            </summary>
+            <remarks>
+            AspNetCore Middleware has dependency on HttpContext so it will be executed only with Http-triggered functions.
+            </remarks>
+            <param name="worker">Functions worker Application builder</param>
+            <param name="applicationBuilder">AspNetCore Application builder</param>
+        </member>
+        <member name="T:System.Text.RegularExpressions.Generated.EntryPointRegex_0">
+            <summary>Custom <see cref="T:System.Text.RegularExpressions.Regex"/>-derived type for the EntryPointRegex method.</summary>
+        </member>
+        <member name="F:System.Text.RegularExpressions.Generated.EntryPointRegex_0.Instance">
+            <summary>Cached, thread-safe singleton instance.</summary>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.EntryPointRegex_0.#ctor">
+            <summary>Initializes the instance.</summary>
+        </member>
+        <member name="T:System.Text.RegularExpressions.Generated.EntryPointRegex_0.RunnerFactory">
+            <summary>Provides a factory for creating <see cref="T:System.Text.RegularExpressions.RegexRunner"/> instances to be used by methods on <see cref="T:System.Text.RegularExpressions.Regex"/>.</summary>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.EntryPointRegex_0.RunnerFactory.CreateInstance">
+            <summary>Creates an instance of a <see cref="T:System.Text.RegularExpressions.RegexRunner"/> used by methods on <see cref="T:System.Text.RegularExpressions.Regex"/>.</summary>
+        </member>
+        <member name="T:System.Text.RegularExpressions.Generated.EntryPointRegex_0.RunnerFactory.Runner">
+            <summary>Provides the runner that contains the custom logic implementing the specified regular expression.</summary>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.EntryPointRegex_0.RunnerFactory.Runner.Scan(System.ReadOnlySpan{System.Char})">
+            <summary>Scan the <paramref name="inputSpan"/> starting from base.runtextstart for the next match.</summary>
+            <param name="inputSpan">The text being scanned by the regular expression.</param>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.EntryPointRegex_0.RunnerFactory.Runner.TryFindNextPossibleStartingPosition(System.ReadOnlySpan{System.Char})">
+            <summary>Search <paramref name="inputSpan"/> starting from base.runtextpos for the next location a match could possibly start.</summary>
+            <param name="inputSpan">The text being scanned by the regular expression.</param>
+            <returns>true if a possible match was found; false if no more matches are possible.</returns>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.EntryPointRegex_0.RunnerFactory.Runner.TryMatchAtCurrentPosition(System.ReadOnlySpan{System.Char})">
+            <summary>Determine whether <paramref name="inputSpan"/> at base.runtextpos is a match for the regular expression.</summary>
+            <param name="inputSpan">The text being scanned by the regular expression.</param>
+            <returns>true if the regular expression matches at the current position; otherwise, false.</returns>
+        </member>
+        <member name="T:System.Text.RegularExpressions.Generated.Utilities">
+            <summary>Helper methods used by generated <see cref="T:System.Text.RegularExpressions.Regex"/>-derived implementations.</summary>
+        </member>
+        <member name="F:System.Text.RegularExpressions.Generated.Utilities.s_defaultTimeout">
+            <summary>Default timeout value set in <see cref="T:System.AppContext"/>, or <see cref="F:System.Text.RegularExpressions.Regex.InfiniteMatchTimeout"/> if none was set.</summary>
+        </member>
+        <member name="F:System.Text.RegularExpressions.Generated.Utilities.s_hasTimeout">
+            <summary>Whether <see cref="F:System.Text.RegularExpressions.Generated.Utilities.s_defaultTimeout"/> is non-infinite.</summary>
+        </member>
+    </members>
+</doc>

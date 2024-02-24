@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>AzureFunctions.Worker.Extensions.ApplicationInsights</name>
+    </assembly>
+    <members>
+        <member name="T:AzureFunctions.Worker.Extensions.ApplicationInsights.ApplicationInsightsExtensionStartup">
+            <summary>
+            Registers ApplicationInsights middleware that converts In-Proc dependency calls into request
+            </summary>
+        </member>
+        <member name="T:AzureFunctions.Worker.Extensions.ApplicationInsights.Internal.FunctionActivityCoordinator">
+            <summary>
+            Helps to exchange <see cref="T:Microsoft.ApplicationInsights.Extensibility.IOperationHolder`1"/> between HTTP triggered function
+            in order to set additional HTTP related information
+            </summary>
+        </member>
+        <member name="T:AzureFunctions.Worker.Extensions.ApplicationInsights.Internal.FunctionApplicationInsightsMiddleware">
+            <summary>
+            Starts <see cref="T:Microsoft.ApplicationInsights.DataContracts.RequestTelemetry"/> operation based on worker host activity.
+            Request telemetry could be hijacked by HTTP middleware if function is triggered by HTTP
+            </summary>
+            <param name="telemetryClientAccessor">Telemetry client accessor</param>
+            <param name="activityCoordinator">Function activity coordinator</param>
+        </member>
+        <member name="M:AzureFunctions.Worker.Extensions.ApplicationInsights.Internal.FunctionApplicationInsightsMiddleware.#ctor(AzureFunctions.Worker.Extensions.ApplicationInsights.TelemetryClientAccessor,AzureFunctions.Worker.Extensions.ApplicationInsights.Internal.FunctionActivityCoordinator)">
+            <summary>
+            Starts <see cref="T:Microsoft.ApplicationInsights.DataContracts.RequestTelemetry"/> operation based on worker host activity.
+            Request telemetry could be hijacked by HTTP middleware if function is triggered by HTTP
+            </summary>
+            <param name="telemetryClientAccessor">Telemetry client accessor</param>
+            <param name="activityCoordinator">Function activity coordinator</param>
+        </member>
+        <member name="T:AzureFunctions.Worker.Extensions.ApplicationInsights.Internal.FunctionTelemetryProcessor">
+            <summary>
+            Filters out internal function context properties and
+            maps any <see cref="P:System.Diagnostics.Activity.Baggage"/> properties to request
+            </summary>
+            <param name="next">Next telemetry processor</param>
+        </member>
+        <member name="M:AzureFunctions.Worker.Extensions.ApplicationInsights.Internal.FunctionTelemetryProcessor.#ctor(Microsoft.ApplicationInsights.Extensibility.ITelemetryProcessor)">
+            <summary>
+            Filters out internal function context properties and
+            maps any <see cref="P:System.Diagnostics.Activity.Baggage"/> properties to request
+            </summary>
+            <param name="next">Next telemetry processor</param>
+        </member>
+        <member name="T:AzureFunctions.Worker.Extensions.ApplicationInsights.Internal.StartupFilter">
+            <summary>
+            Registers application middleware responsible to initialize <see cref="T:Microsoft.ApplicationInsights.DataContracts.RequestTelemetry"/>
+            during function HTTP triggered execution
+            </summary>
+        </member>
+    </members>
+</doc>

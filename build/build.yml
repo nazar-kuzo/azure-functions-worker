@@ -1,0 +1,34 @@
+name: 1.$(Date:yy).$(Date:MMdd)$(Rev:.r)
+
+trigger: none
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  projectRoot: 'src'
+  solution: '$(projectRoot)/*.sln'
+  buildConfiguration: 'Release'
+  NUGET_PACKAGES: $(Pipeline.Workspace)/.nuget/packages
+
+steps:
+- task: DotNetCoreCLI@2
+  displayName: Restore
+  inputs:
+    command: restore
+    projects: '$(solution)'
+    verbosityRestore: minimal
+
+- task: DotNetCoreCLI@2
+  displayName: Build
+  inputs:
+    projects: '$(solution)'
+    arguments: '--no-restore --configuration $(buildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  displayName: Publish
+  inputs:
+    command: 'custom'
+    custom: 'nuget'
+    arguments: 'push *\bin\$(buildConfiguration)\*.nupkg --skip-duplicate --source https://api.nuget.org/v3/index.json --api-key $(nugetApiKey)'
+    workingDirectory: '$(projectRoot)'

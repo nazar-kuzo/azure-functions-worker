@@ -8,6 +8,6 @@ public static class FunctionContextExtensions
     {
         return functionContext.InstanceServices
             .GetRequiredService<ILoggerFactory>()
-            .CreateLogger($"Functions.{functionContext.FunctionDefinition.Name}");
+            .CreateLogger($"Function.{functionContext.FunctionDefinition.Name}");
     }
 }

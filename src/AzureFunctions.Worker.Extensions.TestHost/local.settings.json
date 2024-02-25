@@ -9,11 +9,13 @@
   "Logging": {
     "LogLevel": {
       "Default": "Information",
+      "Function": "Information",
       "AzureFunctions": "Trace"
     },
     "ApplicationInsights": {
       "LogLevel": {
         "Default": "Information",
+        "Function": "Information",
         "AzureFunctions": "Trace"
       }
     }

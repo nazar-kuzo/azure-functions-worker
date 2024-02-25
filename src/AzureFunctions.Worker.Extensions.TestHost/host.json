@@ -3,8 +3,7 @@
   "logging": {
     "fileLoggingMode": "never",
     "logLevel": {
-      "default": "Warning",
-      "Function": "Information"
+      "default": "Warning"
     },
     "applicationInsights": {
       "samplingSettings": {

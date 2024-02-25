@@ -2,8 +2,9 @@
   "IsEncrypted": false,
   "Values": {
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
-    "APPINSIGHTS_INSTRUMENTATIONKEY": "569e1520-cb9d-49d9-92cc-4614d5808057",
-    "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated"
+    "APPINSIGHTS_INSTRUMENTATIONKEY": "",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
+    "AzureFunctionsJobHost:logging:logLevel:Function": "Information"
   },
   "Logging": {
     "LogLevel": {

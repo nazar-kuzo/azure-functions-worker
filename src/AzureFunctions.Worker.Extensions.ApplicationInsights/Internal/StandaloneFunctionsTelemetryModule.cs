@@ -14,6 +14,7 @@ internal sealed class StandaloneFunctionsTelemetryModule(
     {
         activityContext.TelemetryClient = new TelemetryClient(configuration);
 
+        // TODO: investigate possibility to drop this listener
         this.hostActivityListener = new ActivityListener
         {
             ShouldListenTo = source => source.Name.StartsWith("Microsoft.Azure.Functions.Worker"),

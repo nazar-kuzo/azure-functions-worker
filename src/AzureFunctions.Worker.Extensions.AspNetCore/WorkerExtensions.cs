@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 
 namespace Microsoft.Extensions.DependencyInjection;
@@ -21,9 +22,11 @@ public static class WorkerExtensions
     /// <returns>Mvc builder</returns>
     public static IMvcCoreBuilder AddAspNetCoreIntegration(this IFunctionsWorkerApplicationBuilder worker)
     {
+        worker.Services.AddHttpContextAccessor();
+
         worker.Services.AddTransient<IStartupFilter, StartupFilter>();
 
-        worker.Services.AddSingleton<AspNetCoreFunctionMetadataProvider>();
+        worker.Services.TryAddSingleton<AspNetCoreFunctionMetadataProvider>();
         worker.Services.AddSingleton<AspNetCoreFunctionParameterBinder>();
 
         worker.UseMiddleware<AspNetCoreIntegrationMiddleware>();
@@ -43,7 +46,7 @@ public static class WorkerExtensions
         this IFunctionsWorkerApplicationBuilder worker,
         Action<IApplicationBuilder> applicationBuilder)
     {
-        worker.Services.AddSingleton<AspNetCoreFunctionMetadataProvider>();
+        worker.Services.TryAddSingleton<AspNetCoreFunctionMetadataProvider>();
 
         // register AspNetCore middlewares as singleton service since it depends on ServiceProvider
         worker.Services.AddSingleton(serviceProvider =>

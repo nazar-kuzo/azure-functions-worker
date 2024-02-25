@@ -1,7 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <PackageId>AzureFunctions.Worker.Extensions.AspNetCore</PackageId>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
+    <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="icon.png" Pack="true" PackagePath="\" />
+    <None Include="readme.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
   
   <ItemGroup>
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http.AspNetCore" Version="1.2.1" />

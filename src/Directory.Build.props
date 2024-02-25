@@ -26,8 +26,6 @@
     <Authors>Nazar Kuzo</Authors>
     <Copyright>All rights reserved</Copyright>
     <PackageProjectUrl>https://github.com/nazar-kuzo/azure-functions-worker</PackageProjectUrl>
-    <PackageReadmeFile>readme.md</PackageReadmeFile>
-    <PackageIcon>icon.png</PackageIcon>
     <PackageIconUrl />
     <RepositoryUrl>https://github.com/nazar-kuzo/azure-functions-worker</RepositoryUrl>
     <RepositoryType>Github</RepositoryType>
@@ -35,9 +33,9 @@
     <NeutralLanguage>en-US</NeutralLanguage>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <AssemblyVersion>1.0.0</AssemblyVersion>
-    <FileVersion>1.0.0</FileVersion>
-    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.1</AssemblyVersion>
+    <FileVersion>1.0.1</FileVersion>
+    <Version>1.0.1</Version>
     <PackageReleaseNotes>
       - Initial release
     </PackageReleaseNotes>
@@ -62,8 +60,6 @@
 
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
-    <None Include="icon.png" Pack="true" PackagePath="\" />
-    <None Include="readme.md" Pack="true" PackagePath="\" />
   </ItemGroup>
   
   <ItemGroup>

@@ -13,6 +13,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureFunctions.Worker.Exten
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureFunctions.Worker.Extensions.AspNetCore", "AzureFunctions.Worker.Extensions.AspNetCore\AzureFunctions.Worker.Extensions.AspNetCore.csproj", "{4C1567DE-C2D8-48B4-9FED-54182437B821}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{B824C852-9922-4A07-A668-C970A30D905B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureFunctions.Worker.Extensions.TestHost", "AzureFunctions.Worker.Extensions.TestHost\AzureFunctions.Worker.Extensions.TestHost.csproj", "{C64DB707-04C4-46F1-898D-D0B28B15A239}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,9 +31,16 @@ Global
 		{4C1567DE-C2D8-48B4-9FED-54182437B821}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4C1567DE-C2D8-48B4-9FED-54182437B821}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4C1567DE-C2D8-48B4-9FED-54182437B821}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C64DB707-04C4-46F1-898D-D0B28B15A239}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C64DB707-04C4-46F1-898D-D0B28B15A239}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C64DB707-04C4-46F1-898D-D0B28B15A239}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C64DB707-04C4-46F1-898D-D0B28B15A239}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C64DB707-04C4-46F1-898D-D0B28B15A239} = {B824C852-9922-4A07-A668-C970A30D905B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0407B193-BE99-471A-A822-953F5EAA55E8}

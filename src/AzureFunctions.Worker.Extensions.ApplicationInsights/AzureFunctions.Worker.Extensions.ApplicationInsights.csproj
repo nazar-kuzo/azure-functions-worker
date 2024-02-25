@@ -1,7 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <PackageId>AzureFunctions.Worker.Extensions.ApplicationInsights</PackageId>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
+    <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="icon.png" Pack="true" PackagePath="\" />
+    <None Include="readme.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
   
   <ItemGroup>
     <PackageReference Include="Microsoft.ApplicationInsights.WorkerService" Version="2.22.0" />

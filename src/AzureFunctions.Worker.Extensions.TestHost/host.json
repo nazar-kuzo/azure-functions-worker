@@ -1,0 +1,18 @@
+{
+  "version": "2.0",
+  "logging": {
+    "fileLoggingMode": "never",
+    "logLevel": {
+      "default": "Warning",
+      "Function": "Information"
+    },
+    "applicationInsights": {
+      "samplingSettings": {
+        "isEnabled": true,
+        "excludedTypes": "Exception"
+      },
+      "enableDependencyTracking": false,
+      "enableLiveMetricsFilters": true
+    }
+  }
+}

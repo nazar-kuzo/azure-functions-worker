@@ -1,0 +1,20 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "APPINSIGHTS_INSTRUMENTATIONKEY": "569e1520-cb9d-49d9-92cc-4614d5808057",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated"
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "AzureFunctions": "Trace"
+    },
+    "ApplicationInsights": {
+      "LogLevel": {
+        "Default": "Information",
+        "AzureFunctions": "Trace"
+      }
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "AzureFunctions.Worker.Extensions.TestHost": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7045",
+      "launchBrowser": false
+    }
+  }
+}

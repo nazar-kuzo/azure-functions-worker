@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Azure.Functions.Worker.Core.FunctionMetadata;
 
 namespace AzureFunctions.Worker.Extensions.AspNetCore;
@@ -86,6 +87,7 @@ public sealed partial class AspNetCoreFunctionMetadataProvider(
                     };
                 });
             })
+            .DistinctBy(metadata => metadata.Name)
             .ToList();
 
         var functionTypes = functionsMetadata
@@ -98,11 +100,15 @@ public sealed partial class AspNetCoreFunctionMetadataProvider(
                 actionDescriptor => actionDescriptor.MethodInfo,
                 (metadata, actionDescriptor) =>
                 {
+                    actionDescriptor.DisplayName = metadata.Name;
+
                     metadata.ActionDescriptor = actionDescriptor;
 
                     metadata.AspNetCoreParameters = actionDescriptor.Parameters
                         .OfType<ControllerParameterDescriptor>()
-                        .Where(parameter => parameter.BindingInfo?.BindingSource != null)
+                        .Where(parameter =>
+                            parameter.BindingInfo?.BindingSource != null &&
+                            parameter.BindingInfo.BindingSource != BindingSource.Special)
                         .Select(parameter =>
                         {
                             var modelMetadata = ((ModelMetadataProvider) modelMetadataProvider)

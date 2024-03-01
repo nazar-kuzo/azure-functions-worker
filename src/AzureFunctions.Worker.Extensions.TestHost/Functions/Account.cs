@@ -1,10 +1,12 @@
 ﻿using AzureFunctions.Worker.Extensions.TestHost.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 
 namespace AzureFunctions.Worker.Extensions.TestHost.Functions;
 
+[Authorize]
 public class Account(ILogger<Account> logger)
 {
     [Function($"{nameof(Account)}-{nameof(GetUsers)}")]
@@ -51,6 +53,7 @@ public class Account(ILogger<Account> logger)
         return true;
     }
 
+    [RequestFormLimits(MultipartBodyLengthLimit = 500)]
     [Function($"{nameof(Account)}-{nameof(UploadPhoto)}")]
     public async Task UploadPhoto(
         [HttpTrigger(AuthorizationLevel.Anonymous, "POST", Route = "account/upload")] HttpRequest request,

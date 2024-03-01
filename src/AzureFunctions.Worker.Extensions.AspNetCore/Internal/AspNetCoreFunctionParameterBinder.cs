@@ -41,18 +41,27 @@ internal class AspNetCoreFunctionParameterBinder(
 
         foreach (var parameterInfo in metadata.AspNetCoreParameters)
         {
-            var result = await parameterBinder.BindModelAsync(
-                actionContext,
-                parameterInfo.ModelBinder,
-                await CompositeValueProvider.CreateAsync(actionContext, mvcOptions.Value.ValueProviderFactories),
-                parameterInfo.Parameter,
-                parameterInfo.ModelMetadata,
-                value: null,
-                container: null);
-
-            if (result.IsModelSet)
+            try
             {
-                cacheBindingInput(parameterInfo.Parameter.Name, ConversionResult.Success(result.Model));
+                var result = await parameterBinder.BindModelAsync(
+                        actionContext,
+                        parameterInfo.ModelBinder,
+                        await CompositeValueProvider.CreateAsync(actionContext, mvcOptions.Value.ValueProviderFactories),
+                        parameterInfo.Parameter,
+                        parameterInfo.ModelMetadata,
+                        value: null,
+                        container: null);
+
+                if (result.IsModelSet)
+                {
+                    cacheBindingInput(parameterInfo.Parameter.Name, ConversionResult.Success(result.Model));
+                }
+            }
+            catch (ValueProviderException ex)
+            {
+                actionContext.ModelState.AddModelError(
+                    parameterInfo.ModelMetadata.Name ?? parameterInfo.Parameter.Name,
+                    ex.Message);
             }
         }
 

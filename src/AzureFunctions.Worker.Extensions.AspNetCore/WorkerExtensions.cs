@@ -3,6 +3,7 @@ using AzureFunctions.Worker.Extensions.AspNetCore.Internal;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -28,6 +29,7 @@ public static class WorkerExtensions
 
         worker.Services.TryAddSingleton<AspNetCoreFunctionMetadataProvider>();
         worker.Services.AddSingleton<AspNetCoreFunctionParameterBinder>();
+        worker.Services.AddSingleton<IActionDescriptorProvider, FunctionActionDescriptorProvider>();
 
         worker.UseMiddleware<AspNetCoreIntegrationMiddleware>();
 

@@ -10,10 +10,12 @@ namespace AzureFunctions.Worker.Extensions.AspNetCore.Internal;
 /// Decorates existing endpoints provided by default <see cref="EndpointDataSource"/>
 /// with AspNetCore metadata like <see cref="IAuthorizeData"/> etc.
 /// </summary>
-/// <param name="endpointDataSource">Worker default endpoint data source</param>
+/// <param name="functionEndpointDataSource">Worker default endpoint data source</param>
+/// <param name="controllerEndpointDataSource">AspNetCore Controller endpoint data source</param>
 /// <param name="metadataProvider">AspNetCore Function metadata provider</param>
 internal class AspNetCoreFunctionEndpointDataSource(
-    EndpointDataSource endpointDataSource,
+    EndpointDataSource functionEndpointDataSource,
+    EndpointDataSource controllerEndpointDataSource,
     AspNetCoreFunctionMetadataProvider metadataProvider
     ) : EndpointDataSource
 {
@@ -29,8 +31,11 @@ internal class AspNetCoreFunctionEndpointDataSource(
             {
                 lock (this.@lock)
                 {
-                    this.endpoints ??= endpointDataSource.Endpoints
-                        .OfType<RouteEndpoint>()
+                    var controllerEndpointMetadata = controllerEndpointDataSource.Endpoints
+                        .ToDictionary(endpoint => endpoint.DisplayName!, endpoint => endpoint.Metadata);
+
+                    this.endpoints ??= functionEndpointDataSource.Endpoints
+                        .Cast<RouteEndpoint>()
                         .Select(endpoint =>
                         {
                             var builder = new RouteEndpointBuilder(endpoint.RequestDelegate, endpoint.RoutePattern, endpoint.Order)
@@ -40,13 +45,11 @@ internal class AspNetCoreFunctionEndpointDataSource(
 
                             var metadata = metadataProvider.GetFunctionMetadata(endpoint.DisplayName!);
 
-                            object[] endpointMetadata = [
-                                .. endpoint.Metadata,
-                                .. metadata.CustomAttributes.OfType<IAuthorizeData>(),
-                                .. metadata.CustomAttributes.OfType<IAllowAnonymous>(),
-                            ];
+                            var aspnetCoreMetadata = controllerEndpointMetadata.ContainsKey(metadata.Name!)
+                                ? controllerEndpointMetadata[metadata.Name!].AsEnumerable()
+                                : Enumerable.Empty<object>();
 
-                            foreach (var item in endpointMetadata)
+                            foreach (var item in endpoint.Metadata.Union(aspnetCoreMetadata))
                             {
                                 builder.Metadata.Add(item);
                             }

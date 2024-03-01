@@ -23,7 +23,9 @@ internal class StartupFilter : IStartupFilter
 
             if (TryGetEndpointRouteBuilder(builder) is { } endpointRouteBuilder)
             {
-                ReplaceFunctionEndpointDataSource(builder, endpointRouteBuilder);
+                endpointRouteBuilder.MapControllers();
+
+                ReplaceExistingDataSources(builder, endpointRouteBuilder);
             }
         };
     }
@@ -38,17 +40,25 @@ internal class StartupFilter : IStartupFilter
         return null;
     }
 
-    private static void ReplaceFunctionEndpointDataSource(
+    private static void ReplaceExistingDataSources(
         IApplicationBuilder builder,
         IEndpointRouteBuilder endpointRouteBuilder)
     {
-        var existingDataSource = endpointRouteBuilder.DataSources.First();
+        var functionEndpointDataSource = endpointRouteBuilder.DataSources.First();
+        var controllerEndpointDataSource = endpointRouteBuilder.DataSources.Skip(1).First();
 
-        endpointRouteBuilder.DataSources.Remove(existingDataSource);
+        // add "inert" (non-routable) endpoint support
+        controllerEndpointDataSource
+            .GetType()
+            .GetProperty("CreateInertEndpoints")!
+            .SetValue(controllerEndpointDataSource, true);
 
-        var newDataSource = ActivatorUtilities.CreateInstance<AspNetCoreFunctionEndpointDataSource>(
-            builder.ApplicationServices,
-            existingDataSource);
+        endpointRouteBuilder.DataSources.Clear();
+
+        var newDataSource = new AspNetCoreFunctionEndpointDataSource(
+            functionEndpointDataSource,
+            controllerEndpointDataSource,
+            builder.ApplicationServices.GetRequiredService<AspNetCoreFunctionMetadataProvider>());
 
         endpointRouteBuilder.DataSources.Add(newDataSource);
     }

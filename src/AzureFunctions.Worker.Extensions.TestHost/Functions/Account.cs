@@ -28,6 +28,21 @@ public class Account(ILogger<Account> logger)
         ]);
     }
 
+    [Function($"{nameof(Account)}-{nameof(CreateUser)}")]
+    public Task<UserInfo> CreateUser(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "POST", Route = "account")] HttpRequest request,
+        [FromBody, Required] UserInfo user)
+    {
+        logger.LogInformation("Received user with email: {Email}", user.Email);
+
+        return Task.FromResult(new UserInfo
+        {
+            Id = Guid.NewGuid(),
+            Email = "email@domain.com",
+            Name = "User name",
+        });
+    }
+
     [Function($"{nameof(Account)}-{nameof(GetUserInfo)}")]
     public Task<UserInfo> GetUserInfo(
         [HttpTrigger(AuthorizationLevel.Anonymous, "GET", Route = "account/user/{email}")] HttpRequest request,
@@ -53,11 +68,11 @@ public class Account(ILogger<Account> logger)
         return true;
     }
 
-    [RequestFormLimits(MultipartBodyLengthLimit = 500)]
+    [RequestFormLimits(MultipartBodyLengthLimit = 5_000_000)]
     [Function($"{nameof(Account)}-{nameof(UploadPhoto)}")]
     public async Task UploadPhoto(
         [HttpTrigger(AuthorizationLevel.Anonymous, "POST", Route = "account/upload")] HttpRequest request,
-        [FromForm, Required] IFormFile photo,
+        [Required] IFormFile photo,
         CancellationToken cancellationToken)
     {
         logger.LogInformation("Received profile photo: {FileName}, \"{ContentType}\"", photo.FileName, photo.ContentType);

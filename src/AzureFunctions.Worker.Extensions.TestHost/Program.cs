@@ -29,7 +29,12 @@ var host = new HostBuilder()
         {
             app.UseAuthentication();
             app.UseAuthorization();
-            app.UseFunctionSwaggerUI();
+            app.UseFunctionSwaggerUI(
+                uiOptionsSetup: uiOptions =>
+                {
+                    uiOptions.DocumentTitle = "Worker Extensions";
+                },
+                faviconFileName: "icon.png");
         });
     })
 #if DEBUG
@@ -122,7 +127,7 @@ static void ConfigureSwagger(HostBuilderContext hostingContext, IServiceCollecti
                 ("v1", new OpenApiInfo
                 {
                     Version = "1.0.0",
-                    Title = "Client API",
+                    Title = "Test API",
                 }),
                 ("internal", new OpenApiInfo
                 {

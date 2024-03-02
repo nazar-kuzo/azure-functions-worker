@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Microsoft.Azure.Functions.Worker;
 
@@ -9,5 +10,11 @@ public static class FunctionContextExtensions
         return functionContext.InstanceServices
             .GetRequiredService<ILoggerFactory>()
             .CreateLogger($"Function.{functionContext.FunctionDefinition.Name}");
+    }
+
+    public static void ReplyWithActionResult<T>(this FunctionContext functionContext, T result)
+        where T : IActionResult
+    {
+        functionContext.GetInvocationResult().Value = result;
     }
 }

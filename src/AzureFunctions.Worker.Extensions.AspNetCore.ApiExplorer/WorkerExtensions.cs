@@ -1,8 +1,14 @@
+using System.Net.Mime;
+using System.Reflection;
 using DotSwashbuckle.AspNetCore.Swagger;
 using DotSwashbuckle.AspNetCore.SwaggerGen;
 using DotSwashbuckle.AspNetCore.SwaggerUI;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 
 namespace Microsoft.AspNetCore.Builder;
 
@@ -12,7 +18,8 @@ namespace Microsoft.AspNetCore.Builder;
 public static class WorkerExtensions
 {
     private static readonly string RoutePrefix = "/api/swagger";
-    private static readonly string IndexDocumentPath = $"/{RoutePrefix}/index.html";
+    private static readonly string FaviconPath = $"{RoutePrefix}/favicon-";
+    private static readonly FileExtensionContentTypeProvider ContentTypeProvider = new();
 
     /// <summary>
     /// Registers the SwaggerUI middleware with optional setup action for DI-injected options
@@ -20,22 +27,39 @@ public static class WorkerExtensions
     /// <param name="app">IApplicationBuilder</param>
     /// <param name="swaggerOptionsSetup">SwaggerOptions configurator</param>
     /// <param name="uiOptionsSetup">SwaggerUIOptions configurator</param>
+    /// <param name="faviconFileName">Custom favicon embedded file name</param>
     /// <returns>Application builder</returns>
     public static IApplicationBuilder UseFunctionSwaggerUI(
         this IApplicationBuilder app,
         Action<SwaggerOptions>? swaggerOptionsSetup = null,
-        Action<SwaggerUIOptions>? uiOptionsSetup = null)
+        Action<SwaggerUIOptions>? uiOptionsSetup = null,
+        string? faviconFileName = null)
     {
         var swaggerGenOptions = app.ApplicationServices.GetRequiredService<IOptions<SwaggerGenOptions>>();
 
         app.Use(next => httpContext =>
         {
-            // static content wont serve if HttpContext has endpoint set
-            if (httpContext.Request.Path.Value is string path &&
-                path.StartsWith(RoutePrefix) &&
-                path != IndexDocumentPath)
+            if (httpContext.Request.Path.Value is string path && path.StartsWith(RoutePrefix))
             {
+                // static content wont serve if HttpContext has endpoint set
                 httpContext.SetEndpoint(null);
+
+                if (!string.IsNullOrEmpty(faviconFileName) &&
+                    path.StartsWith(FaviconPath) &&
+                    httpContext.GetFunctionContext() is { } functionContext &&
+                    ReadEmbeddedFile(faviconFileName) is { } favicon)
+                {
+                    ContentTypeProvider.TryGetContentType(faviconFileName, out var contentType);
+
+                    contentType ??= MediaTypeNames.Application.Octet;
+
+                    functionContext.ReplyWithActionResult(new FileStreamResult(favicon.CreateReadStream(), contentType)
+                    {
+                        FileDownloadName = faviconFileName,
+                    });
+
+                    return Task.CompletedTask;
+                }
             }
 
             return next(httpContext);
@@ -65,5 +89,12 @@ public static class WorkerExtensions
         });
 
         return app;
+    }
+
+    private static IFileInfo? ReadEmbeddedFile(string faviconFileName)
+    {
+        return new EmbeddedFileProvider(Assembly.GetEntryAssembly()!)
+            .GetDirectoryContents(string.Empty)
+            .SingleOrDefault(fileInfo => fileInfo.Name.EndsWith(faviconFileName));
     }
 }

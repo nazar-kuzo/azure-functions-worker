@@ -1,13 +1,10 @@
 ﻿using System.Collections.Frozen;
-using System.Collections.Immutable;
 using System.Reflection;
 using System.Runtime.Loader;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc.Abstractions;
-using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Azure.Functions.Worker.Core.FunctionMetadata;
 
 namespace AzureFunctions.Worker.Extensions.AspNetCore;
@@ -16,14 +13,7 @@ namespace AzureFunctions.Worker.Extensions.AspNetCore;
 /// Wraps built-in <see cref="IFunctionMetadataProvider"/> provider to return custom <see cref="AspNetCoreFunctionMetadata"/>.
 /// </summary>
 /// <param name="functionMetadataProvider">Built-in <see cref="IFunctionMetadataProvider"/></param>
-/// <param name="modelBinderFactory">Model binder factory</param>
-/// <param name="modelMetadataProvider">Model metadata provider</param>
-/// <param name="applicationModelProviders">Application model providers</param>
-public sealed partial class AspNetCoreFunctionMetadataProvider(
-    IFunctionMetadataProvider functionMetadataProvider,
-    IModelBinderFactory modelBinderFactory,
-    IModelMetadataProvider modelMetadataProvider,
-    IEnumerable<IApplicationModelProvider> applicationModelProviders)
+public sealed partial class AspNetCoreFunctionMetadataProvider(IFunctionMetadataProvider functionMetadataProvider)
 {
     private FrozenDictionary<string, AspNetCoreFunctionMetadata>? metadata;
 
@@ -40,7 +30,7 @@ public sealed partial class AspNetCoreFunctionMetadataProvider(
             type.GetGenericTypeDefinition() is { } genericTypeDefinition &&
             genericTypeDefinition == typeof(Task<>))
         {
-            return TryUnwrapDataType(type.GetGenericArguments()[0]);
+            return type.GetGenericArguments()[0];
         }
 
         return type;
@@ -53,7 +43,7 @@ public sealed partial class AspNetCoreFunctionMetadataProvider(
     {
         var scriptRoot = Environment.GetEnvironmentVariable("FUNCTIONS_APPLICATION_DIRECTORY")!;
 
-        var functionsMetadata = functionMetadataProvider
+        return functionMetadataProvider
             .GetFunctionMetadataAsync(scriptRoot)
             .GetAwaiter()
             .GetResult()
@@ -62,97 +52,43 @@ public sealed partial class AspNetCoreFunctionMetadataProvider(
             {
                 var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(assemblyMetadata.Key);
 
-                return assemblyMetadata.Select(metadata =>
-                {
-                    var entryPointMatch = EntryPointRegex().Match(metadata.EntryPoint!);
-                    var functionType = assembly.GetType(entryPointMatch.Groups["typeName"].Value)!;
-                    var methodInfo = functionType.GetMethod(entryPointMatch.Groups["methodName"].Value)!;
-
-                    return new AspNetCoreFunctionMetadata
+                return assemblyMetadata
+                    .Select(metadata =>
                     {
-                        EntryPoint = metadata.EntryPoint,
-                        IsProxy = metadata.IsProxy,
-                        Language = metadata.Language,
-                        ManagedDependencyEnabled = metadata.ManagedDependencyEnabled,
-                        Name = metadata.Name,
-                        RawBindings = metadata.RawBindings,
-                        Retry = metadata.Retry,
-                        ScriptFile = metadata.ScriptFile,
-                        TargetMethod = methodInfo,
-                        ReturnDataType = TryUnwrapDataType(methodInfo.ReturnType),
-                        CustomAttributes = methodInfo
-                            .GetCustomAttributes(true)
-                            .Union(functionType.GetCustomAttributes(true))
-                            .ToImmutableArray(),
-                    };
-                });
+                        var entryPointMatch = EntryPointRegex().Match(metadata.EntryPoint!);
+
+                        return (
+                            Metadata: metadata,
+                            TypeName: entryPointMatch.Groups["typeName"].Value,
+                            MethodName: entryPointMatch.Groups["methodName"].Value);
+                    })
+                    .GroupBy(context => context.TypeName)
+                    .SelectMany(typeMetadata =>
+                    {
+                        var functionType = assembly.GetType(typeMetadata.Key)!;
+
+                        return typeMetadata.Select(context =>
+                        {
+                            var methodInfo = functionType.GetMethod(context.MethodName)!;
+
+                            return new AspNetCoreFunctionMetadata
+                            {
+                                EntryPoint = context.Metadata.EntryPoint,
+                                IsProxy = context.Metadata.IsProxy,
+                                Language = context.Metadata.Language,
+                                ManagedDependencyEnabled = context.Metadata.ManagedDependencyEnabled,
+                                Name = context.Metadata.Name,
+                                RawBindings = context.Metadata.RawBindings,
+                                Retry = context.Metadata.Retry,
+                                ScriptFile = context.Metadata.ScriptFile,
+                                TargetMethod = methodInfo,
+                                ReturnDataType = TryUnwrapDataType(methodInfo.ReturnType),
+                            };
+                        });
+                    });
             })
             .DistinctBy(metadata => metadata.Name)
-            .ToList();
-
-        var functionTypes = functionsMetadata
-            .Select(metadata => metadata.TargetMethod.DeclaringType!)
-            .Distinct();
-
-        _ = functionsMetadata.Join(
-                this.GetFunctionDescriptors(functionTypes),
-                metadata => metadata.TargetMethod,
-                actionDescriptor => actionDescriptor.MethodInfo,
-                (metadata, actionDescriptor) =>
-                {
-                    actionDescriptor.DisplayName = metadata.Name;
-
-                    metadata.ActionDescriptor = actionDescriptor;
-
-                    metadata.AspNetCoreParameters = actionDescriptor.Parameters
-                        .OfType<ControllerParameterDescriptor>()
-                        .Where(parameter =>
-                            parameter.BindingInfo?.BindingSource != null &&
-                            parameter.BindingInfo.BindingSource != BindingSource.Special)
-                        .Select(parameter =>
-                        {
-                            var modelMetadata = ((ModelMetadataProvider) modelMetadataProvider)
-                                .GetMetadataForParameter(parameter.ParameterInfo);
-
-                            var binder = modelBinderFactory.CreateBinder(new ModelBinderFactoryContext
-                            {
-                                BindingInfo = parameter.BindingInfo,
-                                Metadata = modelMetadata,
-                                CacheToken = parameter,
-                            });
-
-                            return new AspNetCoreParameterBindingInfo(binder, modelMetadata, parameter);
-                        })
-                        .Where(item => item.ModelMetadata.IsBindingAllowed)
-                        .ToArray();
-
-                    return metadata;
-                })
-            .ToArray();
-
-        return functionsMetadata.ToFrozenDictionary(metadata => metadata.Name!);
-    }
-
-    private IList<ControllerActionDescriptor> GetFunctionDescriptors(IEnumerable<Type> functionTypes)
-    {
-        var context = new ApplicationModelProviderContext(functionTypes.Select(type => type.GetTypeInfo()));
-
-        var orderedProviders = applicationModelProviders.OrderBy(p => p.Order);
-
-        foreach (var provider in orderedProviders)
-        {
-            provider.OnProvidersExecuting(context);
-        }
-
-        foreach (var provider in orderedProviders)
-        {
-            provider.OnProvidersExecuted(context);
-        }
-
-        return (IList<ControllerActionDescriptor>) typeof(ApplicationModel).Assembly
-            .GetType("Microsoft.AspNetCore.Mvc.ApplicationModels.ControllerActionDescriptorBuilder")!
-            .GetMethod("Build", BindingFlags.Static | BindingFlags.Public)!
-            .Invoke(null, new[] { context.Result })!;
+            .ToFrozenDictionary(metadata => metadata.Name!);
     }
 }
 
@@ -170,11 +106,6 @@ public sealed class AspNetCoreFunctionMetadata : DefaultFunctionMetadata
     /// Gets function result type. If type is wrapped in <see cref="Task{TResult}"/> then it unwraps underlying type.
     /// </summary>
     public required Type ReturnDataType { get; set; }
-
-    /// <summary>
-    /// Collection of custom attributes provided on <see cref="TargetMethod"/> level and it's declaring type level.
-    /// </summary>
-    public required ImmutableArray<object> CustomAttributes { get; set; }
 
     /// <summary>
     /// AspNetCore action descriptor that contains information about parameter binding or api explorer descriptions

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace AzureFunctions.Worker.Extensions.AspNetCore.Internal;
 
@@ -25,7 +24,7 @@ internal class StartupFilter : IStartupFilter
             {
                 endpointRouteBuilder.MapControllers();
 
-                ReplaceExistingDataSources(builder, endpointRouteBuilder);
+                ReplaceExistingDataSources(endpointRouteBuilder);
             }
         };
     }
@@ -40,26 +39,15 @@ internal class StartupFilter : IStartupFilter
         return null;
     }
 
-    private static void ReplaceExistingDataSources(
-        IApplicationBuilder builder,
-        IEndpointRouteBuilder endpointRouteBuilder)
+    private static void ReplaceExistingDataSources(IEndpointRouteBuilder endpointRouteBuilder)
     {
         var functionEndpointDataSource = endpointRouteBuilder.DataSources.First();
         var controllerEndpointDataSource = endpointRouteBuilder.DataSources.Skip(1).First();
 
-        // add "inert" (non-routable) endpoint support
-        controllerEndpointDataSource
-            .GetType()
-            .GetProperty("CreateInertEndpoints")!
-            .SetValue(controllerEndpointDataSource, true);
-
         endpointRouteBuilder.DataSources.Clear();
 
-        var newDataSource = new AspNetCoreFunctionEndpointDataSource(
+        endpointRouteBuilder.DataSources.Add(new AspNetCoreFunctionEndpointDataSource(
             functionEndpointDataSource,
-            controllerEndpointDataSource,
-            builder.ApplicationServices.GetRequiredService<AspNetCoreFunctionMetadataProvider>());
-
-        endpointRouteBuilder.DataSources.Add(newDataSource);
+            controllerEndpointDataSource));
     }
 }

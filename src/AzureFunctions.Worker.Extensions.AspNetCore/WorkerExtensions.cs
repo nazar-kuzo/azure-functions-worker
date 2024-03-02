@@ -1,9 +1,12 @@
 using AzureFunctions.Worker.Extensions.AspNetCore;
 using AzureFunctions.Worker.Extensions.AspNetCore.Internal;
+using AzureFunctions.Worker.Extensions.AspNetCore.Internal.Middlewares;
+using AzureFunctions.Worker.Extensions.AspNetCore.Internal.ModelBinding;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -25,15 +28,17 @@ public static class WorkerExtensions
     {
         worker.Services.AddHttpContextAccessor();
 
-        worker.Services.AddTransient<IStartupFilter, StartupFilter>();
-
         worker.Services.TryAddSingleton<AspNetCoreFunctionMetadataProvider>();
         worker.Services.AddSingleton<AspNetCoreFunctionParameterBinder>();
         worker.Services.AddSingleton<IActionDescriptorProvider, FunctionActionDescriptorProvider>();
+        worker.Services.AddTransient<IApplicationModelProvider, FunctionApplicationModelProvider>();
+        worker.Services.AddTransient<IStartupFilter, StartupFilter>();
 
         worker.UseMiddleware<AspNetCoreIntegrationMiddleware>();
 
-        return worker.Services.AddMvcCore();
+        return worker.Services
+            .AddMvcCore()
+            .AddApiExplorer();
     }
 
     /// <summary>

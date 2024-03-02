@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Collections.ObjectModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.FileProviders;
@@ -12,16 +13,14 @@ namespace AzureFunctions.Worker.Extensions.AspNetCore.Internal;
 /// </summary>
 /// <param name="functionEndpointDataSource">Worker default endpoint data source</param>
 /// <param name="controllerEndpointDataSource">AspNetCore Controller endpoint data source</param>
-/// <param name="metadataProvider">AspNetCore Function metadata provider</param>
 internal class AspNetCoreFunctionEndpointDataSource(
     EndpointDataSource functionEndpointDataSource,
-    EndpointDataSource controllerEndpointDataSource,
-    AspNetCoreFunctionMetadataProvider metadataProvider
+    EndpointDataSource controllerEndpointDataSource
     ) : EndpointDataSource
 {
     private readonly object @lock = new();
 
-    private List<Endpoint>? endpoints;
+    private IReadOnlyList<Endpoint>? endpoints;
 
     public override IReadOnlyList<Endpoint> Endpoints
     {
@@ -31,32 +30,7 @@ internal class AspNetCoreFunctionEndpointDataSource(
             {
                 lock (this.@lock)
                 {
-                    var controllerEndpointMetadata = controllerEndpointDataSource.Endpoints
-                        .ToDictionary(endpoint => endpoint.DisplayName!, endpoint => endpoint.Metadata);
-
-                    this.endpoints ??= functionEndpointDataSource.Endpoints
-                        .Cast<RouteEndpoint>()
-                        .Select(endpoint =>
-                        {
-                            var builder = new RouteEndpointBuilder(endpoint.RequestDelegate, endpoint.RoutePattern, endpoint.Order)
-                            {
-                                DisplayName = endpoint.DisplayName,
-                            };
-
-                            var metadata = metadataProvider.GetFunctionMetadata(endpoint.DisplayName!);
-
-                            var aspnetCoreMetadata = controllerEndpointMetadata.ContainsKey(metadata.Name!)
-                                ? controllerEndpointMetadata[metadata.Name!].AsEnumerable()
-                                : Enumerable.Empty<object>();
-
-                            foreach (var item in endpoint.Metadata.Union(aspnetCoreMetadata))
-                            {
-                                builder.Metadata.Add(item);
-                            }
-
-                            return builder.Build();
-                        })
-                        .ToList();
+                    this.endpoints ??= this.CreateEndpoints();
                 }
             }
 
@@ -65,4 +39,31 @@ internal class AspNetCoreFunctionEndpointDataSource(
     }
 
     public override IChangeToken GetChangeToken() => NullChangeToken.Singleton;
+
+    private ReadOnlyCollection<Endpoint> CreateEndpoints()
+    {
+        var controllerEndpointMetadata = controllerEndpointDataSource.Endpoints
+            .ToDictionary(endpoint => endpoint.DisplayName!, endpoint => endpoint.Metadata);
+
+        return functionEndpointDataSource.Endpoints
+            .Cast<RouteEndpoint>()
+            .Select(endpoint =>
+            {
+                var builder = new RouteEndpointBuilder(endpoint.RequestDelegate, endpoint.RoutePattern, endpoint.Order)
+                {
+                    DisplayName = endpoint.DisplayName,
+                };
+
+                controllerEndpointMetadata.TryGetValue(endpoint.DisplayName!, out EndpointMetadataCollection? metadata);
+
+                foreach (var item in endpoint.Metadata.Union(metadata?.AsEnumerable() ?? Enumerable.Empty<object>()))
+                {
+                    builder.Metadata.Add(item);
+                }
+
+                return builder.Build();
+            })
+            .ToList()
+            .AsReadOnly();
+    }
 }

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Context.Features;
 
-namespace AzureFunctions.Worker.Extensions.AspNetCore.Internal;
+namespace AzureFunctions.Worker.Extensions.AspNetCore.Internal.ModelBinding;
 
 internal class AspNetCoreFunctionInputBindingFeature(
     AspNetCoreFunctionParameterBinder functionParameterBinder,

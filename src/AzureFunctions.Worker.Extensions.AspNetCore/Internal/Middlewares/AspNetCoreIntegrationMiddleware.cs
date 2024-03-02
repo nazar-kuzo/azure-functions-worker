@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AzureFunctions.Worker.Extensions.AspNetCore.Internal.ModelBinding;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Azure.Functions.Worker;
@@ -6,7 +7,7 @@ using Microsoft.Azure.Functions.Worker.Context.Features;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Azure.Functions.Worker.Middleware;
 
-namespace AzureFunctions.Worker.Extensions.AspNetCore.Internal;
+namespace AzureFunctions.Worker.Extensions.AspNetCore.Internal.Middlewares;
 
 /// <summary>
 /// Worker middleware that integrates AspNetCore middlewares into the execution pipeline

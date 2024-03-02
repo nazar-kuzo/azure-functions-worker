@@ -6,7 +6,7 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Converters;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace AzureFunctions.Worker.Extensions.AspNetCore.Internal;
+namespace AzureFunctions.Worker.Extensions.AspNetCore.Internal.ModelBinding;
 
 internal class AspNetCoreFunctionParameterBinder(
     ParameterBinder parameterBinder,

@@ -2,7 +2,7 @@
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Middleware;
 
-namespace AzureFunctions.Worker.Extensions.AspNetCore.Internal;
+namespace AzureFunctions.Worker.Extensions.AspNetCore.Internal.Middlewares;
 
 /// <summary>
 /// Worker middleware that integrates AspNetCore middlewares into the execution pipeline

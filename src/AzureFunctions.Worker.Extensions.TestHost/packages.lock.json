@@ -4,12 +4,12 @@
     "net8.0": {
       "Microsoft.Azure.Functions.Worker.Sdk": {
         "type": "Direct",
-        "requested": "[1.17.0, )",
-        "resolved": "1.17.0",
-        "contentHash": "wIFy6DZNVhV0f6wzeLvNkiJzv5WPSNbrDQzcqos+KEdl8oeveC+UzE4gGY3t7AsA1UUleW5STRZTuusq6xFCQg==",
+        "requested": "[1.17.2, )",
+        "resolved": "1.17.2",
+        "contentHash": "MlS1aVc1CEQrb8yQtCshOCP0m8tysyBsZYg7pRbXiar5hF5F08BBruCErWYkk+mIj19js+p1jHo31tZsJY59mQ==",
         "dependencies": {
           "Microsoft.Azure.Functions.Worker.Sdk.Analyzers": "1.2.1",
-          "Microsoft.Azure.Functions.Worker.Sdk.Generators": "1.2.0"
+          "Microsoft.Azure.Functions.Worker.Sdk.Generators": "1.2.1"
         }
       },
       "Microsoft.Extensions.Configuration.UserSecrets": {
@@ -293,8 +293,8 @@
       },
       "Microsoft.Azure.Functions.Worker.Sdk.Generators": {
         "type": "Transitive",
-        "resolved": "1.2.0",
-        "contentHash": "PNh6BJD6H1wt0xocWyfYyfKQx/Med6Y6YNsq5puCcQIdkkdaAPLUbwXQ3qy5bPN9C0hMm0tdKcQBtk/zsEo/xQ=="
+        "resolved": "1.2.1",
+        "contentHash": "kSNn3YAMQNqcU9Pcs14xkYWk5pce8atK5mb/Yr9Pk1Gr53QWBNmrLrVhs9Y63t0rKTqRF1O/4Kg6sNcO8nf2zA=="
       },
       "Microsoft.Bcl.AsyncInterfaces": {
         "type": "Transitive",
@@ -911,7 +911,7 @@
       "azurefunctions.worker.extensions.aspnetcore.apiexplorer": {
         "type": "Project",
         "dependencies": {
-          "AzureFunctions.Worker.Extensions.AspNetCore": "[1.0.3, )",
+          "AzureFunctions.Worker.Extensions.AspNetCore": "[1.0.4, )",
           "DotSwashbuckle.AspNetCore": "[3.0.8, )",
           "DotSwashbuckle.AspNetCore.Annotations": "[3.0.8, )"
         }

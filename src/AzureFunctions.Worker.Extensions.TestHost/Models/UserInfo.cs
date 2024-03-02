@@ -20,13 +20,3 @@ public class UserInfo
     /// </summary>
     public required string Email { get; set; }
 }
-
-/// <summary>
-/// User role
-/// </summary>
-public enum UserRole
-{
-    User,
-
-    Admin,
-}

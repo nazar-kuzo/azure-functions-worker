@@ -11,6 +11,7 @@
   
   <ItemGroup>
     <ProjectReference Include="..\AzureFunctions.Worker.Extensions.ApplicationInsights\AzureFunctions.Worker.Extensions.ApplicationInsights.csproj" />
+    <ProjectReference Include="..\AzureFunctions.Worker.Extensions.AspNetCore.ApiExplorer\AzureFunctions.Worker.Extensions.AspNetCore.ApiExplorer.csproj" />
     <ProjectReference Include="..\AzureFunctions.Worker.Extensions.AspNetCore\AzureFunctions.Worker.Extensions.AspNetCore.csproj" />
   </ItemGroup>
   

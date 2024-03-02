@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>AzureFunctions.Worker.Extensions.AspNetCore.ApiExplorer</PackageId>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
+    <PackageIcon>icon.png</PackageIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="icon.png" Pack="true" PackagePath="\" />
+    <None Include="readme.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DotSwashbuckle.AspNetCore" Version="3.0.8" />
+    <PackageReference Include="DotSwashbuckle.AspNetCore.Annotations" Version="3.0.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AzureFunctions.Worker.Extensions.AspNetCore\AzureFunctions.Worker.Extensions.AspNetCore.csproj" />
+  </ItemGroup>
+</Project>

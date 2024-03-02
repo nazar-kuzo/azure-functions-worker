@@ -1,10 +1,12 @@
 using AzureFunctions.Worker.Extensions.ApplicationInsights;
+using AzureFunctions.Worker.Extensions.TestHost.Swagger;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Azure.Functions.Worker;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 
 var host = new HostBuilder()
     .ConfigureServices((hostingContext, services) =>
@@ -16,15 +18,18 @@ var host = new HostBuilder()
         ConfigureAuthorization(services);
 
         ConfigureOptions(services);
+
+        ConfigureSwagger(hostingContext, services);
     })
     .ConfigureFunctionsWebApplication(worker =>
     {
-        ConfigureAspNetCoreIntegration(worker);
+        worker.AddAspNetCoreIntegration();
 
         worker.UseAspNetCoreMiddleware(app =>
         {
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseFunctionSwaggerUI();
         });
     })
 #if DEBUG
@@ -65,22 +70,76 @@ static void ConfigureAuthorization(IServiceCollection services)
 
 static void ConfigureOptions(IServiceCollection services)
 {
-    services.Configure<JsonSerializerOptions>(options =>
+    services.Configure((Action<JsonSerializerOptions>) JsonOptionsConfigurator);
+    services.Configure<JsonOptions>(jsonOptions =>
     {
-        options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-        options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-        options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        JsonOptionsConfigurator(jsonOptions.JsonSerializerOptions);
     });
+
+    static void JsonOptionsConfigurator(JsonSerializerOptions jsonOptions)
+    {
+        jsonOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+        jsonOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+        jsonOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        jsonOptions.Converters.Add(new JsonStringEnumConverter());
+    }
 }
 
-static void ConfigureAspNetCoreIntegration(IFunctionsWorkerApplicationBuilder worker)
+static void ConfigureSwagger(HostBuilderContext hostingContext, IServiceCollection services)
 {
-    worker
-        .AddAspNetCoreIntegration()
-        .AddJsonOptions(jsonOptions =>
+    services
+        .AddSwaggerGen(swaggerOptions =>
         {
-            jsonOptions.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-            jsonOptions.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-            jsonOptions.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+            foreach (var xmlFile in Directory.GetFiles(hostingContext.HostingEnvironment.ContentRootPath, "*.xml", SearchOption.TopDirectoryOnly))
+            {
+                swaggerOptions.IncludeXmlComments(xmlFile);
+            }
+
+            var securityDefinitions = new[]
+            {
+                new OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    Description = "JWT Authorization header using the Bearer scheme.",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "Bearer",
+                    Reference = new OpenApiReference
+                    {
+                        Id = "Bearer",
+                        Type = ReferenceType.SecurityScheme,
+                    },
+                },
+            };
+
+            foreach (var definition in securityDefinitions)
+            {
+                swaggerOptions.AddSecurityDefinition(definition.Scheme, definition);
+            }
+
+            var documents = new (string DocumentName, OpenApiInfo DocumentInfo)[]
+            {
+                ("v1", new OpenApiInfo
+                {
+                    Version = "1.0.0",
+                    Title = "Client API",
+                }),
+                ("internal", new OpenApiInfo
+                {
+                    Version = "1.0.0",
+                    Title = "Internal API",
+                }),
+            };
+
+            foreach (var document in documents)
+            {
+                swaggerOptions.SwaggerDoc(document.DocumentName, document.DocumentInfo);
+            }
+
+            swaggerOptions.DocInclusionPredicate((documentName, action) => documentName == (action.GroupName ?? "v1"));
+            swaggerOptions.DescribeAllParametersInCamelCase();
+            swaggerOptions.EnableAnnotations(enableAnnotationsForInheritance: true, enableAnnotationsForPolymorphism: true);
+
+            swaggerOptions.OperationFilter<SecurityRequirementOperationFilter>();
         });
 }

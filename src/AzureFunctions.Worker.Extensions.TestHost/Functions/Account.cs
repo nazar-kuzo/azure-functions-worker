@@ -6,9 +6,22 @@ using Microsoft.Azure.Functions.Worker;
 
 namespace AzureFunctions.Worker.Extensions.TestHost.Functions;
 
+/// <summary>
+/// Account API
+/// </summary>
+/// <param name="logger">Logger</param>
 [Authorize]
 public class Account(ILogger<Account> logger)
 {
+    /// <summary>
+    /// GetUsers
+    /// </summary>
+    /// <param name="request">request</param>
+    /// <param name="email">User email</param>
+    /// <param name="userRole">User role</param>
+    /// <returns>UserInfo</returns>
+    [ProducesResponseType(typeof(UserInfo), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [Function($"{nameof(Account)}-{nameof(GetUsers)}")]
     public Task<IEnumerable<UserInfo>> GetUsers(
         [HttpTrigger(AuthorizationLevel.Anonymous, "GET", Route = "account")] HttpRequest request,

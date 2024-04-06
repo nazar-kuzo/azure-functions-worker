@@ -54,7 +54,7 @@ internal class FunctionApplicationModelProvider(
                         .Select(bindingJson => JsonSerializer.Deserialize<FunctionHttpBinding>(bindingJson, SerializerOptions))
                         .FirstOrDefault();
 
-                    if (httpTrigger != null)
+                    if (httpTrigger?.Route != null && httpTrigger.Methods != null)
                     {
                         foreach (var selector in action.Selectors)
                         {
@@ -99,7 +99,7 @@ internal class FunctionApplicationModelProvider(
 
 file sealed class FunctionHttpBinding
 {
-    public string Route { get; set; } = default!;
+    public string? Route { get; set; }
 
-    public string[] Methods { get; set; } = default!;
+    public string[]? Methods { get; set; }
 }

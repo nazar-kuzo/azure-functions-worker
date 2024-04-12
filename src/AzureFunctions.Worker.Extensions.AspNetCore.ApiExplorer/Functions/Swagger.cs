@@ -14,9 +14,10 @@ public class Swagger
     /// Swagger UI backing function
     /// </summary>
     /// <param name="request">Http Request</param>
+    /// <returns>Not found result</returns>
     [Function(nameof(SwaggerUI))]
-    public void SwaggerUI([HttpTrigger(AuthorizationLevel.Anonymous, "GET", Route = "swagger/{*path}")] HttpRequest request)
+    public IActionResult SwaggerUI([HttpTrigger(AuthorizationLevel.Anonymous, "GET", Route = "swagger/{*path}")] HttpRequest request)
     {
-        throw new InvalidOperationException("This method should never be executed due to Swagger middleware");
+        return new NotFoundResult();
     }
 }

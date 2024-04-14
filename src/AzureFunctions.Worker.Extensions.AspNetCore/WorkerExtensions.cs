@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -28,6 +29,7 @@ public static class WorkerExtensions
     {
         worker.Services.AddHttpContextAccessor();
 
+        worker.Services.TryAddSingleton<IActionContextAccessor, ActionContextAccessor>();
         worker.Services.TryAddSingleton<AspNetCoreFunctionMetadataProvider>();
         worker.Services.AddSingleton<AspNetCoreFunctionParameterBinder>();
         worker.Services.AddSingleton<IActionDescriptorProvider, FunctionActionDescriptorProvider>();

@@ -11,8 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="DotSwashbuckle.AspNetCore" Version="3.0.8" />
-    <PackageReference Include="DotSwashbuckle.AspNetCore.Annotations" Version="3.0.8" />
+    <PackageReference Include="DotSwashbuckle.AspNetCore" Version="3.0.9" />
+    <PackageReference Include="DotSwashbuckle.AspNetCore.Annotations" Version="3.0.9" />
   </ItemGroup>
 
   <ItemGroup>

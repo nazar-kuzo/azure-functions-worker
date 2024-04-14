@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Converters;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,6 +11,7 @@ namespace AzureFunctions.Worker.Extensions.AspNetCore.Internal.ModelBinding;
 internal class AspNetCoreFunctionParameterBinder(
     ParameterBinder parameterBinder,
     AspNetCoreFunctionMetadataProvider functionMetadataProvider,
+    IActionContextAccessor actionContextAccessor,
     IOptions<MvcOptions> mvcOptions,
     IOptions<ApiBehaviorOptions> apiBehaviorOptions)
 {
@@ -29,24 +30,16 @@ internal class AspNetCoreFunctionParameterBinder(
             return;
         }
 
-        var httpContext = functionContext.GetHttpContext()!;
         var cacheBindingInput = CreateBindingInputCacheSetter(functionContext);
-
-        var actionContext = new ActionContext
-        {
-            HttpContext = httpContext,
-            ActionDescriptor = metadata.ActionDescriptor,
-            RouteData = httpContext.GetRouteData(),
-        };
 
         foreach (var parameterInfo in metadata.AspNetCoreParameters)
         {
             try
             {
                 var result = await parameterBinder.BindModelAsync(
-                        actionContext,
+                        actionContextAccessor.ActionContext!,
                         parameterInfo.ModelBinder,
-                        await CompositeValueProvider.CreateAsync(actionContext, mvcOptions.Value.ValueProviderFactories),
+                        await CompositeValueProvider.CreateAsync(actionContextAccessor.ActionContext!, mvcOptions.Value.ValueProviderFactories),
                         parameterInfo.Parameter,
                         parameterInfo.ModelMetadata,
                         value: null,
@@ -59,22 +52,22 @@ internal class AspNetCoreFunctionParameterBinder(
             }
             catch (ValueProviderException ex)
             {
-                actionContext.ModelState.AddModelError(
+                actionContextAccessor.ActionContext!.ModelState.AddModelError(
                     parameterInfo.ModelMetadata.Name ?? parameterInfo.Parameter.Name,
                     ex.Message);
             }
         }
 
-        if (!actionContext.ModelState.IsValid)
+        if (!actionContextAccessor.ActionContext!.ModelState.IsValid)
         {
-            var validationResult = (ObjectResult) apiBehaviorOptions.Value.InvalidModelStateResponseFactory(actionContext);
+            var validationResult = (ObjectResult) apiBehaviorOptions.Value.InvalidModelStateResponseFactory(actionContextAccessor.ActionContext);
 
             if (validationResult.Value is ValidationProblemDetails problemDetails)
             {
                 problemDetails.Extensions["traceId"] = functionContext.InvocationId;
             }
 
-            await validationResult.ExecuteResultAsync(actionContext);
+            await validationResult.ExecuteResultAsync(actionContextAccessor.ActionContext);
 
             throw new InvalidOperationException("One or more validation errors occurred.");
         }

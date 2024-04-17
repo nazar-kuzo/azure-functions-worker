@@ -47,14 +47,6 @@ internal class AspNetCoreIntegrationMiddleware(
                 RouteData = httpContext.GetRouteData(),
             };
 
-            // extends built-in input binding feature with AspNetCore attributes binding support
-            if (functionMetadata.AspNetCoreParameters.Length > 0 &&
-                context.Features.Get<IFunctionInputBindingFeature>() is { } inputBindingFeature)
-            {
-                context.Features.Set<IFunctionInputBindingFeature>(
-                    new AspNetCoreFunctionInputBindingFeature(parameterBinder, inputBindingFeature));
-            }
-
             await next(context);
 
             var invocationResult = context.GetInvocationResult();

@@ -56,6 +56,7 @@ public static class WorkerExtensions
         Action<IApplicationBuilder> applicationBuilder)
     {
         worker.Services.TryAddSingleton<AspNetCoreFunctionMetadataProvider>();
+        worker.Services.TryAddSingleton<AspNetCoreModelStateValidationMiddleware>();
 
         // register AspNetCore middlewares as singleton service since it depends on ServiceProvider
         worker.Services.AddSingleton(serviceProvider =>
@@ -63,6 +64,11 @@ public static class WorkerExtensions
             var app = new ApplicationBuilder(serviceProvider);
 
             applicationBuilder(app);
+
+            // validate model state at the end of aspnet core pipeline
+            app.Use((HttpContext httpContext, RequestDelegate next) => httpContext.RequestServices
+                .GetRequiredService<AspNetCoreModelStateValidationMiddleware>()
+                .InvokeAsync(httpContext, next));
 
             // register worker middleware as last middleware in AspNetCore execution pipeline
             app.Use((HttpContext httpContext, Func<Task> _) =>

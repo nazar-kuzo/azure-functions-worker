@@ -12,8 +12,7 @@ internal class AspNetCoreFunctionParameterBinder(
     ParameterBinder parameterBinder,
     AspNetCoreFunctionMetadataProvider functionMetadataProvider,
     IActionContextAccessor actionContextAccessor,
-    IOptions<MvcOptions> mvcOptions,
-    IOptions<ApiBehaviorOptions> apiBehaviorOptions)
+    IOptions<MvcOptions> mvcOptions)
 {
     private static readonly Type BindingCacheType = typeof(FunctionContext).Assembly
         .GetType("Microsoft.Azure.Functions.Worker.IBindingCache`1")!
@@ -56,20 +55,6 @@ internal class AspNetCoreFunctionParameterBinder(
                     parameterInfo.ModelMetadata.Name ?? parameterInfo.Parameter.Name,
                     ex.Message);
             }
-        }
-
-        if (!actionContextAccessor.ActionContext!.ModelState.IsValid)
-        {
-            var validationResult = (ObjectResult) apiBehaviorOptions.Value.InvalidModelStateResponseFactory(actionContextAccessor.ActionContext);
-
-            if (validationResult.Value is ValidationProblemDetails problemDetails)
-            {
-                problemDetails.Extensions["traceId"] = functionContext.InvocationId;
-            }
-
-            await validationResult.ExecuteResultAsync(actionContextAccessor.ActionContext);
-
-            throw new InvalidOperationException("One or more validation errors occurred.");
         }
     }
 

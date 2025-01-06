@@ -1,10 +1,8 @@
-﻿using AzureFunctions.Worker.Extensions.AspNetCore.Internal.ModelBinding;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.Azure.Functions.Worker.Context.Features;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Azure.Functions.Worker.Middleware;
 
@@ -16,13 +14,11 @@ namespace AzureFunctions.Worker.Extensions.AspNetCore.Internal.Middlewares;
 /// <param name="httpContextAccessor">Http context accessor</param>
 /// <param name="actionContextAccessor">Action context accessor</param>
 /// <param name="actionResultTypeMapper">AspNetCore ActionResult type mapper</param>
-/// <param name="parameterBinder">AspNetCore parameter binder</param>
 /// <param name="metadataProvider">AspNetCore function metadata provider</param>
 internal class AspNetCoreIntegrationMiddleware(
     IHttpContextAccessor httpContextAccessor,
     IActionContextAccessor actionContextAccessor,
     IActionResultTypeMapper actionResultTypeMapper,
-    AspNetCoreFunctionParameterBinder parameterBinder,
     AspNetCoreFunctionMetadataProvider metadataProvider)
     : IFunctionsWorkerMiddleware
 {

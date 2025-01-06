@@ -44,7 +44,7 @@ var host = new HostBuilder()
 #endif
     .Build();
 
-host.Run();
+await host.RunAsync();
 
 static void ConfigureLogging(HostBuilderContext hostingContext, IServiceCollection services)
 {

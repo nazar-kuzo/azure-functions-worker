@@ -85,6 +85,7 @@ public class Account(ILogger<Account> logger)
     [Function($"{nameof(Account)}-{nameof(UploadPhoto)}")]
     public async Task UploadPhoto(
         [HttpTrigger(AuthorizationLevel.Anonymous, "POST", Route = "account/upload")] HttpRequest request,
+        [FromForm] UserInfo userInfo,
         [Required] IFormFile photo,
         CancellationToken cancellationToken)
     {

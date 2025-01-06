@@ -11,11 +11,18 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="DotSwashbuckle.AspNetCore" Version="3.0.9" />
-    <PackageReference Include="DotSwashbuckle.AspNetCore.Annotations" Version="3.0.9" />
+    <PackageReference Include="DotSwashbuckle.AspNetCore" Version="3.0.11" />
+    <PackageReference Include="DotSwashbuckle.AspNetCore.Annotations" Version="3.0.11" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\AzureFunctions.Worker.Extensions.AspNetCore\AzureFunctions.Worker.Extensions.AspNetCore.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="SonarAnalyzer.CSharp" Version="10.4.0.108396">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 </Project>

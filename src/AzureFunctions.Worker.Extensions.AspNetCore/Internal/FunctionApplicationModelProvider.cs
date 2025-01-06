@@ -36,63 +36,63 @@ internal class FunctionApplicationModelProvider(
 
     public void OnProvidersExecuted(ApplicationModelProviderContext context)
     {
-        this.RemoveHiddenActions(context);
-        this.SetFunctionRoutingInfo(context);
-    }
+        RemoveHiddenActions(context);
+        SetFunctionRoutingInfo(context);
 
-    private void SetFunctionRoutingInfo(ApplicationModelProviderContext context)
-    {
-        _ = context.Result.Controllers
-            .SelectMany(controller => controller.Actions)
-            .Join(
-                functionMetadataProvider.Metadata.Values,
-                action => action.ActionMethod,
-                metadata => metadata.TargetMethod,
-                (action, metadata) =>
+        void RemoveHiddenActions(ApplicationModelProviderContext context)
+        {
+            foreach (var controller in context.Result.Controllers.ToList())
+            {
+                if (controller.ApiExplorer.IsVisible == false)
                 {
-                    var httpTrigger = (metadata.RawBindings ?? Enumerable.Empty<string>())
-                        .Select(bindingJson => JsonSerializer.Deserialize<FunctionHttpBinding>(bindingJson, SerializerOptions))
-                        .FirstOrDefault();
+                    context.Result.Controllers.Remove(controller);
 
-                    if (httpTrigger?.Route != null && httpTrigger.Methods != null)
+                    continue;
+                }
+
+                foreach (var action in controller.Actions.Where(action => action.ApiExplorer.IsVisible == false).ToList())
+                {
+                    controller.Actions.Remove(action);
+                }
+            }
+        }
+
+        void SetFunctionRoutingInfo(ApplicationModelProviderContext context)
+        {
+            _ = context.Result.Controllers
+                .SelectMany(controller => controller.Actions)
+                .Join(
+                    functionMetadataProvider.Metadata.Values,
+                    action => action.ActionMethod,
+                    metadata => metadata.TargetMethod,
+                    (action, metadata) =>
                     {
-                        foreach (var selector in action.Selectors)
+                        var httpTrigger = (metadata.RawBindings ?? Enumerable.Empty<string>())
+                            .Select(bindingJson => JsonSerializer.Deserialize<FunctionHttpBinding>(bindingJson, SerializerOptions))
+                            .FirstOrDefault();
+
+                        if (httpTrigger?.Route != null && httpTrigger.Methods != null)
                         {
-                            selector.AttributeRouteModel = new AttributeRouteModel { Template = $"api/{httpTrigger.Route}" };
-
-                            if (httpTrigger.Methods.Length > 0)
+                            foreach (var selector in action.Selectors)
                             {
-                                var httpMethods = httpTrigger.Methods
-                                    .Distinct(StringComparer.OrdinalIgnoreCase)
-                                    .ToArray();
+                                selector.AttributeRouteModel = new AttributeRouteModel { Template = $"api/{httpTrigger.Route}" };
 
-                                selector.EndpointMetadata.Add(new HttpMethodMetadata(httpMethods));
+                                if (httpTrigger.Methods.Length > 0)
+                                {
+                                    var httpMethods = httpTrigger.Methods
+                                        .Distinct(StringComparer.OrdinalIgnoreCase)
+                                        .ToArray();
 
-                                selector.ActionConstraints.Add(new HttpMethodActionConstraint(httpMethods));
+                                    selector.EndpointMetadata.Add(new HttpMethodMetadata(httpMethods));
+
+                                    selector.ActionConstraints.Add(new HttpMethodActionConstraint(httpMethods));
+                                }
                             }
                         }
-                    }
 
-                    return action;
-                })
-            .ToArray();
-    }
-
-    private void RemoveHiddenActions(ApplicationModelProviderContext context)
-    {
-        foreach (var controller in context.Result.Controllers.ToList())
-        {
-            if (controller.ApiExplorer.IsVisible == false)
-            {
-                context.Result.Controllers.Remove(controller);
-
-                continue;
-            }
-
-            foreach (var action in controller.Actions.Where(action => action.ApiExplorer.IsVisible == false).ToList())
-            {
-                controller.Actions.Remove(action);
-            }
+                        return action;
+                    })
+                .ToArray();
         }
     }
 }

@@ -2,6 +2,7 @@
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.ApplicationInsights;
@@ -10,48 +11,46 @@ namespace AzureFunctions.Worker.Extensions.ApplicationInsights;
 
 public static class WorkerExtensions
 {
-    public static IServiceCollection ConfigureStandaloneFunctionsApplicationInsights(
-        this IServiceCollection services,
-        IConfiguration configuration)
+    public static FunctionsApplicationBuilder ConfigureStandaloneFunctionsApplicationInsights(
+        this FunctionsApplicationBuilder builder)
     {
         // configure default worker application insights
-        services.ConfigureFunctionsApplicationInsights();
+        builder.Services.ConfigureFunctionsApplicationInsights();
 
         // replace built-in module with standalone one
-        if (GetFunctionTelemetryModuleDescriptor(services) is { } descriptor)
+        if (GetFunctionTelemetryModuleDescriptor() is { } descriptor)
         {
-            services.Remove(descriptor);
+            builder.Services.Remove(descriptor);
         }
 
-        services.AddTransient<IStartupFilter, StartupFilter>();
-        services.AddSingleton<TelemetryClientAccessor>();
-        services.AddSingleton<FunctionActivityCoordinator>();
+        builder.Services.AddTransient<IStartupFilter, StartupFilter>();
+        builder.Services.AddSingleton<TelemetryClientAccessor>();
+        builder.Services.AddSingleton<FunctionActivityCoordinator>();
 
-        services.AddSingleton<ITelemetryModule, StandaloneFunctionsTelemetryModule>();
-        services.AddApplicationInsightsTelemetryProcessor<FunctionTelemetryProcessor>();
+        builder.Services.AddSingleton<ITelemetryModule, StandaloneFunctionsTelemetryModule>();
+        builder.Services.AddApplicationInsightsTelemetryProcessor<FunctionTelemetryProcessor>();
 
-        services.AddLogging(loggingBuilder =>
+        builder.Logging.AddConfiguration(builder.Configuration.GetSection("Logging"));
+
+        // remove default logger filter rules
+        builder.Logging.Services.Configure<LoggerFilterOptions>(options =>
         {
-            loggingBuilder.AddConfiguration(configuration.GetSection("Logging"));
+            var applicationInsightsLoggerProviderName = typeof(ApplicationInsightsLoggerProvider).FullName;
 
-            // remove default logger filter rules
-            loggingBuilder.Services.Configure<LoggerFilterOptions>(options =>
+            if (options.Rules is List<LoggerFilterRule> rules)
             {
-                if (options.Rules is List<LoggerFilterRule> rules)
-                {
-                    // remove all default rules set by SDK
-                    rules.RemoveAll(rule => rule.ProviderName == typeof(ApplicationInsightsLoggerProvider).FullName);
-                }
-            });
+                // remove all default rules set by SDK
+                rules.RemoveAll(rule => rule.ProviderName == applicationInsightsLoggerProviderName);
+            }
         });
 
-        return services;
-    }
+        return builder;
 
-    private static ServiceDescriptor? GetFunctionTelemetryModuleDescriptor(IServiceCollection services)
-    {
-        return services.FirstOrDefault(service =>
-            service.ServiceType == typeof(ITelemetryModule) &&
-            service.ImplementationType!.Name == "FunctionsTelemetryModule");
+        ServiceDescriptor? GetFunctionTelemetryModuleDescriptor()
+        {
+            return builder.Services.FirstOrDefault(service =>
+                service.ServiceType == typeof(ITelemetryModule) &&
+                service.ImplementationType!.Name == "FunctionsTelemetryModule");
+        }
     }
 }

@@ -45,12 +45,12 @@ await builder.Build().RunAsync();
 
 void ConfigureLogging()
 {
-    builder.Services
-        .AddApplicationInsightsTelemetryWorkerService(appInsightsOptions =>
-        {
-            appInsightsOptions.ConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"];
-        })
-        .ConfigureStandaloneFunctionsApplicationInsights(builder.Configuration);
+    builder.Services.AddApplicationInsightsTelemetryWorkerService(appInsightsOptions =>
+    {
+        appInsightsOptions.ConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"];
+    });
+
+    builder.ConfigureStandaloneFunctionsApplicationInsights();
 }
 
 void ConfigureAuthentication()

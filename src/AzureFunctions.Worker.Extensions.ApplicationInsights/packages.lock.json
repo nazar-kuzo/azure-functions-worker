@@ -18,16 +18,6 @@
           "Microsoft.Extensions.Logging.ApplicationInsights": "2.22.0"
         }
       },
-      "Microsoft.Azure.Functions.Worker": {
-        "type": "Direct",
-        "requested": "[2.0.0, )",
-        "resolved": "2.0.0",
-        "contentHash": "vK0+XApQq2vDSbJxqrflliGLVILRl66gMfZrlv8yemGKdoh2KI7l4zQPW8ibCThznC2PEMp60+a1D3wp09ZXEg==",
-        "dependencies": {
-          "Microsoft.Azure.Functions.Worker.Core": "2.0.0",
-          "Microsoft.Azure.Functions.Worker.Grpc": "2.0.0"
-        }
-      },
       "Microsoft.Azure.Functions.Worker.ApplicationInsights": {
         "type": "Direct",
         "requested": "[2.0.0, )",
@@ -38,6 +28,18 @@
           "Microsoft.ApplicationInsights.PerfCounterCollector": "2.22.0",
           "Microsoft.Azure.Functions.Worker.Core": "2.0.0",
           "Microsoft.Bcl.AsyncInterfaces": "8.0.0"
+        }
+      },
+      "Microsoft.Azure.Functions.Worker.Extensions.Http.AspNetCore": {
+        "type": "Direct",
+        "requested": "[2.0.0, )",
+        "resolved": "2.0.0",
+        "contentHash": "nJlU1TwlRdlTnU05bdcNabpRb4PNAdtD7G0bzQhUr7g+uqlQ6bKsex+pNLZXuRXy1AY2kjGQLUiUSp8aOAsfIQ==",
+        "dependencies": {
+          "Microsoft.Azure.Functions.Worker": "2.0.0",
+          "Microsoft.Azure.Functions.Worker.Extensions.Abstractions": "1.3.0",
+          "Microsoft.Azure.Functions.Worker.Extensions.Http": "3.2.0",
+          "Microsoft.Azure.Functions.Worker.Extensions.Http.AspNetCore.Analyzers": "1.0.3"
         }
       },
       "Microsoft.SourceLink.GitHub": {
@@ -183,6 +185,15 @@
           "System.IO.FileSystem.AccessControl": "4.7.0"
         }
       },
+      "Microsoft.Azure.Functions.Worker": {
+        "type": "Transitive",
+        "resolved": "2.0.0",
+        "contentHash": "vK0+XApQq2vDSbJxqrflliGLVILRl66gMfZrlv8yemGKdoh2KI7l4zQPW8ibCThznC2PEMp60+a1D3wp09ZXEg==",
+        "dependencies": {
+          "Microsoft.Azure.Functions.Worker.Core": "2.0.0",
+          "Microsoft.Azure.Functions.Worker.Grpc": "2.0.0"
+        }
+      },
       "Microsoft.Azure.Functions.Worker.Core": {
         "type": "Transitive",
         "resolved": "2.0.0",
@@ -196,6 +207,20 @@
         "type": "Transitive",
         "resolved": "1.3.0",
         "contentHash": "+6+/Yb/ouWUweaSQhesbbiIVSmwYEzkSfjIHrBnNqIiCYnx2iLeoYyWjN/wHP3Fnn5COtyDXRDwHKr5A/tCL9Q=="
+      },
+      "Microsoft.Azure.Functions.Worker.Extensions.Http": {
+        "type": "Transitive",
+        "resolved": "3.2.0",
+        "contentHash": "TC1xa/s1hZ97ertSh0+qZVjeXB632ObjsuVEhytND32kLfJhT7u+AiBunvdACgn6r0WOZeLIa/BZPA7qovFxiw==",
+        "dependencies": {
+          "Microsoft.Azure.Functions.Worker.Core": "1.18.0",
+          "Microsoft.Azure.Functions.Worker.Extensions.Abstractions": "1.3.0"
+        }
+      },
+      "Microsoft.Azure.Functions.Worker.Extensions.Http.AspNetCore.Analyzers": {
+        "type": "Transitive",
+        "resolved": "1.0.3",
+        "contentHash": "o5+858lzhpnoP9oFd9eVHiMPe5s7w4v1bnNtzE7CORwjgLhV3bM8mNpiLvOch3D9ci8z5mmSrWENVGWGG1hvVg=="
       },
       "Microsoft.Azure.Functions.Worker.Grpc": {
         "type": "Transitive",

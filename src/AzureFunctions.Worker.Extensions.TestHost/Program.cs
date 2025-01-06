@@ -9,11 +9,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 
-var builder = FunctionsApplication
-    .CreateBuilder(args)
-    .ConfigureFunctionsWebApplication();
+var builder = FunctionsApplication.CreateBuilder(args);
 
-ConfigureLogging();
+builder.ConfigureFunctionsWebApplicationWithStandaloneApplicationInsights(appInsightsOptions =>
+{
+    appInsightsOptions.ConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"];
+});
+
 ConfigureAuthentication();
 ConfigureAuthorization();
 ConfigureOptions();
@@ -42,16 +44,6 @@ builder.Configuration
 #endif
 
 await builder.Build().RunAsync();
-
-void ConfigureLogging()
-{
-    builder.Services.AddApplicationInsightsTelemetryWorkerService(appInsightsOptions =>
-    {
-        appInsightsOptions.ConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"];
-    });
-
-    builder.ConfigureStandaloneFunctionsApplicationInsights();
-}
 
 void ConfigureAuthentication()
 {

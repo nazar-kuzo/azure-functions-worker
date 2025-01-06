@@ -21,7 +21,7 @@ internal class StartupFilter : IStartupFilter
             builder.Use(next => async httpContext =>
             {
                 if (httpContext.Request.Headers["x-ms-invocation-id"].FirstOrDefault() is { } invocationId &&
-                    await activityCoordinator.WaitForRequestActivityStartedAsync(invocationId) is var requestTelemetry)
+                    await activityCoordinator.WaitForRequestActivityStartedAsync(invocationId) is { } requestTelemetry)
                 {
                     requestTelemetry.Url = new Uri(httpContext.Request.GetDisplayUrl());
 

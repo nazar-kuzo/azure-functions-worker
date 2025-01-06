@@ -3,80 +3,77 @@ using AzureFunctions.Worker.Extensions.TestHost.Swagger;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Functions.Worker.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 
-var host = new HostBuilder()
-    .ConfigureServices((hostingContext, services) =>
-    {
-        ConfigureLogging(hostingContext, services);
+var builder = FunctionsApplication
+    .CreateBuilder(args)
+    .ConfigureFunctionsWebApplication();
 
-        ConfigureAuthentication(services);
+ConfigureLogging();
+ConfigureAuthentication();
+ConfigureAuthorization();
+ConfigureOptions();
+ConfigureSwagger();
 
-        ConfigureAuthorization(services);
+builder.AddAspNetCoreIntegration();
 
-        ConfigureOptions(services);
-
-        ConfigureSwagger(hostingContext, services);
-    })
-    .ConfigureFunctionsWebApplication(worker =>
-    {
-        worker.AddAspNetCoreIntegration();
-
-        worker.UseAspNetCoreMiddleware(app =>
-        {
-            app.UseAuthentication();
-            app.UseAuthorization();
-            app.UseFunctionSwaggerUI(
-                uiOptionsSetup: uiOptions =>
-                {
-                    uiOptions.DocumentTitle = "Worker Extensions";
-                },
-                faviconFileName: "icon.png");
-        });
-    })
-#if DEBUG
-    .ConfigureAppConfiguration(builder => builder
-        .AddJsonFile("local.settings.json", optional: false, reloadOnChange: true)
-        .AddUserSecrets<Program>())
-#endif
-    .Build();
-
-await host.RunAsync();
-
-static void ConfigureLogging(HostBuilderContext hostingContext, IServiceCollection services)
+builder.UseAspNetCoreMiddleware(app =>
 {
-    services
+    app.UseAuthentication();
+    app.UseAuthorization();
+    app.UseFunctionSwaggerUI(
+        uiOptionsSetup: uiOptions =>
+        {
+            uiOptions.DocumentTitle = "Worker Extensions";
+        },
+        faviconFileName: "icon.png");
+});
+
+#if DEBUG
+
+builder.Configuration
+    .AddJsonFile("local.settings.json", optional: false, reloadOnChange: true)
+    .AddUserSecrets<Program>();
+
+#endif
+
+await builder.Build().RunAsync();
+
+void ConfigureLogging()
+{
+    builder.Services
         .AddApplicationInsightsTelemetryWorkerService(appInsightsOptions =>
         {
-            appInsightsOptions.ConnectionString = hostingContext.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"];
+            appInsightsOptions.ConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"];
         })
-        .ConfigureStandaloneFunctionsApplicationInsights(hostingContext.Configuration);
+        .ConfigureStandaloneFunctionsApplicationInsights(builder.Configuration);
 }
 
-static void ConfigureAuthentication(IServiceCollection services)
+void ConfigureAuthentication()
 {
-    services.AddAuthentication();
+    builder.Services.AddAuthentication();
 }
 
-static void ConfigureAuthorization(IServiceCollection services)
+void ConfigureAuthorization()
 {
     var defaultPolicy = new AuthorizationPolicyBuilder()
         .RequireAssertion(context => true)
         .Build();
 
-    services
+    builder.Services
         .AddAuthorizationBuilder()
         .SetInvokeHandlersAfterFailure(false)
         .SetDefaultPolicy(defaultPolicy);
 }
 
-static void ConfigureOptions(IServiceCollection services)
+void ConfigureOptions()
 {
-    services.Configure((Action<JsonSerializerOptions>) JsonOptionsConfigurator);
-    services.Configure<JsonOptions>(jsonOptions =>
+    builder.Services.Configure((Action<JsonSerializerOptions>) JsonOptionsConfigurator);
+    builder.Services.Configure<JsonOptions>(jsonOptions =>
     {
         JsonOptionsConfigurator(jsonOptions.JsonSerializerOptions);
     });
@@ -90,12 +87,12 @@ static void ConfigureOptions(IServiceCollection services)
     }
 }
 
-static void ConfigureSwagger(HostBuilderContext hostingContext, IServiceCollection services)
+void ConfigureSwagger()
 {
-    services
+    builder.Services
         .AddSwaggerGen(swaggerOptions =>
         {
-            foreach (var xmlFile in Directory.GetFiles(hostingContext.HostingEnvironment.ContentRootPath, "*.xml", SearchOption.TopDirectoryOnly))
+            foreach (var xmlFile in Directory.GetFiles(AppContext.BaseDirectory, "*.xml", SearchOption.TopDirectoryOnly))
             {
                 swaggerOptions.IncludeXmlComments(xmlFile);
             }

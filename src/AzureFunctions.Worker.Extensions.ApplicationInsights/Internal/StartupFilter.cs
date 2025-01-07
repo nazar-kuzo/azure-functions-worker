@@ -16,7 +16,7 @@ internal class StartupFilter : IStartupFilter
     {
         return builder =>
         {
-            var activityCoordinator = builder.ApplicationServices.GetRequiredService<FunctionActivityCoordinator>();
+            var activityCoordinator = builder.ApplicationServices.GetRequiredService<HttpActivityCoordinator>();
 
             builder.Use(next => async httpContext =>
             {

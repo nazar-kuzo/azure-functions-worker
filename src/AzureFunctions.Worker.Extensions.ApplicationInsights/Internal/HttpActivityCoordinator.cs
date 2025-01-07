@@ -8,7 +8,7 @@ namespace AzureFunctions.Worker.Extensions.ApplicationInsights.Internal;
 /// Helps to exchange <see cref="IOperationHolder{T}"/> between HTTP triggered function
 /// in order to set additional HTTP related information
 /// </summary>
-internal class FunctionActivityCoordinator
+internal class HttpActivityCoordinator
 {
     private readonly ConcurrentDictionary<string, RequestActivity> inflightRequestActivities = new();
 

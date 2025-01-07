@@ -15,11 +15,9 @@ namespace AzureFunctions.Worker.Extensions.ApplicationInsights.Internal;
 /// <param name="activityCoordinator">Function activity coordinator</param>
 internal class FunctionApplicationInsightsMiddleware(
     TelemetryClient telemetryClient,
-    FunctionActivityCoordinator activityCoordinator)
+    HttpActivityCoordinator activityCoordinator)
     : IFunctionsWorkerMiddleware
 {
-    private const string HttpTrigger = "httpTrigger";
-
     private readonly ConcurrentDictionary<string, bool> httpTriggerFunctions = new();
 
     public async Task Invoke(FunctionContext context, FunctionExecutionDelegate next)
@@ -31,7 +29,10 @@ internal class FunctionApplicationInsightsMiddleware(
         requestActivity.Telemetry.Name = context.FunctionDefinition.Name;
         requestActivity.Telemetry.Context.Operation.Name = context.FunctionDefinition.Name;
 
-        activityCoordinator.StartRequestActivity(context.InvocationId, requestActivity.Telemetry, context.CancellationToken);
+        if (IsHttpTriggerFunction())
+        {
+            activityCoordinator.StartRequestActivity(context.InvocationId, requestActivity.Telemetry, context.CancellationToken);
+        }
 
         var success = default(bool?);
 
@@ -47,7 +48,7 @@ internal class FunctionApplicationInsightsMiddleware(
         }
         finally
         {
-            if (success == null && this.IsHttpTriggerFunction(context))
+            if (success == null && IsHttpTriggerFunction())
             {
                 try
                 {
@@ -67,14 +68,14 @@ internal class FunctionApplicationInsightsMiddleware(
                 requestActivity.Telemetry.Properties.TryAdd(property.Key, property.Value);
             }
         }
-    }
 
-    private bool IsHttpTriggerFunction(FunctionContext context)
-    {
-        return this.httpTriggerFunctions.GetOrAdd(
-            context.FunctionId,
-            static (_, context) => context.FunctionDefinition.InputBindings
-                .Any(binding => binding.Value.Type.Equals(HttpTrigger, StringComparison.OrdinalIgnoreCase)),
-            context);
+        bool IsHttpTriggerFunction()
+        {
+            return this.httpTriggerFunctions.GetOrAdd(
+                context.FunctionId,
+                static (_, context) => context.FunctionDefinition.InputBindings
+                    .Any(binding => binding.Value.Type.Equals("httpTrigger", StringComparison.OrdinalIgnoreCase)),
+                context);
+        }
     }
 }

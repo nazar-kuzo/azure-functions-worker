@@ -29,7 +29,7 @@ public static class WorkerExtensions
         RemoveBuiltInFunctionsTelemetryModule();
 
         worker.Services.AddTransient<IStartupFilter, StartupFilter>();
-        worker.Services.AddSingleton<FunctionActivityCoordinator>();
+        worker.Services.AddSingleton<HttpActivityCoordinator>();
 
         worker.Services.AddApplicationInsightsTelemetryProcessor<FunctionTelemetryProcessor>();
 

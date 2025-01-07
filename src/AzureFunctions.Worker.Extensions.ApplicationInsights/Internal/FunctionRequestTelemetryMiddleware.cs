@@ -13,9 +13,9 @@ namespace AzureFunctions.Worker.Extensions.ApplicationInsights.Internal;
 /// </summary>
 /// <param name="telemetryClient">Telemetry client</param>
 /// <param name="activityCoordinator">Function activity coordinator. Could be null if &quot;enableHttpRequestMapping&quot; is set to false</param>
-internal class FunctionApplicationInsightsMiddleware(
+internal class FunctionRequestTelemetryMiddleware(
     TelemetryClient telemetryClient,
-    HttpActivityCoordinator? activityCoordinator = null)
+    HttpRequestActivityCoordinator? activityCoordinator = null)
     : IFunctionsWorkerMiddleware
 {
     private readonly ConcurrentDictionary<string, bool> httpTriggerFunctions = new();

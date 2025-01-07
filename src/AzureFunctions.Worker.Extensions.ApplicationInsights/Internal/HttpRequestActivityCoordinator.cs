@@ -8,11 +8,20 @@ namespace AzureFunctions.Worker.Extensions.ApplicationInsights.Internal;
 /// Helps to exchange <see cref="IOperationHolder{T}"/> between HTTP triggered function
 /// in order to set additional HTTP related information
 /// </summary>
-internal class HttpActivityCoordinator
+internal class HttpRequestActivityCoordinator
 {
     private readonly ConcurrentDictionary<string, RequestActivity> inflightRequestActivities = new();
 
-    public void StartRequestActivity(string invocationId, RequestTelemetry requestTelemetry, CancellationToken cancellationToken)
+    /// <summary>
+    /// Stores <see cref="RequestTelemetry"/> for the given invocationId, to be picked up later by <see cref="WorkerHttpRequestMappingMiddleware"/>
+    /// </summary>
+    /// <param name="invocationId">Function invocation ID</param>
+    /// <param name="requestTelemetry">Application Insights request telemetry</param>
+    /// <param name="cancellationToken">Request cancellation token</param>
+    public void StartRequestActivity(
+        string invocationId,
+        RequestTelemetry requestTelemetry,
+        CancellationToken cancellationToken)
     {
         this.inflightRequestActivities.AddOrUpdate(
             invocationId,
@@ -37,7 +46,11 @@ internal class HttpActivityCoordinator
             requestTelemetry);
     }
 
-    public void StopRequestActivity(string invocationId)
+    /// <summary>
+    /// Removes <see cref="RequestTelemetry"/> for the given invocationId
+    /// </summary>
+    /// <param name="invocationId">Function invocation ID</param>
+    public void CompleteRequestActivity(string invocationId)
     {
         if (this.inflightRequestActivities.TryRemove(invocationId, out var requestActivity))
         {
@@ -45,6 +58,12 @@ internal class HttpActivityCoordinator
         }
     }
 
+    /// <summary>
+    /// <see cref="WorkerHttpRequestMappingMiddleware"/> execution is blocked until
+    /// <see cref="FunctionRequestTelemetryMiddleware"/> stores <see cref="RequestActivity"/>
+    /// </summary>
+    /// <param name="invocationId">Function invocation ID</param>
+    /// <returns>Application Insights request telemetry</returns>
     public Task<RequestTelemetry> WaitForRequestActivityStartedAsync(string invocationId)
     {
         var requestActivity = this.inflightRequestActivities.GetOrAdd(
@@ -54,6 +73,12 @@ internal class HttpActivityCoordinator
         return requestActivity.Telemetry.Task;
     }
 
+    /// <summary>
+    /// <see cref="FunctionRequestTelemetryMiddleware"/> should wait until
+    /// <see cref="WorkerHttpRequestMappingMiddleware"/> execution is completed in order to dispose request telemetry
+    /// </summary>
+    /// <param name="invocationId">Function invocation ID</param>
+    /// <returns>Task</returns>
     public async Task WaitForRequestActivityCompletedAsync(string invocationId)
     {
         if (this.inflightRequestActivities.TryGetValue(invocationId, out var requestActivity))

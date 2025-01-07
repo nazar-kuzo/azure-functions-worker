@@ -40,8 +40,9 @@ public static class WorkerExtensions
 
         if (enableHttpRequestMapping)
         {
-            worker.Services.AddSingleton<HttpActivityCoordinator>();
-            worker.Services.AddTransient<IStartupFilter, WorkerHostStartupFilter>();
+            worker.Services.AddSingleton<HttpRequestActivityCoordinator>();
+            worker.Services.AddTransient<IStartupFilter, WorkerStartupFilter>();
+            worker.Services.AddSingleton<WorkerHttpRequestMappingMiddleware>();
         }
 
         worker.Services.AddApplicationInsightsTelemetryProcessor<FunctionTelemetryProcessor>();
@@ -60,7 +61,7 @@ public static class WorkerExtensions
             }
         });
 
-        worker.UseMiddleware<FunctionApplicationInsightsMiddleware>();
+        worker.UseMiddleware<FunctionRequestTelemetryMiddleware>();
 
         return worker;
 

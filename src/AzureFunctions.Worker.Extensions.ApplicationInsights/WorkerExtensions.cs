@@ -41,7 +41,7 @@ public static class WorkerExtensions
         if (enableHttpRequestMapping)
         {
             worker.Services.AddSingleton<HttpActivityCoordinator>();
-            worker.Services.AddTransient<IStartupFilter, StartupFilter>();
+            worker.Services.AddTransient<IStartupFilter, WorkerHostStartupFilter>();
         }
 
         worker.Services.AddApplicationInsightsTelemetryProcessor<FunctionTelemetryProcessor>();

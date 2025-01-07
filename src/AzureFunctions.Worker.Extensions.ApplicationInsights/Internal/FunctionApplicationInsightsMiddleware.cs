@@ -44,20 +44,29 @@ internal class FunctionApplicationInsightsMiddleware(
         {
             success = false;
 
+            requestActivity.Telemetry.Success = false;
+
             throw;
         }
         finally
         {
-            if (activityCoordinator is not null && success == null && IsHttpTriggerFunction())
+            if (activityCoordinator is not null && IsHttpTriggerFunction())
             {
-                try
+                if (success == false)
                 {
-                    await activityCoordinator.WaitForRequestActivityCompletedAsync(context.InvocationId);
+                    requestActivity.Telemetry.ResponseCode = "500";
                 }
-                catch (TaskCanceledException)
+                else
                 {
-                    requestActivity.Telemetry.ResponseCode = "(cancelled)";
-                    requestActivity.Telemetry.Success = false;
+                    try
+                    {
+                        await activityCoordinator.WaitForRequestActivityCompletedAsync(context.InvocationId);
+                    }
+                    catch (TaskCanceledException)
+                    {
+                        requestActivity.Telemetry.ResponseCode = "(cancelled)";
+                        requestActivity.Telemetry.Success = false;
+                    }
                 }
             }
 

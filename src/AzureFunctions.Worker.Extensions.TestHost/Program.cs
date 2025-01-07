@@ -2,6 +2,7 @@ using AzureFunctions.Worker.Extensions.ApplicationInsights;
 using AzureFunctions.Worker.Extensions.TestHost.Swagger;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker.Builder;
 using Microsoft.Extensions.Configuration;
@@ -49,13 +50,25 @@ await builder.Build().RunAsync();
 
 void ConfigureAuthentication()
 {
-    builder.Services.AddAuthentication();
+    builder.Services
+        .AddAuthentication(authenticationOptions =>
+        {
+            authenticationOptions.DefaultScheme = "Bearer";
+            authenticationOptions.DefaultChallengeScheme = "Bearer";
+            authenticationOptions.DefaultAuthenticateScheme = "Bearer";
+        })
+        .AddBearerToken("Bearer", tokenOptions => { });
 }
 
 void ConfigureAuthorization()
 {
     var defaultPolicy = new AuthorizationPolicyBuilder()
-        .RequireAssertion(context => true)
+        .RequireAssertion(context =>
+        {
+            return context.Resource is HttpContext httpContext &&
+                httpContext.Request.Headers.TryGetValue("Authorization", out var authorization) &&
+                authorization == "Bearer 123456";
+        })
         .Build();
 
     builder.Services

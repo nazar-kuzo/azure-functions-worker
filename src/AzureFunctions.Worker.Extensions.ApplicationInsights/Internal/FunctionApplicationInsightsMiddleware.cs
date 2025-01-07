@@ -12,7 +12,7 @@ namespace AzureFunctions.Worker.Extensions.ApplicationInsights.Internal;
 /// Request telemetry could be hijacked by HTTP middleware if function is triggered by HTTP
 /// </summary>
 /// <param name="telemetryClient">Telemetry client</param>
-/// <param name="activityCoordinator">Function activity coordinator</param>
+/// <param name="activityCoordinator">Function activity coordinator. Could be null if &quot;enableHttpRequestMapping&quot; is set to false</param>
 internal class FunctionApplicationInsightsMiddleware(
     TelemetryClient telemetryClient,
     HttpActivityCoordinator? activityCoordinator = null)

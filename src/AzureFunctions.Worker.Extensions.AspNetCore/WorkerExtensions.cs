@@ -2,6 +2,7 @@ using AzureFunctions.Worker.Extensions.AspNetCore;
 using AzureFunctions.Worker.Extensions.AspNetCore.Internal;
 using AzureFunctions.Worker.Extensions.AspNetCore.Internal.Middlewares;
 using AzureFunctions.Worker.Extensions.AspNetCore.Internal.ModelBinding;
+using Google.Protobuf.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Builder;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 
@@ -25,8 +27,13 @@ public static class WorkerExtensions
     /// </summary>
     /// <param name="worker">FunctionsWorker ApplicationBuilder</param>
     /// <returns>Mvc builder</returns>
-    public static IMvcCoreBuilder AddAspNetCoreIntegration(this IFunctionsWorkerApplicationBuilder worker)
+    public static IMvcCoreBuilder ConfigureAspNetCoreIntegration(this FunctionsApplicationBuilder worker)
     {
+        if (!worker.Services.Any(descriptor => descriptor.ImplementationType?.FullName == "Microsoft.Azure.Functions.Worker.Extensions.Http.AspNetCore.DefaultHttpCoordinator"))
+        {
+            throw new InvalidOperationException($"This method requires the \"ConfigureFunctionsWebApplication\" method to be called first");
+        }
+
         worker.Services.AddHttpContextAccessor();
 
         worker.Services.TryAddSingleton<IActionContextAccessor, ActionContextAccessor>();

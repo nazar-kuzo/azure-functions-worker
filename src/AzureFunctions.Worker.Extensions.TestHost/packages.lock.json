@@ -948,8 +948,8 @@
         "type": "Project",
         "dependencies": {
           "Microsoft.ApplicationInsights.WorkerService": "[2.22.0, )",
-          "Microsoft.Azure.Functions.Worker.ApplicationInsights": "[2.0.0, )",
-          "Microsoft.Azure.Functions.Worker.Extensions.Http.AspNetCore": "[2.0.0, )"
+          "Microsoft.Azure.Functions.Worker": "[2.0.0, )",
+          "Microsoft.Azure.Functions.Worker.ApplicationInsights": "[2.0.0, )"
         }
       },
       "azurefunctions.worker.extensions.aspnetcore": {

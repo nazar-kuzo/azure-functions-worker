@@ -11,10 +11,10 @@ namespace AzureFunctions.Worker.Extensions.ApplicationInsights.Internal;
 /// Starts <see cref="RequestTelemetry"/> operation based on worker host activity.
 /// Request telemetry could be hijacked by HTTP middleware if function is triggered by HTTP
 /// </summary>
-/// <param name="telemetryClientAccessor">Telemetry client accessor</param>
+/// <param name="telemetryClient">Telemetry client</param>
 /// <param name="activityCoordinator">Function activity coordinator</param>
 internal class FunctionApplicationInsightsMiddleware(
-    TelemetryClientAccessor telemetryClientAccessor,
+    TelemetryClient telemetryClient,
     FunctionActivityCoordinator activityCoordinator)
     : IFunctionsWorkerMiddleware
 {
@@ -26,7 +26,7 @@ internal class FunctionApplicationInsightsMiddleware(
     {
         var hostActivity = Activity.Current!;
 
-        using var requestActivity = telemetryClientAccessor.TelemetryClient!.StartOperation<RequestTelemetry>(hostActivity);
+        using var requestActivity = telemetryClient.StartOperation<RequestTelemetry>(hostActivity);
 
         requestActivity.Telemetry.Name = context.FunctionDefinition.Name;
         requestActivity.Telemetry.Context.Operation.Name = context.FunctionDefinition.Name;

@@ -11,17 +11,19 @@ using Microsoft.OpenApi.Models;
 
 var builder = FunctionsApplication.CreateBuilder(args);
 
-builder.ConfigureFunctionsWebApplicationWithStandaloneApplicationInsights(appInsightsOptions =>
-{
-    appInsightsOptions.ConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"];
-});
+// should be called before "ConfigureFunctionsWebApplication"
+builder.ConfigureStandaloneApplicationInsights();
+
+// should be used for HTTP triggered APIs
+builder.ConfigureFunctionsWebApplication();
+
+// configures AspNetCore input bindings
+builder.ConfigureAspNetCoreIntegration();
 
 ConfigureAuthentication();
 ConfigureAuthorization();
 ConfigureOptions();
 ConfigureSwagger();
-
-builder.AddAspNetCoreIntegration();
 
 builder.UseAspNetCoreMiddleware(app =>
 {

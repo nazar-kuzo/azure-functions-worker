@@ -41,6 +41,7 @@ public class Account(ILogger<Account> logger)
         ]);
     }
 
+    [AllowAnonymous]
     [Function($"{nameof(Account)}-{nameof(CreateUser)}")]
     public Task<UserInfo> CreateUser(
         [HttpTrigger(AuthorizationLevel.Anonymous, "POST", Route = "account")] HttpRequest request,

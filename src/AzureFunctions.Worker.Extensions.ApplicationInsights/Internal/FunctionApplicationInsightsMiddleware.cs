@@ -15,7 +15,7 @@ namespace AzureFunctions.Worker.Extensions.ApplicationInsights.Internal;
 /// <param name="activityCoordinator">Function activity coordinator</param>
 internal class FunctionApplicationInsightsMiddleware(
     TelemetryClient telemetryClient,
-    HttpActivityCoordinator activityCoordinator)
+    HttpActivityCoordinator? activityCoordinator = null)
     : IFunctionsWorkerMiddleware
 {
     private readonly ConcurrentDictionary<string, bool> httpTriggerFunctions = new();
@@ -29,7 +29,7 @@ internal class FunctionApplicationInsightsMiddleware(
         requestActivity.Telemetry.Name = context.FunctionDefinition.Name;
         requestActivity.Telemetry.Context.Operation.Name = context.FunctionDefinition.Name;
 
-        if (IsHttpTriggerFunction())
+        if (activityCoordinator is not null && IsHttpTriggerFunction())
         {
             activityCoordinator.StartRequestActivity(context.InvocationId, requestActivity.Telemetry, context.CancellationToken);
         }
@@ -48,7 +48,7 @@ internal class FunctionApplicationInsightsMiddleware(
         }
         finally
         {
-            if (success == null && IsHttpTriggerFunction())
+            if (activityCoordinator is not null && success == null && IsHttpTriggerFunction())
             {
                 try
                 {

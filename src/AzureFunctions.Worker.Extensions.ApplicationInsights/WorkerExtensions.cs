@@ -13,8 +13,18 @@ namespace AzureFunctions.Worker.Extensions.ApplicationInsights;
 
 public static class WorkerExtensions
 {
+    /// <summary>
+    /// Configures standalone Application Insights for Azure Functions Worker application.
+    /// With this approach, host telemetry is ignored and worker gets full control over request telemetry.
+    /// </summary>
+    /// <param name="worker">Functions application builder</param>
+    /// <param name="enableHttpRequestMapping">Whether HTTP triggered functions should map their request info and response code</param>
+    /// <param name="configureServiceOptions">Action to configure <see cref="ApplicationInsightsServiceOptions"/></param>
+    /// <returns>Functions application builder for chaining methods</returns>
+    /// <exception cref="InvalidOperationException">Is thrown when method is not called before &quot;ConfigureFunctionsWebApplication&quot;</exception>
     public static FunctionsApplicationBuilder ConfigureStandaloneApplicationInsights(
         this FunctionsApplicationBuilder worker,
+        bool enableHttpRequestMapping = true,
         Action<ApplicationInsightsServiceOptions>? configureServiceOptions = null)
     {
         if (worker.Services.Any(descriptor => descriptor.ImplementationType?.FullName == "Microsoft.Azure.Functions.Worker.Extensions.Http.AspNetCore.DefaultHttpCoordinator"))
@@ -28,8 +38,11 @@ public static class WorkerExtensions
 
         RemoveBuiltInFunctionsTelemetryModule();
 
-        worker.Services.AddTransient<IStartupFilter, StartupFilter>();
-        worker.Services.AddSingleton<HttpActivityCoordinator>();
+        if (enableHttpRequestMapping)
+        {
+            worker.Services.AddSingleton<HttpActivityCoordinator>();
+            worker.Services.AddTransient<IStartupFilter, StartupFilter>();
+        }
 
         worker.Services.AddApplicationInsightsTelemetryProcessor<FunctionTelemetryProcessor>();
 

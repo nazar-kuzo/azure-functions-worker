@@ -10,8 +10,7 @@
         "isEnabled": true,
         "excludedTypes": "Exception"
       },
-      "enableDependencyTracking": false,
-      "enableLiveMetricsFilters": true
+      "enableDependencyTracking": false
     }
   }
 }

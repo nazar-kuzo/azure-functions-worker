@@ -9,7 +9,7 @@
   "Logging": {
     "LogLevel": {
       "Default": "Information",
-      "Function": "Information",
+      "Microsoft.AspNetCore": "Warning",
       "AzureFunctions": "Trace"
     }
   }

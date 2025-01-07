@@ -22,6 +22,8 @@ public static class WorkerExtensions
 
         worker.ConfigureFunctionsWebApplication();
 
+        worker.Services.AddApplicationInsightsTelemetryWorkerService(appInsightsOptions => configureServiceOptions?.Invoke(appInsightsOptions));
+
         // configure default worker application insights
         worker.Services.ConfigureFunctionsApplicationInsights();
 
@@ -51,8 +53,6 @@ public static class WorkerExtensions
                 rules.RemoveAll(rule => rule.ProviderName == applicationInsightsLoggerProviderName);
             }
         });
-
-        worker.Services.AddApplicationInsightsTelemetryWorkerService(appInsightsOptions => configureServiceOptions?.Invoke(appInsightsOptions));
 
         return worker;
 

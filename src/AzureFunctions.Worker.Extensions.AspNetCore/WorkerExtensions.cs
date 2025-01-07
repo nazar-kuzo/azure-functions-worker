@@ -40,7 +40,7 @@ public static class WorkerExtensions
         worker.Services.AddSingleton<AspNetCoreFunctionParameterBinder>();
         worker.Services.AddSingleton<IActionDescriptorProvider, FunctionActionDescriptorProvider>();
         worker.Services.AddTransient<IApplicationModelProvider, FunctionApplicationModelProvider>();
-        worker.Services.AddTransient<IStartupFilter, StartupFilter>();
+        worker.Services.AddTransient<IStartupFilter, WorkerStartupFilter>();
 
         worker.UseMiddleware<AspNetCoreIntegrationMiddleware>();
 

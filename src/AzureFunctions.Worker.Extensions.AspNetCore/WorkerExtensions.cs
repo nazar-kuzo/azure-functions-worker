@@ -2,7 +2,6 @@ using AzureFunctions.Worker.Extensions.AspNetCore;
 using AzureFunctions.Worker.Extensions.AspNetCore.Internal;
 using AzureFunctions.Worker.Extensions.AspNetCore.Internal.Middlewares;
 using AzureFunctions.Worker.Extensions.AspNetCore.Internal.ModelBinding;
-using Google.Protobuf.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;

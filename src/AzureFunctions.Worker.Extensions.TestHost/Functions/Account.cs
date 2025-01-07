@@ -1,4 +1,5 @@
-﻿using AzureFunctions.Worker.Extensions.TestHost.Models;
+﻿using System.Diagnostics;
+using AzureFunctions.Worker.Extensions.TestHost.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -49,12 +50,17 @@ public class Account(ILogger<Account> logger)
     {
         logger.LogInformation("Received user with email: {Email}", user.Email);
 
-        return Task.FromResult(new UserInfo
+        var createdUser = new UserInfo
         {
             Id = Guid.NewGuid(),
             Email = "email@domain.com",
             Name = "User name",
-        });
+        };
+
+        // attaches custom property to RequestTelemetry
+        Activity.Current?.AddBaggage("UserId", createdUser.Id.ToString());
+
+        return Task.FromResult(createdUser);
     }
 
     [Function($"{nameof(Account)}-{nameof(GetUserInfo)}")]

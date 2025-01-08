@@ -1,7 +1,7 @@
 ﻿using System.Text;
-using DotSwashbuckle.AspNetCore.SwaggerGen;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace AzureFunctions.Worker.Extensions.TestHost.Swagger;
 

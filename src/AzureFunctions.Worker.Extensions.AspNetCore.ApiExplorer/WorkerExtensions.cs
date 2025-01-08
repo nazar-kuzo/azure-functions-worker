@@ -1,14 +1,14 @@
 using System.Net.Mime;
 using System.Reflection;
-using DotSwashbuckle.AspNetCore.Swagger;
-using DotSwashbuckle.AspNetCore.SwaggerGen;
-using DotSwashbuckle.AspNetCore.SwaggerUI;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
+using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace Microsoft.AspNetCore.Builder;
 

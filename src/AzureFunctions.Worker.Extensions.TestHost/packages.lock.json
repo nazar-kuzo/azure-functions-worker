@@ -143,8 +143,8 @@
       },
       "Json.More.Net": {
         "type": "Transitive",
-        "resolved": "2.0.1",
-        "contentHash": "k4yLP8ZgEeiFKodcOdqt4qscXZU69F/My5pRNNBox97mBHQwdfUdJDG8jmsLM99GDhPgE25iSxj2/NvMnstUOw=="
+        "resolved": "2.1.0",
+        "contentHash": "qtwsyAsL55y2vB2/sK4Pjg3ZyVzD5KKSpV3lOAMHlnjFfsjQ/86eHJfQT9aV1YysVXzF4+xyHOZbh7Iu3YQ7Lg=="
       },
       "Microsoft.ApplicationInsights": {
         "type": "Transitive",
@@ -995,7 +995,7 @@
       "azurefunctions.worker.extensions.aspnetcore": {
         "type": "Project",
         "dependencies": {
-          "Json.More.Net": "[2.0.1, )",
+          "Json.More.Net": "[2.1.0, )",
           "Microsoft.Azure.Functions.Worker.Extensions.Http.AspNetCore": "[2.0.0, )"
         }
       },

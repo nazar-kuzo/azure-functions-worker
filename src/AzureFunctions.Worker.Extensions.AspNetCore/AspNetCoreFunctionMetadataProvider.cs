@@ -20,13 +20,18 @@ public sealed partial class AspNetCoreFunctionMetadataProvider(IFunctionMetadata
         return this.Metadata[functionName];
     }
 
-    private static Type TryUnwrapDataType(Type type)
+    private static Type? TryUnwrapDataType(Type type)
     {
         if (type.IsGenericType &&
             type.GetGenericTypeDefinition() is { } genericTypeDefinition &&
-            genericTypeDefinition == typeof(Task<>))
+            (genericTypeDefinition == typeof(Task<>) ||
+            genericTypeDefinition == typeof(ValueTask<>)))
         {
             return type.GetGenericArguments()[0];
+        }
+        else if (type == typeof(Task) || type == typeof(ValueTask) || type == typeof(void))
+        {
+            return null;
         }
 
         return type;
@@ -97,7 +102,9 @@ public sealed partial class AspNetCoreFunctionMetadataProvider(IFunctionMetadata
                                 {
                                     { Name: "$return" } => TryUnwrapDataType(methodInfo.ReturnType),
 
-                                    _ => TryUnwrapDataType(methodInfo.ReturnType).GetProperty(httpResultBinding.Name)!.PropertyType,
+                                    _ => TryUnwrapDataType(methodInfo.ReturnType)
+                                        ?.GetProperty(httpResultBinding.Name)
+                                        ?.PropertyType,
                                 },
                             };
                         });

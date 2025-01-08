@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Azure.Functions.Worker;
@@ -41,11 +43,19 @@ public static class WorkerExtensions
         worker.Services.AddSingleton<IActionDescriptorProvider, FunctionActionDescriptorProvider>();
         worker.Services.AddTransient<IApplicationModelProvider, FunctionApplicationModelProvider>();
         worker.Services.AddTransient<IStartupFilter, WorkerStartupFilter>();
+        worker.Services.TryAddEnumerable(ServiceDescriptor.Transient<IApiDescriptionProvider, FunctionApiDescriptionProvider>());
 
         worker.UseMiddleware<AspNetCoreIntegrationMiddleware>();
 
         return worker.Services
-            .AddMvcCore()
+            .AddMvcCore(mvcOptions =>
+            {
+                mvcOptions.OutputFormatters.RemoveType<StringOutputFormatter>();
+
+                var jsonOutputFormatter = mvcOptions.OutputFormatters.OfType<SystemTextJsonOutputFormatter>().FirstOrDefault();
+
+                jsonOutputFormatter?.SupportedMediaTypes.Remove("text/json");
+            })
             .AddApiExplorer();
     }
 

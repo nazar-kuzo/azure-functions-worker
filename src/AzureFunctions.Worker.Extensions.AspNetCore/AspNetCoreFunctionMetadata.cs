@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿using System.ComponentModel;
+using System.Reflection;
+using Json.More;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -12,14 +14,25 @@ namespace AzureFunctions.Worker.Extensions.AspNetCore;
 public sealed class AspNetCoreFunctionMetadata : DefaultFunctionMetadata
 {
     /// <summary>
+    /// Parsed metadata from <see cref="DefaultFunctionMetadata.RawBindings"/>
+    /// </summary>
+    public required FunctionBinding[] Bindings { get; set; }
+
+    /// <summary>
     /// Function target <see cref="MethodInfo"/> that will be executed.
     /// </summary>
     public required MethodInfo TargetMethod { get; set; }
 
     /// <summary>
-    /// Gets function result type. If type is wrapped in <see cref="Task{TResult}"/> then it unwraps underlying type.
+    /// Gets function HTTP result binding (if exists).
     /// </summary>
-    public required Type ReturnDataType { get; set; }
+    public FunctionBinding? HttpResultBinding { get; set; }
+
+    /// <summary>
+    /// Gets function HTTP result type (if exists).
+    /// If type is wrapped in <see cref="Task{TResult}"/> then it unwraps underlying type.
+    /// </summary>
+    public Type? HttpResultDataType { get; set; }
 
     /// <summary>
     /// AspNetCore action descriptor that contains information about parameter binding or api explorer descriptions
@@ -43,4 +56,30 @@ public sealed record AspNetCoreParameterBindingInfo(
     ModelMetadata ModelMetadata,
     ParameterDescriptor Parameter)
 {
+}
+
+public sealed class FunctionBinding
+{
+    public required string Name { get; set; }
+
+    public required BindingDirection Direction { get; set; }
+
+    public required string Type { get; set; }
+
+    public string? Route { get; set; }
+
+    public string[]? Methods { get; set; }
+}
+
+[JsonConverter(typeof(EnumStringConverter<BindingDirection>))]
+public enum BindingDirection
+{
+    [Description("In")]
+    In,
+
+    [Description("Out")]
+    Out,
+
+    [Description("Inout")]
+    InOut,
 }

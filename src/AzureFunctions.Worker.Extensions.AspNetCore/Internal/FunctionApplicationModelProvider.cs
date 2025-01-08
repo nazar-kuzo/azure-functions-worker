@@ -13,11 +13,6 @@ internal class FunctionApplicationModelProvider(
     AspNetCoreFunctionMetadataProvider functionMetadataProvider)
     : IApplicationModelProvider
 {
-    private static readonly JsonSerializerOptions SerializerOptions = new()
-    {
-        PropertyNameCaseInsensitive = true,
-    };
-
     public int Order => -10_000;
 
     public void OnProvidersExecuting(ApplicationModelProviderContext context)
@@ -67,9 +62,7 @@ internal class FunctionApplicationModelProvider(
                     metadata => metadata.TargetMethod,
                     (action, metadata) =>
                     {
-                        var httpTrigger = (metadata.RawBindings ?? Enumerable.Empty<string>())
-                            .Select(bindingJson => JsonSerializer.Deserialize<FunctionHttpBinding>(bindingJson, SerializerOptions))
-                            .FirstOrDefault();
+                        var httpTrigger = metadata.Bindings.FirstOrDefault(binding => binding.Type == "httpTrigger");
 
                         if (httpTrigger?.Route != null && httpTrigger.Methods != null)
                         {
@@ -95,11 +88,4 @@ internal class FunctionApplicationModelProvider(
                 .ToArray();
         }
     }
-}
-
-file sealed class FunctionHttpBinding
-{
-    public string? Route { get; set; }
-
-    public string[]? Methods { get; set; }
 }

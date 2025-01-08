@@ -26,48 +26,63 @@ internal class AspNetCoreIntegrationMiddleware(
     {
         var httpContext = context.GetHttpContext();
 
-        if (httpContext != null)
+        if (httpContext == null)
         {
-            var functionMetadata = metadataProvider.GetFunctionMetadata(context.FunctionDefinition.Name);
-
-            // lets access FunctionContext from withing AspNetCore middleware
-            httpContext.Features.Set(context);
-
-            // enables IHttpContextAccessor support
-            httpContextAccessor.HttpContext = httpContext;
-
-            actionContextAccessor.ActionContext = new ActionContext
-            {
-                HttpContext = httpContext,
-                ActionDescriptor = functionMetadata.ActionDescriptor,
-                RouteData = httpContext.GetRouteData(),
-            };
-
             await next(context);
 
-            var invocationResult = context.GetInvocationResult();
-
-            // try to convert raw object response to AspNetCore ObjectResult response
-            if (invocationResult.Value is not null &&
-                invocationResult.Value is not HttpResponseData &&
-                invocationResult.Value is not IActionResult)
-            {
-                invocationResult.Value = actionResultTypeMapper.Convert(
-                    invocationResult.Value,
-                    functionMetadata.ReturnDataType);
-            }
-
-            if (invocationResult.Value is IActionResult actionResult)
-            {
-                await actionResult.ExecuteResultAsync(actionContextAccessor.ActionContext);
-
-                // there's no need to return this result as no additional processing is required
-                invocationResult.Value = null;
-            }
+            return;
         }
-        else
+
+        var functionMetadata = metadataProvider.GetFunctionMetadata(context.FunctionDefinition.Name);
+
+        // lets access FunctionContext from withing AspNetCore middleware
+        httpContext.Features.Set(context);
+
+        // enables IHttpContextAccessor support
+        httpContextAccessor.HttpContext = httpContext;
+
+        actionContextAccessor.ActionContext = new ActionContext
         {
-            await next(context);
+            HttpContext = httpContext,
+            ActionDescriptor = functionMetadata.ActionDescriptor,
+            RouteData = httpContext.GetRouteData(),
+        };
+
+        await next(context);
+
+        if (functionMetadata.HttpResultBinding is not null)
+        {
+            TryConvertHttpResult();
+        }
+
+        void TryConvertHttpResult()
+        {
+            if (functionMetadata.HttpResultBinding.Name == "$return")
+            {
+                var invocationResult = context.GetInvocationResult();
+
+                if (invocationResult.Value is not null &&
+                    invocationResult.Value is not HttpResponseData &&
+                    invocationResult.Value is not IActionResult)
+                {
+                    invocationResult.Value = actionResultTypeMapper
+                        .Convert(invocationResult.Value, functionMetadata.HttpResultDataType!);
+                }
+            }
+            else
+            {
+                var outputBindingData = context
+                    .GetOutputBindings<object?>()
+                    .FirstOrDefault(binding => binding.Name == functionMetadata.HttpResultBinding.Name);
+
+                if (outputBindingData?.Value is not null &&
+                    outputBindingData.Value is not HttpResponseData &&
+                    outputBindingData.Value is not IActionResult)
+                {
+                    outputBindingData.Value = actionResultTypeMapper
+                        .Convert(outputBindingData.Value, functionMetadata.HttpResultDataType!);
+                }
+            }
         }
     }
 }

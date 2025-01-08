@@ -39,6 +39,11 @@ public sealed partial class AspNetCoreFunctionMetadataProvider(IFunctionMetadata
     {
         var scriptRoot = Environment.GetEnvironmentVariable("FUNCTIONS_APPLICATION_DIRECTORY")!;
 
+        var serializerOptions = new JsonSerializerOptions()
+        {
+            PropertyNameCaseInsensitive = true,
+        };
+
         return functionMetadataProvider
             .GetFunctionMetadataAsync(scriptRoot)
             .GetAwaiter()
@@ -67,6 +72,14 @@ public sealed partial class AspNetCoreFunctionMetadataProvider(IFunctionMetadata
                         {
                             var methodInfo = functionType.GetMethod(context.MethodName)!;
 
+                            var bindings = (context.Metadata.RawBindings ?? [])
+                                .Select(bindingJson => JsonSerializer.Deserialize<FunctionBinding>(bindingJson, serializerOptions)!)
+                                .ToArray();
+
+                            var httpResultBinding = bindings.FirstOrDefault(binding =>
+                                binding.Type == "http" &&
+                                binding.Direction == BindingDirection.Out);
+
                             return new AspNetCoreFunctionMetadata
                             {
                                 EntryPoint = context.Metadata.EntryPoint,
@@ -75,10 +88,17 @@ public sealed partial class AspNetCoreFunctionMetadataProvider(IFunctionMetadata
                                 ManagedDependencyEnabled = context.Metadata.ManagedDependencyEnabled,
                                 Name = context.Metadata.Name,
                                 RawBindings = context.Metadata.RawBindings,
+                                Bindings = bindings,
                                 Retry = context.Metadata.Retry,
                                 ScriptFile = context.Metadata.ScriptFile,
                                 TargetMethod = methodInfo,
-                                ReturnDataType = TryUnwrapDataType(methodInfo.ReturnType),
+                                HttpResultBinding = httpResultBinding,
+                                HttpResultDataType = httpResultBinding == null ? null : httpResultBinding switch
+                                {
+                                    { Name: "$return" } => TryUnwrapDataType(methodInfo.ReturnType),
+
+                                    _ => TryUnwrapDataType(methodInfo.ReturnType).GetProperty(httpResultBinding.Name)!.PropertyType,
+                                },
                             };
                         });
                     });

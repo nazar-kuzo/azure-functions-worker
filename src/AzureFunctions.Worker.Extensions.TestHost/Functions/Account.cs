@@ -44,7 +44,7 @@ public class Account(ILogger<Account> logger)
 
     [AllowAnonymous]
     [Function($"{nameof(Account)}-{nameof(CreateUser)}")]
-    public Task<UserInfo> CreateUser(
+    public Task<CreateUserResponse> CreateUser(
         [HttpTrigger(AuthorizationLevel.Anonymous, "POST", Route = "account")] HttpRequest request,
         [FromBody, Required] UserInfo user)
     {
@@ -60,7 +60,11 @@ public class Account(ILogger<Account> logger)
         // attaches custom property to RequestTelemetry
         Activity.Current?.AddBaggage("UserId", createdUser.Id.ToString());
 
-        return Task.FromResult(createdUser);
+        return Task.FromResult(new CreateUserResponse
+        {
+            HttpResult = createdUser,
+            QueueValue = createdUser,
+        });
     }
 
     [Function($"{nameof(Account)}-{nameof(GetUserInfo)}")]
@@ -101,5 +105,12 @@ public class Account(ILogger<Account> logger)
         using var stream = new MemoryStream();
 
         await photo.CopyToAsync(stream, cancellationToken);
+    }
+
+    [Function($"{nameof(Account)}-{nameof(UserCreatedQueue)}")]
+    public void UserCreatedQueue(
+        [QueueTrigger("user-created")] UserInfo user)
+    {
+        logger.LogInformation("Received user info: {FileName}", user.Email);
     }
 }

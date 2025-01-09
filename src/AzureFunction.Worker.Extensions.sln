@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureFunctions.Worker.Exten
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureFunctions.Worker.Extensions.TestHost", "AzureFunctions.Worker.Extensions.TestHost\AzureFunctions.Worker.Extensions.TestHost.csproj", "{C64DB707-04C4-46F1-898D-D0B28B15A239}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureFunctions.Worker.Extensions.AspNetCore.ApiExplorer", "AzureFunctions.Worker.Extensions.AspNetCore.ApiExplorer\AzureFunctions.Worker.Extensions.AspNetCore.ApiExplorer.csproj", "{4C721300-6E72-4B05-B01A-00E86F8BB5D1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureFunctions.Worker.Extensions.Swashbuckle", "AzureFunctions.Worker.Extensions.Swashbuckle\AzureFunctions.Worker.Extensions.Swashbuckle.csproj", "{4C721300-6E72-4B05-B01A-00E86F8BB5D1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

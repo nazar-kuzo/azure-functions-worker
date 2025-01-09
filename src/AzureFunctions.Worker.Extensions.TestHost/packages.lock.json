@@ -999,10 +999,10 @@
           "Microsoft.Azure.Functions.Worker.Extensions.Http.AspNetCore": "[2.0.0, )"
         }
       },
-      "azurefunctions.worker.extensions.aspnetcore.apiexplorer": {
+      "azurefunctions.worker.extensions.swashbuckle": {
         "type": "Project",
         "dependencies": {
-          "AzureFunctions.Worker.Extensions.AspNetCore": "[1.0.10, )",
+          "AzureFunctions.Worker.Extensions.AspNetCore": "[2.0.0, )",
           "Swashbuckle.AspNetCore": "[7.2.0, )",
           "Swashbuckle.AspNetCore.Annotations": "[7.2.0, )"
         }

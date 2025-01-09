@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <PackageId>AzureFunctions.Worker.Extensions.AspNetCore.ApiExplorer</PackageId>
+    <PackageId>AzureFunctions.Worker.Extensions.Swashbuckle</PackageId>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
     <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>

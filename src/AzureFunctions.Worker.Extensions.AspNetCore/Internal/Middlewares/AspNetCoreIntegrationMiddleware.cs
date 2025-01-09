@@ -24,14 +24,7 @@ internal class AspNetCoreIntegrationMiddleware(
 {
     public async Task Invoke(FunctionContext context, FunctionExecutionDelegate next)
     {
-        var httpContext = context.GetHttpContext();
-
-        if (httpContext == null)
-        {
-            await next(context);
-
-            return;
-        }
+        var httpContext = context.GetHttpContext()!;
 
         var functionMetadata = metadataProvider.GetFunctionMetadata(context.FunctionDefinition.Name);
 

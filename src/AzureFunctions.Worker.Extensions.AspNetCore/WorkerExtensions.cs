@@ -45,7 +45,7 @@ public static class WorkerExtensions
         worker.Services.AddTransient<IStartupFilter, WorkerStartupFilter>();
         worker.Services.TryAddEnumerable(ServiceDescriptor.Transient<IApiDescriptionProvider, FunctionApiDescriptionProvider>());
 
-        worker.UseMiddleware<AspNetCoreIntegrationMiddleware>();
+        worker.UseWhen<AspNetCoreIntegrationMiddleware>(context => context.GetHttpContext() is not null);
 
         return worker.Services
             .AddMvcCore(mvcOptions =>
@@ -74,6 +74,8 @@ public static class WorkerExtensions
         worker.Services.TryAddSingleton<AspNetCoreFunctionMetadataProvider>();
         worker.Services.TryAddSingleton<AspNetCoreModelStateValidationMiddleware>();
 
+        worker.UseWhen<AspNetCoreProxyMiddleware>(context => context.GetHttpContext() is not null);
+
         // register AspNetCore middlewares as singleton service since it depends on ServiceProvider
         worker.Services.AddSingleton(serviceProvider =>
         {
@@ -101,23 +103,6 @@ public static class WorkerExtensions
         worker.Services.PostConfigure<RouteOptions>(routeOptions =>
         {
             routeOptions.SuppressCheckForUnhandledSecurityMetadata = true;
-        });
-
-        // register worker middleware that invokes AspNetCore middleware and passes next delegate
-        worker.Use(next => context =>
-        {
-            var httpContext = context.GetHttpContext();
-
-            if (httpContext == null)
-            {
-                return next(context);
-            }
-            else
-            {
-                var middleware = context.InstanceServices.GetRequiredService<AspNetCoreProxyMiddleware>();
-
-                return middleware.Invoke(context, next);
-            }
         });
     }
 }

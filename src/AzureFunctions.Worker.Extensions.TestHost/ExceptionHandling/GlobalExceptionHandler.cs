@@ -28,6 +28,7 @@ public class GlobalExceptionHandler(IProblemDetailsWriter problemDetailsWriter) 
             HttpContext = httpContext,
             ProblemDetails = problemDetails,
             Exception = exception,
+            AdditionalMetadata = httpContext.GetEndpoint()?.Metadata,
         });
 
         return true;

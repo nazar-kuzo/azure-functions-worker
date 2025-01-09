@@ -21,10 +21,8 @@ internal class AspNetCoreProxyMiddleware(RequestDelegate aspnetMiddleware) : IFu
         {
             await aspnetMiddleware.Invoke(httpContext);
         }
-        catch (Exception ex)
+        catch
         {
-            context.GetFunctionLogger().LogError(ex, ex.Message);
-
             httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
         }
     }

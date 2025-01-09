@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Routing;
@@ -30,6 +31,10 @@ internal class AspNetCoreIntegrationMiddleware(
 
         // lets access FunctionContext from withing AspNetCore middleware
         httpContext.Features.Set(context);
+
+        // TODO: find proper trace ID compatible with cross function execution
+        // align HTTP trace ID with worker trace ID
+        httpContext.TraceIdentifier = Activity.Current?.TraceId.ToString() ?? context.InvocationId;
 
         // enables IHttpContextAccessor support
         httpContextAccessor.HttpContext = httpContext;

@@ -26,15 +26,9 @@ internal class AspNetCoreModelStateValidationMiddleware(
 
         if (!actionContextAccessor.ActionContext!.ModelState.IsValid)
         {
-            var validationResult = (ObjectResult) apiBehaviorOptions.Value
-                .InvalidModelStateResponseFactory(actionContextAccessor.ActionContext);
-
-            if (validationResult.Value is ValidationProblemDetails problemDetails)
-            {
-                problemDetails.Extensions["traceId"] = functionContext.InvocationId;
-            }
-
-            await validationResult.ExecuteResultAsync(actionContextAccessor.ActionContext);
+            await apiBehaviorOptions.Value
+                .InvalidModelStateResponseFactory(actionContextAccessor.ActionContext)
+                .ExecuteResultAsync(actionContextAccessor.ActionContext);
         }
         else
         {

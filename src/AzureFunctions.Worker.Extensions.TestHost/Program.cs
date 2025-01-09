@@ -1,5 +1,6 @@
 using System.Net.Mime;
 using AzureFunctions.Worker.Extensions.ApplicationInsights;
+using AzureFunctions.Worker.Extensions.TestHost.ExceptionHandling;
 using AzureFunctions.Worker.Extensions.TestHost.Swagger;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -35,13 +36,14 @@ builder
 
         if (mvcOptions.OutputFormatters.OfType<SystemTextJsonOutputFormatter>().FirstOrDefault() is { } jsonOutputFormatter)
         {
-            jsonOutputFormatter.SupportedMediaTypes.Clear();
-            jsonOutputFormatter.SupportedMediaTypes.Add(MediaTypeNames.Application.Json);
+            jsonOutputFormatter.SupportedMediaTypes.Remove("text/json");
         }
     });
 
 builder.UseAspNetCoreMiddleware(app =>
 {
+    app.UseExceptionHandler();
+
     app.UseAuthentication();
     app.UseAuthorization();
     app.UseFunctionSwaggerUI(
@@ -55,6 +57,7 @@ builder.UseAspNetCoreMiddleware(app =>
 ConfigureAuthentication();
 ConfigureAuthorization();
 ConfigureOptions();
+ConfigureExceptionHandling();
 ConfigureSwagger();
 
 await builder.Build().RunAsync();
@@ -111,6 +114,19 @@ void ConfigureOptions()
         jsonOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
         jsonOptions.Converters.Add(new JsonStringEnumConverter());
     }
+}
+
+void ConfigureExceptionHandling()
+{
+    builder.Services
+        .AddProblemDetails(problemDetailsOptions =>
+        {
+            problemDetailsOptions.CustomizeProblemDetails = context =>
+            {
+                context.ProblemDetails.Extensions["traceId"] = context.HttpContext.TraceIdentifier;
+            };
+        })
+        .AddExceptionHandler<GlobalExceptionHandler>();
 }
 
 void ConfigureSwagger()

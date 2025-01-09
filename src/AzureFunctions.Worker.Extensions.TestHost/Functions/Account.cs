@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using AzureFunctions.Worker.Extensions.TestHost.ExceptionHandling;
 using AzureFunctions.Worker.Extensions.TestHost.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -48,6 +49,12 @@ public class Account(ILogger<Account> logger)
         [HttpTrigger("POST", Route = "account")] HttpRequest request,
         [FromBody, Required] UserInfo user)
     {
+        // showcases global exception handling
+        if (user.Email == "invalid@email")
+        {
+            throw new BadRequestException("Invalid email");
+        }
+
         logger.LogInformation("Received user with email: {Email}", user.Email);
 
         var createdUser = new UserInfo

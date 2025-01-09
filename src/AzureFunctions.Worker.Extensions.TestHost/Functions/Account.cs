@@ -25,7 +25,7 @@ public class Account(ILogger<Account> logger)
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [Function($"{nameof(Account)}-{nameof(GetUsers)}")]
     public Task<IEnumerable<UserInfo>> GetUsers(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "GET", Route = "account")] HttpRequest request,
+        [HttpTrigger("GET", Route = "account")] HttpRequest request,
         [FromQuery, EmailAddress] string email,
         [FromQuery] UserRole userRole = UserRole.User)
     {
@@ -45,7 +45,7 @@ public class Account(ILogger<Account> logger)
     [AllowAnonymous]
     [Function($"{nameof(Account)}-{nameof(CreateUser)}")]
     public Task<CreateUserResponse> CreateUser(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "POST", Route = "account")] HttpRequest request,
+        [HttpTrigger("POST", Route = "account")] HttpRequest request,
         [FromBody, Required] UserInfo user)
     {
         logger.LogInformation("Received user with email: {Email}", user.Email);
@@ -69,7 +69,7 @@ public class Account(ILogger<Account> logger)
 
     [Function($"{nameof(Account)}-{nameof(GetUserInfo)}")]
     public Task<UserInfo> GetUserInfo(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "GET", Route = "account/user/{email}")] HttpRequest request,
+        [HttpTrigger("GET", Route = "account/user/{email}")] HttpRequest request,
         [FromRoute, EmailAddress] string email)
     {
         logger.LogInformation("Received route param \"email\": {Email}", email);
@@ -84,7 +84,7 @@ public class Account(ILogger<Account> logger)
 
     [Function($"{nameof(Account)}-{nameof(SignIn)}")]
     public bool SignIn(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "POST", Route = "account/sign-in")] HttpRequest request,
+        [HttpTrigger("POST", Route = "account/sign-in")] HttpRequest request,
         [FromBody] SignInRequest signInRequest)
     {
         logger.LogInformation("Received sign in request for email: {Email}", signInRequest.Email);
@@ -95,7 +95,7 @@ public class Account(ILogger<Account> logger)
     [RequestFormLimits(MultipartBodyLengthLimit = 5_000_000)]
     [Function($"{nameof(Account)}-{nameof(UploadPhoto)}")]
     public async Task UploadPhoto(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "POST", Route = "account/upload")] HttpRequest request,
+        [HttpTrigger("POST", Route = "account/upload")] HttpRequest request,
         [FromForm] UserInfo userInfo,
         [Required] IFormFile photo,
         CancellationToken cancellationToken)

@@ -1,9 +1,11 @@
+using System.Net.Mime;
 using AzureFunctions.Worker.Extensions.ApplicationInsights;
 using AzureFunctions.Worker.Extensions.TestHost.Swagger;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Azure.Functions.Worker.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,13 +20,25 @@ builder.ConfigureStandaloneApplicationInsights();
 // should be used for HTTP triggered APIs
 builder.ConfigureFunctionsWebApplication();
 
-// configures AspNetCore input bindings
-builder.ConfigureAspNetCoreIntegration();
+// should be called after "ConfigureFunctionsWebApplication"
+builder
+    .ConfigureAspNetCoreMvcIntegration()
+    .AddMvcOptions(mvcOptions =>
+    {
+        if (mvcOptions.InputFormatters.OfType<SystemTextJsonInputFormatter>().FirstOrDefault() is { } jsonInputFormatter)
+        {
+            jsonInputFormatter.SupportedMediaTypes.Clear();
+            jsonInputFormatter.SupportedMediaTypes.Add(MediaTypeNames.Application.Json);
+        }
 
-ConfigureAuthentication();
-ConfigureAuthorization();
-ConfigureOptions();
-ConfigureSwagger();
+        mvcOptions.OutputFormatters.RemoveType<StringOutputFormatter>();
+
+        if (mvcOptions.OutputFormatters.OfType<SystemTextJsonOutputFormatter>().FirstOrDefault() is { } jsonOutputFormatter)
+        {
+            jsonOutputFormatter.SupportedMediaTypes.Clear();
+            jsonOutputFormatter.SupportedMediaTypes.Add(MediaTypeNames.Application.Json);
+        }
+    });
 
 builder.UseAspNetCoreMiddleware(app =>
 {
@@ -38,13 +52,10 @@ builder.UseAspNetCoreMiddleware(app =>
         faviconFileName: "icon.png");
 });
 
-#if DEBUG
-
-builder.Configuration
-    .AddJsonFile("local.settings.json", optional: false, reloadOnChange: true)
-    .AddUserSecrets<Program>();
-
-#endif
+ConfigureAuthentication();
+ConfigureAuthorization();
+ConfigureOptions();
+ConfigureSwagger();
 
 await builder.Build().RunAsync();
 
@@ -79,6 +90,14 @@ void ConfigureAuthorization()
 
 void ConfigureOptions()
 {
+#if DEBUG
+
+    builder.Configuration
+        .AddJsonFile("local.settings.json", optional: false, reloadOnChange: true)
+        .AddUserSecrets<Program>();
+
+#endif
+
     builder.Services.Configure((Action<JsonSerializerOptions>) JsonOptionsConfigurator);
     builder.Services.Configure<JsonOptions>(jsonOptions =>
     {

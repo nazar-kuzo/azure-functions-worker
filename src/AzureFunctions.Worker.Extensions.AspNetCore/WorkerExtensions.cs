@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
-using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Azure.Functions.Worker;
@@ -24,11 +23,12 @@ namespace Microsoft.Extensions.DependencyInjection;
 public static class WorkerExtensions
 {
     /// <summary>
-    /// Enables AspNetCore function parameter binding and exposes AspNetCore related Function metadata
+    /// Enables AspNetCore MVC model binding for Azure functions
+    /// parameter binding and exposes AspNetCore related Function metadata
     /// </summary>
     /// <param name="worker">FunctionsWorker ApplicationBuilder</param>
     /// <returns>Mvc builder</returns>
-    public static IMvcCoreBuilder ConfigureAspNetCoreIntegration(this FunctionsApplicationBuilder worker)
+    public static IMvcCoreBuilder ConfigureAspNetCoreMvcIntegration(this FunctionsApplicationBuilder worker)
     {
         if (!worker.Services.Any(descriptor => descriptor.ImplementationType?.FullName == "Microsoft.Azure.Functions.Worker.Extensions.Http.AspNetCore.DefaultHttpCoordinator"))
         {
@@ -48,14 +48,7 @@ public static class WorkerExtensions
         worker.UseWhen<AspNetCoreIntegrationMiddleware>(context => context.GetHttpContext() is not null);
 
         return worker.Services
-            .AddMvcCore(mvcOptions =>
-            {
-                mvcOptions.OutputFormatters.RemoveType<StringOutputFormatter>();
-
-                var jsonOutputFormatter = mvcOptions.OutputFormatters.OfType<SystemTextJsonOutputFormatter>().FirstOrDefault();
-
-                jsonOutputFormatter?.SupportedMediaTypes.Remove("text/json");
-            })
+            .AddMvcCore()
             .AddApiExplorer();
     }
 

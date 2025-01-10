@@ -9,7 +9,7 @@ v1
 v2
 [https://www.nuget.org/packages/AzureFunctions.Worker.Extensions.Swashbuckle](https://www.nuget.org/packages/AzureFunctions.Worker.Extensions.Swashbuckle)
 
-## ${\textsf{\color{red}Migration to v2 Azure Functions SDK}}$
+## 🔴Migration to v2 Azure Functions SDK🔴
 
 Microsoft suggest to use `FunctionsApplicationBuilder` over generic `HostBuilder` that is why v2 package will only support this api.
 

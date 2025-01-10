@@ -18,11 +18,4 @@
   <ItemGroup>
     <ProjectReference Include="..\AzureFunctions.Worker.Extensions.AspNetCore\AzureFunctions.Worker.Extensions.AspNetCore.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Update="SonarAnalyzer.CSharp" Version="10.4.0.108396">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
 </Project>

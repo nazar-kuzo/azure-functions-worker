@@ -96,11 +96,6 @@
           "Grpc.Core.Api": "2.65.0"
         }
       },
-      "Json.More.Net": {
-        "type": "Transitive",
-        "resolved": "2.1.0",
-        "contentHash": "qtwsyAsL55y2vB2/sK4Pjg3ZyVzD5KKSpV3lOAMHlnjFfsjQ/86eHJfQT9aV1YysVXzF4+xyHOZbh7Iu3YQ7Lg=="
-      },
       "Microsoft.Azure.Functions.Worker": {
         "type": "Transitive",
         "resolved": "2.0.0",
@@ -560,7 +555,6 @@
       "azurefunctions.worker.extensions.aspnetcore": {
         "type": "Project",
         "dependencies": {
-          "Json.More.Net": "[2.1.0, )",
           "Microsoft.Azure.Functions.Worker.Extensions.Http.AspNetCore": "[2.0.0, )"
         }
       }

@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-using System.Reflection;
-using Json.More;
+﻿using System.Reflection;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -71,15 +69,15 @@ public sealed class FunctionBinding
     public string[]? Methods { get; set; }
 }
 
-[JsonConverter(typeof(EnumStringConverter<BindingDirection>))]
+[JsonConverter(typeof(JsonStringEnumConverter<BindingDirection>))]
 public enum BindingDirection
 {
-    [Description("In")]
+    [JsonStringEnumMemberName("In")]
     In,
 
-    [Description("Out")]
+    [JsonStringEnumMemberName("Out")]
     Out,
 
-    [Description("Inout")]
+    [JsonStringEnumMemberName("Inout")]
     InOut,
 }

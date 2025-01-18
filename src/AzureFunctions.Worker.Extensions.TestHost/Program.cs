@@ -112,7 +112,6 @@ void ConfigureOptions()
         jsonOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
         jsonOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
         jsonOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-        jsonOptions.Converters.Add(new JsonStringEnumConverter());
     }
 }
 

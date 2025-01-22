@@ -341,9 +341,8 @@ internal sealed class AzureTableCache(
         {
             var entries = this.tableClient
                 .QueryAsync<Cache>(
-                    filter: cache =>
-                        cache.PartitionKey == cacheOptions.Value.ApplicationName &&
-                        cache.ExpiresAtTime <= now,
+                    $"{nameof(Cache.PartitionKey)} eq '{cacheOptions.Value.ApplicationName}'" +
+                    $" and {nameof(Cache.ExpiresAtTime)} le datetime'{now:yyyy-MM-dd'T'HH:mm:ssZ}'",
                     maxPerPage: 100,
                     select: CacheWithoutValue)
                 .AsPages();

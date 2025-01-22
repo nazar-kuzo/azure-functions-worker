@@ -151,6 +151,11 @@ csharp_prefer_system_threading_lock = true:suggestion
 
 # SA1201: Elements should appear in the correct order
 dotnet_diagnostic.SA1201.severity = none
+csharp_style_allow_embedded_statements_on_same_line_experimental = true:silent
+dotnet_diagnostic.SA1124.severity = none
+
+# S3358: Ternary operators should not be nested
+dotnet_diagnostic.S3358.severity = suggestion
 
 [*.{cs,vb}]
 #### Naming styles ####

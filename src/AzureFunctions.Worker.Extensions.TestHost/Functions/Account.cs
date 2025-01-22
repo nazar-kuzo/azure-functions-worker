@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace AzureFunctions.Worker.Extensions.TestHost.Functions;
 
@@ -13,7 +14,7 @@ namespace AzureFunctions.Worker.Extensions.TestHost.Functions;
 /// </summary>
 /// <param name="logger">Logger</param>
 [Authorize]
-public class Account(ILogger<Account> logger)
+public class Account(ILogger<Account> logger, IDistributedCache cache)
 {
     /// <summary>
     /// GetUsers
@@ -45,7 +46,7 @@ public class Account(ILogger<Account> logger)
 
     [AllowAnonymous]
     [Function($"{nameof(Account)}-{nameof(CreateUser)}")]
-    public Task<CreateUserResponse> CreateUser(
+    public async Task<CreateUserResponse> CreateUser(
         [HttpTrigger("POST", Route = "account")] HttpRequest request,
         [FromBody, Required] UserInfo user)
     {
@@ -67,26 +68,30 @@ public class Account(ILogger<Account> logger)
         // attaches custom property to RequestTelemetry
         Activity.Current?.AddBaggage("UserId", createdUser.Id.ToString());
 
-        return Task.FromResult(new CreateUserResponse
+        await cache.SetJsonAsync(user.Email, createdUser, new() { AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(1) });
+
+        return new CreateUserResponse
         {
             HttpResult = createdUser,
             QueueValue = createdUser,
-        });
+        };
     }
 
     [Function($"{nameof(Account)}-{nameof(GetUserInfo)}")]
-    public Task<UserInfo> GetUserInfo(
+    public async Task<UserInfo> GetUserInfo(
         [HttpTrigger("GET", Route = "account/user/{email}")] HttpRequest request,
         [FromRoute, EmailAddress] string email)
     {
         logger.LogInformation("Received route param \"email\": {Email}", email);
 
-        return Task.FromResult(new UserInfo
+        var userInfo = await cache.GetJsonAsync<UserInfo>(email);
+
+        return userInfo ?? new UserInfo
         {
             Id = Guid.NewGuid(),
             Email = "email@domain.com",
             Name = "User name",
-        });
+        };
     }
 
     [Function($"{nameof(Account)}-{nameof(SignIn)}")]

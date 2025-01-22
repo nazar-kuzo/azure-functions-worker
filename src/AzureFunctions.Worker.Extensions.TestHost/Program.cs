@@ -54,6 +54,8 @@ builder.UseAspNetCoreMiddleware(app =>
         faviconFileName: "icon.png");
 });
 
+builder.AddAzureTableCache();
+
 ConfigureAuthentication();
 ConfigureAuthorization();
 ConfigureOptions();
@@ -101,7 +103,7 @@ void ConfigureOptions()
 
 #endif
 
-    builder.Services.Configure((Action<JsonSerializerOptions>) JsonOptionsConfigurator);
+    builder.Services.Configure<JsonSerializerOptions>(JsonOptionsConfigurator);
     builder.Services.Configure<JsonOptions>(jsonOptions =>
     {
         JsonOptionsConfigurator(jsonOptions.JsonSerializerOptions);

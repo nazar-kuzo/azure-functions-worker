@@ -72,6 +72,14 @@
           "System.Threading.Tasks.Extensions": "4.5.4"
         }
       },
+      "Azure.Data.Tables": {
+        "type": "Transitive",
+        "resolved": "12.10.0",
+        "contentHash": "fW6873rvhpAYUGXzu7JmbfSkYfppvfkKkiZqifSyOVJ0SsAWBMqHWL9VbUPsApP3DWTwakpU35nfpKTPqvFVww==",
+        "dependencies": {
+          "Azure.Core": "1.44.1"
+        }
+      },
       "Azure.Identity": {
         "type": "Transitive",
         "resolved": "1.12.0",
@@ -993,10 +1001,17 @@
           "Microsoft.Azure.Functions.Worker.Extensions.Http.AspNetCore": "[2.0.0, )"
         }
       },
+      "azurefunctions.worker.extensions.caching.azuretable": {
+        "type": "Project",
+        "dependencies": {
+          "Azure.Data.Tables": "[12.10.0, )",
+          "Microsoft.Azure.Functions.Worker": "[2.0.0, )"
+        }
+      },
       "azurefunctions.worker.extensions.swashbuckle": {
         "type": "Project",
         "dependencies": {
-          "AzureFunctions.Worker.Extensions.AspNetCore": "[2.0.0, )",
+          "AzureFunctions.Worker.Extensions.AspNetCore": "[2.0.1, )",
           "Swashbuckle.AspNetCore": "[7.2.0, )",
           "Swashbuckle.AspNetCore.Annotations": "[7.2.0, )"
         }

@@ -18,5 +18,6 @@ public class UserInfo
     /// <summary>
     /// User email
     /// </summary>
+    [EmailAddress]
     public required string Email { get; set; }
 }

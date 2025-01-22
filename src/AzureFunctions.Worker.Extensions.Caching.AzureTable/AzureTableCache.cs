@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using Azure;
 using Azure.Data.Tables;
 using AzureFunctions.Worker.Extensions.Caching.AzureTable.Internal;
 
@@ -24,13 +25,11 @@ internal sealed class AzureTableCache(
     {
         this.ScheduleExpiredCacheCleanup();
 
-        var pages = this.tableClient
-            .QueryAsync<Cache>(this.BuildFilter(keyPattern), maxPerPage: 1000, cancellationToken: cancellationToken)
-            .AsPages();
+        var pages = this.tableClient.QueryAsync<Cache>(this.BuildFilter(keyPattern), maxPerPage: 1000, cancellationToken: cancellationToken);
 
         var values = new List<T>();
 
-        await foreach (var page in pages)
+        await foreach (var page in pages.AsPages())
         {
             this.ScheduleCacheRefresh(page.Values);
 
@@ -44,14 +43,11 @@ internal sealed class AzureTableCache(
     {
         this.ScheduleExpiredCacheCleanup();
 
-        var response = await this.tableClient
-            .GetEntityIfExistsAsync<Cache>(cacheOptions.Value.ApplicationName, key, cancellationToken: token);
-
-        var cache = response.HasValue ? response.Value : null;
+        var cache = await this.RetrieveAsync(key, cancellationToken: token);
 
         if (cache != null)
         {
-            this.ScheduleCacheRefresh([cache]);
+            this.ScheduleCacheRefresh(cache);
 
             return JsonSerializer.Deserialize<T>(cache.Data, serializerOptions.Value)!;
         }
@@ -124,11 +120,9 @@ internal sealed class AzureTableCache(
     {
         this.ScheduleExpiredCacheCleanup();
 
-        var pages = this.tableClient
-            .QueryAsync<Cache>(this.BuildFilter(keyPattern), maxPerPage: 100, CacheWithoutValue, cancellationToken)
-            .AsPages();
+        var pages = this.tableClient.QueryAsync<Cache>(this.BuildFilter(keyPattern), maxPerPage: 100, CacheWithoutValue, cancellationToken);
 
-        await foreach (var page in pages)
+        await foreach (var page in pages.AsPages())
         {
             var actions = page.Values.Select(cache => new TableTransactionAction(TableTransactionActionType.Delete, cache));
 
@@ -144,14 +138,11 @@ internal sealed class AzureTableCache(
     {
         this.ScheduleExpiredCacheCleanup();
 
-        var response = await this.tableClient
-            .GetEntityIfExistsAsync<Cache>(cacheOptions.Value.ApplicationName, key, cancellationToken: token);
-
-        var cache = response.HasValue ? response.Value : null;
+        var cache = await this.RetrieveAsync(key, cancellationToken: token);
 
         if (cache != null)
         {
-            this.ScheduleCacheRefresh([cache]);
+            this.ScheduleCacheRefresh(cache);
         }
 
         return cache?.Data;
@@ -174,14 +165,11 @@ internal sealed class AzureTableCache(
     {
         this.ScheduleExpiredCacheCleanup();
 
-        var response = await this.tableClient
-            .GetEntityIfExistsAsync<Cache>(cacheOptions.Value.ApplicationName, key, CacheWithoutValue, token);
-
-        var cache = response.HasValue ? response.Value : null;
+        var cache = await this.RetrieveAsync(key, CacheWithoutValue, token);
 
         if (cache != null)
         {
-            this.ScheduleCacheRefresh([cache]);
+            this.ScheduleCacheRefresh(cache);
         }
     }
 
@@ -282,6 +270,18 @@ internal sealed class AzureTableCache(
         return cache;
     }
 
+    private async Task<Cache?> RetrieveAsync(string key, IEnumerable<string>? select = null, CancellationToken cancellationToken = default)
+    {
+        var response = this.tableClient
+            .QueryAsync<Cache>(this.BuildFilter(key), maxPerPage: 1, select, cancellationToken)
+            .AsPages()
+            .GetAsyncEnumerator();
+
+        await response.MoveNextAsync();
+
+        return response.Current.Values.FirstOrDefault();
+    }
+
     private string BuildFilter(string keyPattern)
     {
         var now = DateTime.UtcNow;
@@ -339,15 +339,13 @@ internal sealed class AzureTableCache(
 
         async Task DeleteExpiredEntries()
         {
-            var entries = this.tableClient
-                .QueryAsync<Cache>(
-                    $"{nameof(Cache.PartitionKey)} eq '{cacheOptions.Value.ApplicationName}'" +
-                    $" and {nameof(Cache.ExpiresAtTime)} le datetime'{now:yyyy-MM-dd'T'HH:mm:ssZ}'",
-                    maxPerPage: 100,
-                    select: CacheWithoutValue)
-                .AsPages();
+            var entries = this.tableClient.QueryAsync<Cache>(
+                $"{nameof(Cache.PartitionKey)} eq '{cacheOptions.Value.ApplicationName}'" +
+                $" and {nameof(Cache.ExpiresAtTime)} le datetime'{now:yyyy-MM-dd'T'HH:mm:ssZ}'",
+                maxPerPage: 100,
+                select: CacheWithoutValue);
 
-            await foreach (var page in entries)
+            await foreach (var page in entries.AsPages())
             {
                 if (page.Values.Count > 0)
                 {
@@ -358,42 +356,70 @@ internal sealed class AzureTableCache(
         }
     }
 
+    private void ScheduleCacheRefresh(Cache cache)
+    {
+        if (cache.SlidingExpirationInSeconds.HasValue)
+        {
+            Task.Factory.StartNew(
+                async cache =>
+                {
+                    var entry = (Cache) cache!;
+
+                    var expiresAtTime = DateTimeOffset.UtcNow.AddSeconds(entry.SlidingExpirationInSeconds!.Value);
+
+                    if (expiresAtTime > entry.AbsoluteExpiration)
+                    {
+                        expiresAtTime = entry.AbsoluteExpiration.Value;
+                    }
+
+                    await this.tableClient.UpdateEntityAsync(
+                        new Cache
+                        {
+                            PartitionKey = entry.PartitionKey,
+                            RowKey = entry.RowKey,
+                            ExpiresAtTime = expiresAtTime,
+                        },
+                        ETag.All,
+                        mode: TableUpdateMode.Merge);
+                },
+                cache);
+        }
+    }
+
     private void ScheduleCacheRefresh(IEnumerable<Cache> entries)
     {
         var entriesToRefresh = entries.Where(cache => cache.SlidingExpirationInSeconds.HasValue);
 
         if (entriesToRefresh.Any())
         {
-            Task.Factory
-                .StartNew(
-                    async entriesToRefresh =>
+            Task.Factory.StartNew(
+                async entriesToRefresh =>
+                {
+                    var now = DateTimeOffset.UtcNow;
+
+                    foreach (var entriesChunk in ((IEnumerable<Cache>) entriesToRefresh!).Chunk(100))
                     {
-                        var now = DateTimeOffset.UtcNow;
-
-                        foreach (var entriesChunk in ((IEnumerable<Cache>) entriesToRefresh!).Chunk(100))
+                        await this.tableClient.SubmitTransactionAsync(entriesChunk.Select(entry =>
                         {
-                            await this.tableClient.SubmitTransactionAsync(entriesChunk.Select(entry =>
+                            var expiresAtTime = now.AddSeconds(entry.SlidingExpirationInSeconds!.Value);
+
+                            if (expiresAtTime > entry.AbsoluteExpiration)
                             {
-                                var expiresAtTime = now.AddSeconds(entry.SlidingExpirationInSeconds!.Value);
+                                expiresAtTime = entry.AbsoluteExpiration.Value;
+                            }
 
-                                if (expiresAtTime > entry.AbsoluteExpiration)
+                            return new TableTransactionAction(
+                                TableTransactionActionType.UpdateMerge,
+                                new Cache
                                 {
-                                    expiresAtTime = entry.AbsoluteExpiration.Value;
-                                }
-
-                                return new TableTransactionAction(
-                                    TableTransactionActionType.UpdateMerge,
-                                    new Cache
-                                    {
-                                        PartitionKey = entry.PartitionKey,
-                                        RowKey = entry.RowKey,
-                                        ExpiresAtTime = expiresAtTime,
-                                    });
-                            }));
-                        }
-                    },
-                    entriesToRefresh)
-                .ConfigureAwait(false);
+                                    PartitionKey = entry.PartitionKey,
+                                    RowKey = entry.RowKey,
+                                    ExpiresAtTime = expiresAtTime,
+                                });
+                        }));
+                    }
+                },
+                entriesToRefresh);
         }
     }
 }

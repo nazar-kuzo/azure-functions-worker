@@ -13,6 +13,7 @@ namespace AzureFunctions.Worker.Extensions.TestHost.Functions;
 /// Account API
 /// </summary>
 /// <param name="logger">Logger</param>
+/// <param name="cache">Distributed cache</param>
 [Authorize]
 public class Account(ILogger<Account> logger, IDistributedCache cache)
 {

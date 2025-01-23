@@ -389,7 +389,9 @@ internal sealed class AzureTableCache(
 
     private void ScheduleCacheRefresh(IEnumerable<Cache> entries)
     {
-        var entriesToRefresh = entries.Where(cache => cache.SlidingExpirationInSeconds.HasValue);
+        var entriesToRefresh = entries.Where(cache =>
+            cache.SlidingExpirationInSeconds.HasValue &&
+            (cache.AbsoluteExpiration is null || cache.ExpiresAtTime < cache.AbsoluteExpiration.Value));
 
         if (entriesToRefresh.Any())
         {

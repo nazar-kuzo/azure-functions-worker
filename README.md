@@ -17,6 +17,12 @@ Boost your productivity with better ASP.NET Core framework integration like in o
 - Use Swashbuckle (Swagger UI) api explorer with zero midifications to your code
 - Get full Swagger extensibility as in MVC
 
+## [Distributed caching with Azure Table storage](src/AzureFunctions.Worker.Extensions.Caching.AzureTable/readme.md)
+- Use Azure Table as distributed cache provider
+- Full support for `IDistributedCache` interface
+- JSON serialization extensions with host `System.Text.Json` serializer options as default
+- Search cache entries or bulk set/delete operations support
+
 # 🔴Migration to v2 Azure Functions SDK🔴
 
 There are some changes in the API for bootstrapping worker, therefore extensions should be registered differently,

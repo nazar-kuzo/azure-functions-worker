@@ -358,7 +358,8 @@ internal sealed class AzureTableCache(
 
     private void ScheduleCacheRefresh(Cache cache)
     {
-        if (cache.SlidingExpirationInSeconds.HasValue)
+        if (cache.SlidingExpirationInSeconds.HasValue &&
+            (cache.AbsoluteExpiration is null || cache.ExpiresAtTime < cache.AbsoluteExpiration.Value))
         {
             Task.Factory.StartNew(
                 async cache =>

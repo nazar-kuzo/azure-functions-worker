@@ -23,21 +23,23 @@ builder.ConfigureFunctionsWebApplication();
 
 // should be called after "ConfigureFunctionsWebApplication"
 builder
-    .ConfigureAspNetCoreMvcIntegration()
-    .AddMvcOptions(mvcOptions =>
+    .ConfigureAspNetCoreMvcIntegration(mvcBuilder =>
     {
-        if (mvcOptions.InputFormatters.OfType<SystemTextJsonInputFormatter>().FirstOrDefault() is { } jsonInputFormatter)
+        mvcBuilder.AddMvcOptions(mvcOptions =>
         {
-            jsonInputFormatter.SupportedMediaTypes.Clear();
-            jsonInputFormatter.SupportedMediaTypes.Add(MediaTypeNames.Application.Json);
-        }
+            if (mvcOptions.InputFormatters.OfType<SystemTextJsonInputFormatter>().FirstOrDefault() is { } jsonInputFormatter)
+            {
+                jsonInputFormatter.SupportedMediaTypes.Clear();
+                jsonInputFormatter.SupportedMediaTypes.Add(MediaTypeNames.Application.Json);
+            }
 
-        mvcOptions.OutputFormatters.RemoveType<StringOutputFormatter>();
+            mvcOptions.OutputFormatters.RemoveType<StringOutputFormatter>();
 
-        if (mvcOptions.OutputFormatters.OfType<SystemTextJsonOutputFormatter>().FirstOrDefault() is { } jsonOutputFormatter)
-        {
-            jsonOutputFormatter.SupportedMediaTypes.Remove("text/json");
-        }
+            if (mvcOptions.OutputFormatters.OfType<SystemTextJsonOutputFormatter>().FirstOrDefault() is { } jsonOutputFormatter)
+            {
+                jsonOutputFormatter.SupportedMediaTypes.Remove("text/json");
+            }
+        });
     });
 
 builder.UseAspNetCoreMiddleware(app =>

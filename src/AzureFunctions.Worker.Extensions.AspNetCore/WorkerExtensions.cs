@@ -27,8 +27,11 @@ public static class WorkerExtensions
     /// parameter binding and exposes AspNetCore related Function metadata
     /// </summary>
     /// <param name="worker">FunctionsWorker ApplicationBuilder</param>
-    /// <returns>Mvc builder</returns>
-    public static IMvcCoreBuilder ConfigureAspNetCoreMvcIntegration(this FunctionsApplicationBuilder worker)
+    /// <param name="configureMvc">Optionally configure Mvc builder</param>
+    /// <returns>Functions application builder</returns>
+    public static FunctionsApplicationBuilder ConfigureAspNetCoreMvcIntegration(
+        this FunctionsApplicationBuilder worker,
+        Action<IMvcCoreBuilder>? configureMvc = null)
     {
         if (!worker.Services.Any(descriptor => descriptor.ImplementationType?.FullName == "Microsoft.Azure.Functions.Worker.Extensions.Http.AspNetCore.DefaultHttpCoordinator"))
         {
@@ -47,9 +50,13 @@ public static class WorkerExtensions
 
         worker.UseWhen<AspNetCoreIntegrationMiddleware>(context => context.GetHttpContext() is not null);
 
-        return worker.Services
+        var mvcBuilder = worker.Services
             .AddMvcCore()
             .AddApiExplorer();
+
+        configureMvc?.Invoke(mvcBuilder);
+
+        return worker;
     }
 
     /// <summary>
@@ -60,8 +67,9 @@ public static class WorkerExtensions
     /// </remarks>
     /// <param name="worker">Functions worker Application builder</param>
     /// <param name="applicationBuilder">AspNetCore Application builder</param>
-    public static void UseAspNetCoreMiddleware(
-        this IFunctionsWorkerApplicationBuilder worker,
+    /// <returns>Functions application builder</returns>
+    public static FunctionsApplicationBuilder UseAspNetCoreMiddleware(
+        this FunctionsApplicationBuilder worker,
         Action<IApplicationBuilder> applicationBuilder)
     {
         worker.Services.TryAddSingleton<AspNetCoreFunctionMetadataProvider>();
@@ -97,5 +105,7 @@ public static class WorkerExtensions
         {
             routeOptions.SuppressCheckForUnhandledSecurityMetadata = true;
         });
+
+        return worker;
     }
 }

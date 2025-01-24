@@ -46,17 +46,16 @@ builder.ConfigureFunctionsWebApplication();
 
 // should be called after "ConfigureFunctionsWebApplication"
 builder
-    .ConfigureAspNetCoreMvcIntegration()
-    .AddMvcOptions(mvcOptions =>
+    .ConfigureAspNetCoreMvcIntegration(mvcBuilder =>
     {
-        // additional MVC options customization
-    });
-
-builder.UseAspNetCoreMiddleware(app =>
-{
-    app.UseMiddleware<ExceptionHandlingMiddleware>(); // <-- custom ASP.NET middleware for exception handling of all HTTP triggered requests
+        // additional MVC builder customization
+        mvcBuilder.AddMvcOptions(mvcOptions => { });
+    })
+    .UseAspNetCoreMiddleware(app =>
+    {
+        app.UseMiddleware<ExceptionHandlingMiddleware>(); // <-- custom ASP.NET middleware for exception handling of all HTTP triggered requests
     
-    app.UseAuthentication();  // <-- built-in ASP.NET middleware
-    app.UseAuthorization();  // <-- built-in ASP.NET middleware
-});
+        app.UseAuthentication();  // <-- built-in ASP.NET middleware
+        app.UseAuthorization();  // <-- built-in ASP.NET middleware
+    });
 ```

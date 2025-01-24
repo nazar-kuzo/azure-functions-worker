@@ -16,7 +16,7 @@ var builder = FunctionsApplication.CreateBuilder(args);
 // should be used for HTTP triggered APIs
 builder.ConfigureFunctionsWebApplication();
 
-builder.AddAzureTableCache(cacheOptions =>
+builder.Services.AddAzureTableCache(cacheOptions =>
 {
     cacheOptions.ConnectionString = builder.Configuration.GetConnectionString("AzureWebJobsStorage");
     cacheOptions.ApplicationName = "Default";

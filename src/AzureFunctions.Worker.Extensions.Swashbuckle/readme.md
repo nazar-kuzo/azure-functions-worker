@@ -46,14 +46,13 @@ builder.ConfigureFunctionsWebApplication();
 
 // should be called after "ConfigureFunctionsWebApplication"
 builder
-    .ConfigureAspNetCoreMvcIntegration()
-    .AddMvcOptions(mvcOptions =>
+    .ConfigureAspNetCoreMvcIntegration(mvcBuilder =>
     {
-        // additional MVC options customization
+        // additional MVC builder customization
+        mvcBuilder.AddMvcOptions(mvcOptions => { });
+    })
+    .UseAspNetCoreMiddleware(app =>
+    {
+        app.UseFunctionSwaggerUI();  // <--- magic happens here
     });
-
-builder.UseAspNetCoreMiddleware(app =>
-{
-    app.UseFunctionSwaggerUI();  // <--- magic happens here
-});
 ```

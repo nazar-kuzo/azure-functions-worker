@@ -56,12 +56,11 @@ builder.UseAspNetCoreMiddleware(app =>
         faviconFileName: "icon.png");
 });
 
-builder.AddAzureTableCache();
-
 ConfigureAuthentication();
 ConfigureAuthorization();
 ConfigureOptions();
 ConfigureExceptionHandling();
+ConfigureInjectables();
 ConfigureSwagger();
 
 await builder.Build().RunAsync();
@@ -130,6 +129,12 @@ void ConfigureExceptionHandling()
             };
         })
         .AddExceptionHandler<GlobalExceptionHandler>();
+}
+
+void ConfigureInjectables()
+{
+    builder.Services
+        .AddAzureTableCache(cacheOptions => cacheOptions.ApplicationName = "AzureFunctions.Worker.Extensions.TestHost");
 }
 
 void ConfigureSwagger()

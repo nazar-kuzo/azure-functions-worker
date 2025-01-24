@@ -50,10 +50,10 @@ internal class AspNetCoreIntegrationMiddleware(
 
         if (functionMetadata.HttpResultBinding is not null)
         {
-            TryConvertHttpResult();
+            await TryExecuteHttpResult();
         }
 
-        void TryConvertHttpResult()
+        async Task TryExecuteHttpResult()
         {
             if (functionMetadata.HttpResultBinding.Name == "$return")
             {
@@ -65,6 +65,19 @@ internal class AspNetCoreIntegrationMiddleware(
                 {
                     invocationResult.Value = actionResultTypeMapper
                         .Convert(invocationResult.Value, functionMetadata.HttpResultDataType!);
+                }
+
+                if (invocationResult.Value is IActionResult actionResult)
+                {
+                    await actionResult.ExecuteResultAsync(actionContextAccessor.ActionContext);
+
+                    invocationResult.Value = null;
+                }
+                else if (invocationResult.Value is IResult result)
+                {
+                    await result.ExecuteAsync(httpContext);
+
+                    invocationResult.Value = null;
                 }
             }
             else
@@ -79,6 +92,19 @@ internal class AspNetCoreIntegrationMiddleware(
                 {
                     outputBindingData.Value = actionResultTypeMapper
                         .Convert(outputBindingData.Value, functionMetadata.HttpResultDataType!);
+                }
+
+                if (outputBindingData?.Value is IActionResult actionResult)
+                {
+                    await actionResult.ExecuteResultAsync(actionContextAccessor.ActionContext);
+
+                    outputBindingData.Value = Enumerable.Empty<object>();
+                }
+                else if (outputBindingData?.Value is IResult result)
+                {
+                    await result.ExecuteAsync(httpContext);
+
+                    outputBindingData.Value = Enumerable.Empty<object>();
                 }
             }
         }

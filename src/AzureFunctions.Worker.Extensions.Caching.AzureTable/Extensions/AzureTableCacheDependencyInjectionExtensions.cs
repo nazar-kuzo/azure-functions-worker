@@ -5,7 +5,6 @@ namespace Microsoft.Extensions.DependencyInjection;
 
 public static class AzureTableCacheDependencyInjectionExtensions
 {
-
     /// <summary>
     /// Adds Azure Table Storage as a distributed cache.
     /// </summary>
@@ -48,7 +47,8 @@ public static class AzureTableCacheDependencyInjectionExtensions
                 configureCacheOptions?.Invoke(cacheOptions);
 
                 cacheOptions.ApplicationName ??= "Default";
-                cacheOptions.ConnectionString ??= configuration?.GetValue<string>("AzureWebJobsStorage")!;
+                cacheOptions.ConnectionString ??= configuration?.GetValue<string>("AzureWebJobsStorage")
+                    ?? Environment.GetEnvironmentVariable("AzureWebJobsStorage");
             });
 
         return services;

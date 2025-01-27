@@ -96,13 +96,10 @@ void ConfigureAuthorization()
 
 void ConfigureOptions()
 {
-#if DEBUG
-
-    builder.Configuration
-        .AddJsonFile("local.settings.json", optional: false, reloadOnChange: true)
-        .AddUserSecrets<Program>();
-
-#endif
+    if (builder.Environment.IsDevelopment())
+    {
+        builder.Configuration.AddJsonFile("local.settings.json", optional: false, reloadOnChange: true);
+    }
 
     builder.Services.Configure<JsonSerializerOptions>(JsonOptionsConfigurator);
     builder.Services.Configure<JsonOptions>(jsonOptions =>
@@ -134,7 +131,7 @@ void ConfigureExceptionHandling()
 void ConfigureInjectables()
 {
     builder.Services
-        .AddAzureTableCache(cacheOptions => cacheOptions.ApplicationName = "AzureFunctions.Worker.Extensions.TestHost");
+        .AddAzureTableCache(builder.Configuration, cacheOptions => cacheOptions.ApplicationName = "AzureFunctions.Worker.Extensions.TestHost");
 }
 
 void ConfigureSwagger()

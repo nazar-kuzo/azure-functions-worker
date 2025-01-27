@@ -36,13 +36,13 @@ internal class AspNetCoreFunctionParameterBinder(
             try
             {
                 var result = await parameterBinder.BindModelAsync(
-                        actionContextAccessor.ActionContext!,
-                        parameterInfo.ModelBinder,
-                        await CompositeValueProvider.CreateAsync(actionContextAccessor.ActionContext!, mvcOptions.Value.ValueProviderFactories),
-                        parameterInfo.Parameter,
-                        parameterInfo.ModelMetadata,
-                        value: null,
-                        container: null);
+                    actionContextAccessor.ActionContext!,
+                    parameterInfo.ModelBinder,
+                    await CompositeValueProvider.CreateAsync(actionContextAccessor.ActionContext!, mvcOptions.Value.ValueProviderFactories),
+                    parameterInfo.Parameter,
+                    parameterInfo.ModelMetadata,
+                    value: null,
+                    container: null);
 
                 if (result.IsModelSet)
                 {

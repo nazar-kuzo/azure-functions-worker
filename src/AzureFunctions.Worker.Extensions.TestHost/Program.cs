@@ -98,7 +98,9 @@ void ConfigureOptions()
 {
     if (builder.Environment.IsDevelopment())
     {
-        builder.Configuration.AddJsonFile("local.settings.json", optional: false, reloadOnChange: true);
+        builder.Configuration
+            .AddJsonFile("local.settings.json", optional: false, reloadOnChange: true)
+            .AddUserSecrets<Program>();
     }
 
     builder.Services.Configure<JsonSerializerOptions>(JsonOptionsConfigurator);

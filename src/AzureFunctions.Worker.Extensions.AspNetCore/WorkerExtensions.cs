@@ -75,8 +75,6 @@ public static class WorkerExtensions
         worker.Services.TryAddSingleton<AspNetCoreFunctionMetadataProvider>();
         worker.Services.TryAddSingleton<AspNetCoreModelStateValidationMiddleware>();
 
-        worker.UseWhen<AspNetCoreProxyMiddleware>(context => context.GetHttpContext() is not null);
-
         // register AspNetCore middlewares as singleton service since it depends on ServiceProvider
         worker.Services.AddSingleton(serviceProvider =>
         {
@@ -104,6 +102,21 @@ public static class WorkerExtensions
         worker.Services.PostConfigure<RouteOptions>(routeOptions =>
         {
             routeOptions.SuppressCheckForUnhandledSecurityMetadata = true;
+        });
+
+        worker.Use(next =>
+        {
+            return functionContext =>
+            {
+                if (functionContext.GetHttpContext() is not null)
+                {
+                    return functionContext.InstanceServices
+                        .GetRequiredService<AspNetCoreProxyMiddleware>()
+                        .Invoke(functionContext, next);
+                }
+
+                return next.Invoke(functionContext);
+            };
         });
 
         return worker;

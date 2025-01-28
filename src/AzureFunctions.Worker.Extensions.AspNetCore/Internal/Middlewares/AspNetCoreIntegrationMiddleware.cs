@@ -67,6 +67,7 @@ internal class AspNetCoreIntegrationMiddleware(
                         .Convert(invocationResult.Value, functionMetadata.HttpResultDataType!);
                 }
 
+                // TODO: remove this code once https://github.com/Azure/azure-functions-dotnet-worker/issues/2682 is fixed
                 if (invocationResult.Value is IActionResult actionResult)
                 {
                     await actionResult.ExecuteResultAsync(actionContextAccessor.ActionContext);
@@ -94,6 +95,7 @@ internal class AspNetCoreIntegrationMiddleware(
                         .Convert(outputBindingData.Value, functionMetadata.HttpResultDataType!);
                 }
 
+                // TODO: remove this code once https://github.com/Azure/azure-functions-dotnet-worker/issues/2682 is fixed
                 if (outputBindingData?.Value is IActionResult actionResult)
                 {
                     await actionResult.ExecuteResultAsync(actionContextAccessor.ActionContext);

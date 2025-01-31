@@ -14,9 +14,9 @@
       },
       "SonarAnalyzer.CSharp": {
         "type": "Direct",
-        "requested": "[10.4.0.108396, )",
-        "resolved": "10.4.0.108396",
-        "contentHash": "xGcLZ+dvkVuBbd3sjPur9X+1owSL/iDoxVFJLhMx3/vq1fmoKM2fwvrZ8ReAas6l715GJ/dWU2ckwlrRVopmbg=="
+        "requested": "[10.6.0.109712, )",
+        "resolved": "10.6.0.109712",
+        "contentHash": "fMwoXhlmFrcIYLpmCZOPXQkKwQD6WoFsmkZp8FZ7RJ9Db+ELUg56qh1X4Vy2nU7ZOWmuAMDOMosYxiQKNLBWtw=="
       },
       "StyleCop.Analyzers.Unstable": {
         "type": "Direct",
@@ -130,8 +130,8 @@
       },
       "Microsoft.Azure.Functions.Worker.Extensions.Http.AspNetCore": {
         "type": "Transitive",
-        "resolved": "2.0.0",
-        "contentHash": "nJlU1TwlRdlTnU05bdcNabpRb4PNAdtD7G0bzQhUr7g+uqlQ6bKsex+pNLZXuRXy1AY2kjGQLUiUSp8aOAsfIQ==",
+        "resolved": "2.0.1",
+        "contentHash": "UQl76U1Wedqb8caiNovdSU8imUW3JMFglUq6+Z2S5N+obvoPzh27y/NJ0pL1ebsr1tXVy+BRV6BCxbvTu0WWeQ==",
         "dependencies": {
           "Microsoft.Azure.Functions.Worker": "2.0.0",
           "Microsoft.Azure.Functions.Worker.Extensions.Abstractions": "1.3.0",
@@ -555,7 +555,7 @@
       "azurefunctions.worker.extensions.aspnetcore": {
         "type": "Project",
         "dependencies": {
-          "Microsoft.Azure.Functions.Worker.Extensions.Http.AspNetCore": "[2.0.0, )"
+          "Microsoft.Azure.Functions.Worker.Extensions.Http.AspNetCore": "[2.0.1, )"
         }
       }
     }

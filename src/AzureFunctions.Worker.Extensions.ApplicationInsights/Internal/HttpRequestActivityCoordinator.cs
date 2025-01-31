@@ -113,7 +113,7 @@ internal class RequestActivity : IDisposable
         {
             if (this.Telemetry.Task.IsCanceled || this.token.IsCancellationRequested)
             {
-                this.Completed.SetCanceled();
+                this.Completed.TrySetCanceled();
             }
             else
             {

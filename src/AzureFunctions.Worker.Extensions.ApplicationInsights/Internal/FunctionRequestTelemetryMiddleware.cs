@@ -23,54 +23,36 @@ internal class FunctionRequestTelemetryMiddleware(
     public async Task Invoke(FunctionContext context, FunctionExecutionDelegate next)
     {
         var hostActivity = Activity.Current!;
+        var shouldDelegateRequestActivity = activityCoordinator is not null && IsHttpTriggerFunction();
 
         using var requestActivity = telemetryClient.StartOperation<RequestTelemetry>(hostActivity);
 
         requestActivity.Telemetry.Name = context.FunctionDefinition.Name;
         requestActivity.Telemetry.Context.Operation.Name = context.FunctionDefinition.Name;
 
-        if (activityCoordinator is not null && IsHttpTriggerFunction())
+        if (shouldDelegateRequestActivity)
         {
-            activityCoordinator.StartRequestActivity(context.InvocationId, requestActivity.Telemetry, context.CancellationToken);
+            activityCoordinator!.StartRequestActivity(context.InvocationId, requestActivity.Telemetry, context.CancellationToken);
         }
 
-        var success = default(bool?);
+        var success = false;
 
         try
         {
             await next(context);
-        }
-        catch
-        {
-            success = false;
 
-            requestActivity.Telemetry.Success = false;
-
-            throw;
+            success = true;
         }
         finally
         {
-            if (activityCoordinator is not null && IsHttpTriggerFunction())
+            if (shouldDelegateRequestActivity)
             {
-                if (success == false)
-                {
-                    requestActivity.Telemetry.ResponseCode = "500";
-                }
-                else
-                {
-                    try
-                    {
-                        await activityCoordinator.WaitForRequestActivityCompletedAsync(context.InvocationId);
-                    }
-                    catch (TaskCanceledException)
-                    {
-                        requestActivity.Telemetry.ResponseCode = "(cancelled)";
-                        requestActivity.Telemetry.Success = false;
-                    }
-                }
+                await activityCoordinator!.WaitForRequestActivityCompletedAsync(context.InvocationId);
             }
-
-            requestActivity.Telemetry.Success ??= success ?? true;
+            else
+            {
+                requestActivity.Telemetry.Success = success;
+            }
 
             foreach (var property in hostActivity.Baggage)
             {

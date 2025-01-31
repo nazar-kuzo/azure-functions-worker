@@ -2,6 +2,7 @@
 using System.Runtime.Loader;
 using System.Text.RegularExpressions;
 using Microsoft.Azure.Functions.Worker.Core.FunctionMetadata;
+using Microsoft.Extensions.Configuration;
 
 namespace AzureFunctions.Worker.Extensions.AspNetCore;
 
@@ -9,7 +10,10 @@ namespace AzureFunctions.Worker.Extensions.AspNetCore;
 /// Wraps built-in <see cref="IFunctionMetadataProvider"/> provider to return custom <see cref="AspNetCoreFunctionMetadata"/>.
 /// </summary>
 /// <param name="functionMetadataProvider">Built-in <see cref="IFunctionMetadataProvider"/></param>
-public sealed partial class AspNetCoreFunctionMetadataProvider(IFunctionMetadataProvider functionMetadataProvider)
+/// <param name="configuration">Configuration</param>
+public sealed partial class AspNetCoreFunctionMetadataProvider(
+    IFunctionMetadataProvider functionMetadataProvider,
+    IConfiguration configuration)
 {
     private FrozenDictionary<string, AspNetCoreFunctionMetadata>? metadata;
 
@@ -89,6 +93,7 @@ public sealed partial class AspNetCoreFunctionMetadataProvider(IFunctionMetadata
                             {
                                 EntryPoint = context.Metadata.EntryPoint,
                                 IsProxy = context.Metadata.IsProxy,
+                                IsDisabled = IsFunctionDisabled(context.Metadata.Name!),
                                 Language = context.Metadata.Language,
                                 ManagedDependencyEnabled = context.Metadata.ManagedDependencyEnabled,
                                 Name = context.Metadata.Name,
@@ -112,5 +117,12 @@ public sealed partial class AspNetCoreFunctionMetadataProvider(IFunctionMetadata
             })
             .DistinctBy(metadata => metadata.Name)
             .ToFrozenDictionary(metadata => metadata.Name!);
+
+        bool IsFunctionDisabled(string functionName)
+        {
+            var value = configuration.GetValue<string>($"AzureWebJobs.{functionName}.Disabled");
+
+            return value != null && (value == "1" || value.Equals("true", StringComparison.InvariantCultureIgnoreCase));
+        }
     }
 }

@@ -12,6 +12,11 @@ namespace AzureFunctions.Worker.Extensions.AspNetCore;
 public sealed class AspNetCoreFunctionMetadata : DefaultFunctionMetadata
 {
     /// <summary>
+    /// Indicating whether function is disabled based on environment configuration.
+    /// </summary>
+    public bool IsDisabled { get; set; }
+
+    /// <summary>
     /// Parsed metadata from <see cref="DefaultFunctionMetadata.RawBindings"/>
     /// </summary>
     public required FunctionBinding[] Bindings { get; set; }

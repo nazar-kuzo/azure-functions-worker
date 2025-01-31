@@ -2,8 +2,8 @@ using System.Net.Mime;
 using System.Reflection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.StaticFiles;
-using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Swashbuckle.AspNetCore.Swagger;
@@ -36,6 +36,7 @@ public static class WorkerExtensions
         string? faviconFileName = null)
     {
         var swaggerGenOptions = app.ApplicationServices.GetRequiredService<IOptions<SwaggerGenOptions>>();
+        var actionContextAccessor = app.ApplicationServices.GetRequiredService<IActionContextAccessor>();
 
         app.Use(next => httpContext =>
         {
@@ -46,19 +47,18 @@ public static class WorkerExtensions
 
                 if (!string.IsNullOrEmpty(faviconFileName) &&
                     path.StartsWith(FaviconPath) &&
-                    httpContext.GetFunctionContext() is { } functionContext &&
                     ReadEmbeddedFile(faviconFileName) is { } favicon)
                 {
                     ContentTypeProvider.TryGetContentType(faviconFileName, out var contentType);
 
                     contentType ??= MediaTypeNames.Application.Octet;
 
-                    functionContext.ReplyWithActionResult(new FileStreamResult(favicon.CreateReadStream(), contentType)
+                    var actionResult = new FileStreamResult(favicon.CreateReadStream(), contentType)
                     {
                         FileDownloadName = faviconFileName,
-                    });
+                    };
 
-                    return Task.CompletedTask;
+                    return actionResult.ExecuteResultAsync(actionContextAccessor.ActionContext!);
                 }
             }
 

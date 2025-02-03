@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.ApiExplorer;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace AzureFunctions.Worker.Extensions.AspNetCore.Internal;
@@ -29,6 +30,17 @@ internal class FunctionApiDescriptionProvider(
                     {
                         responseType.Type = metadata.HttpResultDataType;
                         responseType.ModelMetadata = modelMetadataProvider.GetMetadataForType(metadata.HttpResultDataType);
+                    }
+                }
+            }
+            else
+            {
+                foreach (var responseType in apiDescription.SupportedResponseTypes)
+                {
+                    if ((responseType.Type == typeof(void) || responseType.Type == typeof(Task) || responseType.Type == typeof(ValueTask)) &&
+                        responseType.StatusCode == StatusCodes.Status200OK)
+                    {
+                        responseType.StatusCode = StatusCodes.Status204NoContent;
                     }
                 }
             }

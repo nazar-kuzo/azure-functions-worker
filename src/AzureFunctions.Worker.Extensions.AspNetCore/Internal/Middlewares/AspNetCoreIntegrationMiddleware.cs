@@ -59,6 +59,13 @@ internal class AspNetCoreIntegrationMiddleware(
             {
                 var invocationResult = context.GetInvocationResult();
 
+                if (invocationResult.Value is null && functionMetadata.HttpResultDataType is null)
+                {
+                    await new NoContentResult().ExecuteResultAsync(actionContextAccessor.ActionContext);
+
+                    return;
+                }
+
                 if (invocationResult.Value is not null &&
                     invocationResult.Value is not HttpResponseData &&
                     invocationResult.Value is not IActionResult)

@@ -25,7 +25,7 @@ internal class FunctionRequestTelemetryMiddleware(
         var hostActivity = Activity.Current!;
         var shouldDelegateRequestActivity = activityCoordinator is not null && IsHttpTriggerFunction();
 
-        using var requestActivity = telemetryClient.StartOperation<RequestTelemetry>(hostActivity);
+        using var requestActivity = telemetryClient.StartRequestOperation(hostActivity);
 
         requestActivity.Telemetry.Name = context.FunctionDefinition.Name;
         requestActivity.Telemetry.Context.Operation.Name = context.FunctionDefinition.Name;

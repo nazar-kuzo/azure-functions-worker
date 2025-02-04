@@ -33,9 +33,9 @@
     <NeutralLanguage>en-US</NeutralLanguage>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <AssemblyVersion>2.0.11</AssemblyVersion>
-    <FileVersion>2.0.11</FileVersion>
-    <Version>2.0.11</Version>
+    <AssemblyVersion>2.0.12</AssemblyVersion>
+    <FileVersion>2.0.12</FileVersion>
+    <Version>2.0.12</Version>
     <PackageReleaseNotes>
       - Migration to .NET 9 and Azure Functions Worker v2
     </PackageReleaseNotes>

@@ -20,6 +20,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureFunctions.Worker.Exten
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureFunctions.Worker.Extensions.Caching.AzureTable", "AzureFunctions.Worker.Extensions.Caching.AzureTable\AzureFunctions.Worker.Extensions.Caching.AzureTable.csproj", "{E47EED3B-6965-42F4-AC7F-B39A1F8F7531}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureFunctions.Worker.Extensions.DurableTask", "AzureFunctions.Worker.Extensions.DurableTask\AzureFunctions.Worker.Extensions.DurableTask.csproj", "{1145901B-F4ED-4C75-ADA1-E9AA15C313FB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -46,6 +48,10 @@ Global
 		{E47EED3B-6965-42F4-AC7F-B39A1F8F7531}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E47EED3B-6965-42F4-AC7F-B39A1F8F7531}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E47EED3B-6965-42F4-AC7F-B39A1F8F7531}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1145901B-F4ED-4C75-ADA1-E9AA15C313FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1145901B-F4ED-4C75-ADA1-E9AA15C313FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1145901B-F4ED-4C75-ADA1-E9AA15C313FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1145901B-F4ED-4C75-ADA1-E9AA15C313FB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

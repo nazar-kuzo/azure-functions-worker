@@ -77,12 +77,18 @@ public sealed class FunctionBinding
 [JsonConverter(typeof(JsonStringEnumConverter<BindingDirection>))]
 public enum BindingDirection
 {
+#if NET9_0_OR_GREATER
     [JsonStringEnumMemberName("In")]
+#endif
     In,
 
+#if NET9_0_OR_GREATER
     [JsonStringEnumMemberName("Out")]
+#endif
     Out,
 
+#if NET9_0_OR_GREATER
     [JsonStringEnumMemberName("Inout")]
+#endif
     InOut,
 }

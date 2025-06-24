@@ -13,12 +13,16 @@ internal sealed class AzureTableCache(
     private static readonly string[] CacheWithoutValue =
     [
         nameof(Cache.PartitionKey), nameof(Cache.RowKey), nameof(Cache.AbsoluteExpiration),
-        nameof(Cache.ExpiresAtTime), nameof(Cache.SlidingExpirationInSeconds)
+        nameof(Cache.ExpiresAtTime), nameof(Cache.SlidingExpirationInSeconds),
     ];
 
     private readonly TableClient tableClient = CreateTableClient(cacheOptions.Value.ConnectionString!, cacheOptions.Value.TableName);
 
+#if NET9_0_OR_GREATER
     private readonly Lock expirationLock = new();
+#else
+    private readonly object expirationLock = new();
+#endif
 
     private DateTimeOffset? lastExpirationScan;
 

@@ -13,6 +13,8 @@ internal class FunctionApplicationModelProvider(
     AspNetCoreFunctionMetadataProvider functionMetadataProvider)
     : IApplicationModelProvider
 {
+    private static readonly string[] DefaultHttpMethods = ["GET", "POST", "PUT", "DELETE"];
+
     public int Order => -10_000;
 
     public void OnProvidersExecuting(ApplicationModelProviderContext context)
@@ -64,23 +66,20 @@ internal class FunctionApplicationModelProvider(
                     {
                         var httpTrigger = metadata.Bindings.FirstOrDefault(binding => binding.Type == "httpTrigger");
 
-                        if (httpTrigger?.Route != null && httpTrigger.Methods != null)
+                        foreach (var selector in action.Selectors)
                         {
-                            foreach (var selector in action.Selectors)
+                            selector.AttributeRouteModel = new AttributeRouteModel
                             {
-                                selector.AttributeRouteModel = new AttributeRouteModel { Template = $"api/{httpTrigger.Route}" };
+                                Template = $"api/{httpTrigger?.Route ?? metadata.Name}",
+                            };
 
-                                if (httpTrigger.Methods.Length > 0)
-                                {
-                                    var httpMethods = httpTrigger.Methods
-                                        .Distinct(StringComparer.OrdinalIgnoreCase)
-                                        .ToArray();
+                            var httpMethods = (httpTrigger?.Methods?.Length > 0 ? httpTrigger.Methods : DefaultHttpMethods)
+                                .Distinct(StringComparer.OrdinalIgnoreCase)
+                                .ToArray();
 
-                                    selector.EndpointMetadata.Add(new HttpMethodMetadata(httpMethods));
+                            selector.EndpointMetadata.Add(new HttpMethodMetadata(httpMethods));
 
-                                    selector.ActionConstraints.Add(new HttpMethodActionConstraint(httpMethods));
-                                }
-                            }
+                            selector.ActionConstraints.Add(new HttpMethodActionConstraint(httpMethods));
                         }
 
                         return action;

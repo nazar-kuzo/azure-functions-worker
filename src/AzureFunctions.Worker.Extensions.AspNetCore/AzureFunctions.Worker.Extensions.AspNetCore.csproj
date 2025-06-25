@@ -3,6 +3,9 @@
     <PackageId>AzureFunctions.Worker.Extensions.AspNetCore</PackageId>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
     <PackageIcon>icon.png</PackageIcon>
+    <PackageReleaseNotes>
+      - now functions without Route will fallback to function name generated route
+    </PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

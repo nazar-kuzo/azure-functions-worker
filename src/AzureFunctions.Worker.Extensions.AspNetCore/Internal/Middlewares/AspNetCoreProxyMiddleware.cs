@@ -17,13 +17,6 @@ internal class AspNetCoreProxyMiddleware(RequestDelegate aspnetMiddleware) : IFu
         // set worker middleware to be called at the end of AspNetCore pipeline
         httpContext.Items.Add("__WorkerMiddleware", () => next(context));
 
-        try
-        {
-            await aspnetMiddleware.Invoke(httpContext);
-        }
-        catch
-        {
-            httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
-        }
+        await aspnetMiddleware.Invoke(httpContext);
     }
 }

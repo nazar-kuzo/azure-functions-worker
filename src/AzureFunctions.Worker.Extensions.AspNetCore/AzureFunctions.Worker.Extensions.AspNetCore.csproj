@@ -4,7 +4,7 @@
     <PackageReadmeFile>readme.md</PackageReadmeFile>
     <PackageIcon>icon.png</PackageIcon>
     <PackageReleaseNotes>
-      - now functions without Route will fallback to function name generated route
+      - aspnet core middleware no longer swallows exceptions
     </PackageReleaseNotes>
   </PropertyGroup>
 

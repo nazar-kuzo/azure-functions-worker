@@ -1,13 +1,14 @@
 using AzureFunctions.Worker.Extensions.AspNetCore;
 using AzureFunctions.Worker.Extensions.AspNetCore.Internal;
 using AzureFunctions.Worker.Extensions.AspNetCore.Internal.Middlewares;
-using AzureFunctions.Worker.Extensions.AspNetCore.Internal.ModelBinding;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Azure.Functions.Worker;
@@ -42,11 +43,17 @@ public static class WorkerExtensions
 
         worker.Services.TryAddSingleton<IActionContextAccessor, ActionContextAccessor>();
         worker.Services.TryAddSingleton<AspNetCoreFunctionMetadataProvider>();
-        worker.Services.AddSingleton<AspNetCoreFunctionParameterBinder>();
         worker.Services.AddSingleton<IActionDescriptorProvider, FunctionActionDescriptorProvider>();
         worker.Services.AddTransient<IApplicationModelProvider, FunctionApplicationModelProvider>();
         worker.Services.AddTransient<IStartupFilter, WorkerStartupFilter>();
         worker.Services.TryAddEnumerable(ServiceDescriptor.Transient<IApiDescriptionProvider, FunctionApiDescriptionProvider>());
+
+        worker.Services.AddScoped<IFilterMetadata>(serviceProvider =>
+        {
+            return new ModelStateInvalidFilter(
+                serviceProvider.GetRequiredService<IOptions<ApiBehaviorOptions>>().Value,
+                serviceProvider.GetRequiredService<ILogger<ModelStateInvalidFilter>>());
+        });
 
         worker.UseWhen<AspNetCoreIntegrationMiddleware>(context => context.GetHttpContext() is not null);
 
@@ -55,6 +62,21 @@ public static class WorkerExtensions
             .AddApiExplorer();
 
         configureMvc?.Invoke(mvcBuilder);
+
+        return worker;
+    }
+
+    /// <summary>
+    /// Configures custom action filter that validates the ModelState before function execution
+    /// </summary>
+    /// <typeparam name="T">Action filter type</typeparam>
+    /// <param name="worker">FunctionsWorker ApplicationBuilder</param>
+    /// <returns>Functions application builder</returns>
+    public static FunctionsApplicationBuilder ConfigureModelStateInvalidFilter<T>(
+        this FunctionsApplicationBuilder worker)
+        where T : class, IFilterMetadata
+    {
+        worker.Services.AddScoped<IFilterMetadata, T>();
 
         return worker;
     }

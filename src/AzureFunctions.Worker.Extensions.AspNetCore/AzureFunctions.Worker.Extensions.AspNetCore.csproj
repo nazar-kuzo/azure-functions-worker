@@ -4,7 +4,7 @@
     <PackageReadmeFile>readme.md</PackageReadmeFile>
     <PackageIcon>icon.png</PackageIcon>
     <PackageReleaseNotes>
-      - aspnet core middleware no longer swallows exceptions
+      - exposed model state validation filter to allow custom validators
     </PackageReleaseNotes>
   </PropertyGroup>
 

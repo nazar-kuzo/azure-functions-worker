@@ -40,6 +40,8 @@ internal class AspNetCoreModelStateValidationMiddleware(
         if (metadata.AspNetCoreParameters.Length == 0)
         {
             await next(context);
+
+            return;
         }
 
         var actionContext = actionContextAccessor.ActionContext!;

@@ -4,7 +4,7 @@
     <PackageReadmeFile>readme.md</PackageReadmeFile>
     <PackageIcon>icon.png</PackageIcon>
     <PackageReleaseNotes>
-      - exposed model state validation filter to allow custom validators
+      - fixed issue with middleware double execution for parameterless function 
     </PackageReleaseNotes>
   </PropertyGroup>
 

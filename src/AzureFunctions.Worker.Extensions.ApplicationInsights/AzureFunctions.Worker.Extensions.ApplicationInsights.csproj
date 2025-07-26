@@ -3,6 +3,9 @@
     <PackageId>AzureFunctions.Worker.Extensions.ApplicationInsights</PackageId>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
     <PackageIcon>icon.png</PackageIcon>
+    <PackageReleaseNotes>
+      - added ability to set distributed trace context
+    </PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

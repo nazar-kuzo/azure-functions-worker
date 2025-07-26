@@ -74,7 +74,13 @@ public class Account(ILogger<Account> logger, IDistributedCache cache)
         return new CreateUserResponse
         {
             HttpResult = createdUser,
-            QueueValue = createdUser,
+            QueueValue = new QueueMessage<UserInfo>
+            {
+                TraceParent = Activity.Current?.Id,
+                TraceState = Activity.Current?.TraceStateString,
+                Baggage = Activity.Current?.Baggage,
+                Data = createdUser,
+            },
         };
     }
 
@@ -122,8 +128,10 @@ public class Account(ILogger<Account> logger, IDistributedCache cache)
 
     [Function($"{nameof(Account)}-{nameof(UserCreatedQueue)}")]
     public void UserCreatedQueue(
-        [QueueTrigger("user-created")] UserInfo user)
+        [QueueTrigger("user-created")] QueueMessage<UserInfo> message)
     {
-        logger.LogInformation("Received user info: {FileName}", user.Email);
+        Activity.Current?.ApplyCorrelationContext(message.TraceParent, message.TraceState, message.Baggage);
+
+        logger.LogInformation("Received user info: {FileName}", message.Data.Email);
     }
 }

@@ -8,5 +8,5 @@ public class CreateUserResponse
     public required UserInfo HttpResult { get; set; }
 
     [QueueOutput("user-created")]
-    public required UserInfo QueueValue { get; set; }
+    public required QueueMessage<UserInfo> QueueValue { get; set; }
 }

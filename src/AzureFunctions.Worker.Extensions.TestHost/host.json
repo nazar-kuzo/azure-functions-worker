@@ -14,5 +14,13 @@
       },
       "enableDependencyTracking": false
     }
+  },
+  "extensions": {
+    "durableTask": {
+      "tracing": {
+        "distributedTracingEnabled": true,
+        "version": "V2"
+      }
+    }
   }
 }

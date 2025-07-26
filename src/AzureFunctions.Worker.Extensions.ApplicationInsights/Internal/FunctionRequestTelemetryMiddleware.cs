@@ -27,12 +27,14 @@ internal class FunctionRequestTelemetryMiddleware(
 
         using var requestActivity = telemetryClient.StartRequestOperation(hostActivity);
 
-        requestActivity.Telemetry.Name = context.FunctionDefinition.Name;
-        requestActivity.Telemetry.Context.Operation.Name = context.FunctionDefinition.Name;
+        var requestTelemetry = requestActivity.Telemetry;
+
+        requestTelemetry.Name = context.FunctionDefinition.Name;
+        requestTelemetry.Context.Operation.Name = context.FunctionDefinition.Name;
 
         if (shouldDelegateRequestActivity)
         {
-            activityCoordinator!.StartRequestActivity(context.InvocationId, requestActivity.Telemetry, context.CancellationToken);
+            activityCoordinator!.StartRequestActivity(context.InvocationId, requestTelemetry, context.CancellationToken);
         }
 
         var success = false;
@@ -51,12 +53,18 @@ internal class FunctionRequestTelemetryMiddleware(
             }
             else
             {
-                requestActivity.Telemetry.Success = success;
+                requestTelemetry.Success = success;
+            }
+
+            if (hostActivity.TryGetCorrelationContext() is ActivityContext activityContext)
+            {
+                requestTelemetry.Context.Operation.Id = activityContext.TraceId.ToString();
+                requestTelemetry.Context.Operation.ParentId = activityContext.SpanId.ToString();
             }
 
             foreach (var property in hostActivity.Baggage)
             {
-                requestActivity.Telemetry.Properties.TryAdd(property.Key, property.Value);
+                requestTelemetry.Properties.TryAdd(property.Key, property.Value);
             }
         }
 

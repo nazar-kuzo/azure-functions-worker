@@ -66,20 +66,23 @@ internal class FunctionApplicationModelProvider(
                     {
                         var httpTrigger = metadata.Bindings.FirstOrDefault(binding => binding.Type == "httpTrigger");
 
-                        foreach (var selector in action.Selectors)
+                        if (httpTrigger != null)
                         {
-                            selector.AttributeRouteModel = new AttributeRouteModel
+                            foreach (var selector in action.Selectors)
                             {
-                                Template = $"api/{httpTrigger?.Route ?? metadata.Name}",
-                            };
+                                selector.AttributeRouteModel = new AttributeRouteModel
+                                {
+                                    Template = $"api/{httpTrigger?.Route ?? metadata.Name}",
+                                };
 
-                            var httpMethods = (httpTrigger?.Methods?.Length > 0 ? httpTrigger.Methods : DefaultHttpMethods)
-                                .Distinct(StringComparer.OrdinalIgnoreCase)
-                                .ToArray();
+                                var httpMethods = (httpTrigger?.Methods?.Length > 0 ? httpTrigger.Methods : DefaultHttpMethods)
+                                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                                    .ToArray();
 
-                            selector.EndpointMetadata.Add(new HttpMethodMetadata(httpMethods));
+                                selector.EndpointMetadata.Add(new HttpMethodMetadata(httpMethods));
 
-                            selector.ActionConstraints.Add(new HttpMethodActionConstraint(httpMethods));
+                                selector.ActionConstraints.Add(new HttpMethodActionConstraint(httpMethods));
+                            }
                         }
 
                         return action;

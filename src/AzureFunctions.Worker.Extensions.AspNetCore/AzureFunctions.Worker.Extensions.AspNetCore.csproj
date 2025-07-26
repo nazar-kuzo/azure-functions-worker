@@ -4,7 +4,7 @@
     <PackageReadmeFile>readme.md</PackageReadmeFile>
     <PackageIcon>icon.png</PackageIcon>
     <PackageReleaseNotes>
-      - fixed issue with middleware double execution for parameterless function 
+      - fixed issue when open API picks up non-http functions
     </PackageReleaseNotes>
   </PropertyGroup>
 

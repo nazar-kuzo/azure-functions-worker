@@ -28,7 +28,7 @@ public class DurableTasks
     }
 
     [Function(nameof(DurableTasks) + "_" + nameof(SingleParamActivity))]
-    public Task<Result> SingleParamActivity([ActivityTrigger] Device device)
+    public Task<Result> SingleParamActivity([ActivityTrigger] Data data)
     {
         return Task.FromResult(new Result());
     }

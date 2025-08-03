@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>AzureFunctions.Worker.Extensions.AppConfiguration</PackageId>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageReleaseNotes>
+    </PackageReleaseNotes>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="icon.png" Pack="true" PackagePath="\" />
+    <None Include="readme.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Abstractions" Version="1.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="Microsoft.Azure.Functions.Worker.Extensions.Abstractions.ExtensionInformationAttribute">
+      <_Parameter1>AzureFunctions.Worker.Extensions.AppConfiguration.Host</_Parameter1>
+      <_Parameter2>$(Version)</_Parameter2>
+      <_Parameter3>true</_Parameter3>
+      <_Parameter3_IsLiteral>true</_Parameter3_IsLiteral>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+</Project>

@@ -12,6 +12,7 @@
   </ItemGroup>
   
   <ItemGroup>
+    <ProjectReference Include="..\AzureFunctions.Worker.Extensions.AppConfiguration\AzureFunctions.Worker.Extensions.AppConfiguration.csproj" />
     <ProjectReference Include="..\AzureFunctions.Worker.Extensions.ApplicationInsights\AzureFunctions.Worker.Extensions.ApplicationInsights.csproj" />
     <ProjectReference Include="..\AzureFunctions.Worker.Extensions.DurableTask\AzureFunctions.Worker.Extensions.DurableTask.csproj" />
     <ProjectReference Include="..\AzureFunctions.Worker.Extensions.Swashbuckle\AzureFunctions.Worker.Extensions.Swashbuckle.csproj" />

@@ -5,7 +5,8 @@
       "commandLineArgs": "--port 7045",
       "launchBrowser": false,
       "environmentVariables": {
-        "DOTNET_ENVIRONMENT": "Development"
+        "DOTNET_ENVIRONMENT": "Development",
+        "APPCONFIG_ENDPOINT": "https://myappconfig.azconfig.io"
       }
     }
   }

@@ -1161,6 +1161,12 @@
           "System.Drawing.Common": "6.0.0"
         }
       },
+      "azurefunctions.worker.extensions.appconfiguration": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.Azure.Functions.Worker.Extensions.Abstractions": "[1.3.0, )"
+        }
+      },
       "azurefunctions.worker.extensions.applicationinsights": {
         "type": "Project",
         "dependencies": {
@@ -1190,7 +1196,7 @@
       "azurefunctions.worker.extensions.swashbuckle": {
         "type": "Project",
         "dependencies": {
-          "AzureFunctions.Worker.Extensions.AspNetCore": "[2.0.18, )",
+          "AzureFunctions.Worker.Extensions.AspNetCore": "[2.0.19, )",
           "Swashbuckle.AspNetCore": "[9.0.3, )",
           "Swashbuckle.AspNetCore.Annotations": "[9.0.3, )"
         }
@@ -2356,6 +2362,12 @@
           "System.Drawing.Common": "6.0.0"
         }
       },
+      "azurefunctions.worker.extensions.appconfiguration": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.Azure.Functions.Worker.Extensions.Abstractions": "[1.3.0, )"
+        }
+      },
       "azurefunctions.worker.extensions.applicationinsights": {
         "type": "Project",
         "dependencies": {
@@ -2385,7 +2397,7 @@
       "azurefunctions.worker.extensions.swashbuckle": {
         "type": "Project",
         "dependencies": {
-          "AzureFunctions.Worker.Extensions.AspNetCore": "[2.0.18, )",
+          "AzureFunctions.Worker.Extensions.AspNetCore": "[2.0.19, )",
           "Swashbuckle.AspNetCore": "[9.0.3, )",
           "Swashbuckle.AspNetCore.Annotations": "[9.0.3, )"
         }

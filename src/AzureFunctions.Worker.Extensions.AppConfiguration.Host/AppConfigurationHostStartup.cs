@@ -12,18 +12,23 @@ public class AppConfigurationHostStartup : IWebJobsConfigurationStartup
 {
     public void Configure(WebJobsBuilderContext context, IWebJobsConfigurationBuilder builder)
     {
-        Thread.Sleep(10_000);
-
         if (Environment.GetEnvironmentVariable("APPCONFIG_ENDPOINT") is string appConfigEndpoint)
         {
+            // TODO: add option for credentials local cache to improve performance
+            var credentials = new DefaultAzureCredential(new DefaultAzureCredentialOptions
+            {
+                ExcludeEnvironmentCredential = true,
+                ExcludeWorkloadIdentityCredential = true,
+            });
+
             builder.ConfigurationBuilder.AddAzureAppConfiguration(appConfigOptions =>
             {
-                appConfigOptions.Connect(new Uri(appConfigEndpoint), new DefaultAzureCredential())
-                    .Select("*", tagFilters: ["Host=true"]);
+                // TODO: add configuration filtering by tags
+                appConfigOptions.Connect(new Uri(appConfigEndpoint), credentials);
 
                 appConfigOptions.ConfigureKeyVault(keyVaultOptions =>
                 {
-                    keyVaultOptions.SetCredential(new DefaultAzureCredential());
+                    keyVaultOptions.SetCredential(credentials);
                 });
             });
         }

@@ -6,7 +6,7 @@
       "launchBrowser": false,
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Development",
-        "APPCONFIG_ENDPOINT": "https://myappconfig.azconfig.io"
+        //"APPCONFIG_ENDPOINT": "https://myappconfig.azconfig.io"
       }
     }
   }

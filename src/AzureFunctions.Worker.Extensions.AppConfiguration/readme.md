@@ -1,41 +1,27 @@
-## [Standalone Application Insights](src/AzureFunctions.Worker.Extensions.ApplicationInsights/readme.md)
-- Completely opt-out worker host logging to Application insights
-- Have control over `RequestTelemetry` item in your code
-- Debloat worker host logs
-- Keep Application insights metrics and perf counters
+## [Azure App Configuration support for Azure Function Host](src/AzureFunctions.Worker.Extensions.AppConfiguration/readme.md)
+- Resolve host triggered connection strings via Azure App Configuration
 
 ## NuGet package
-[https://www.nuget.org/packages/AzureFunctions.Worker.Extensions.ApplicationInsights](https://www.nuget.org/packages/AzureFunctions.Worker.Extensions.ApplicationInsights)
+[https://www.nuget.org/packages/AzureFunctions.Worker.Extensions.AppConfiguration](https://www.nuget.org/packages/AzureFunctions.Worker.Extensions.AppConfiguration)
 
-## 🔴Migration to v2 Azure Functions SDK🔴
+## Example
 
-Microsoft suggest to use `FunctionsApplicationBuilder` over generic `HostBuilder` that is why v2 package will only support this api.
+Host will connect to Azure App Configuration via managed identity credentials, so we have to provide
+`APPCONFIG_ENDPOINT` environment variable to let host know that it should load configuration
 
-v1
-```csharp
-var host = new HostBuilder()
-    .ConfigureServices((hostingContext, services) =>
-    {
-        services
-            .AddApplicationInsightsTelemetryWorkerService()
-            .ConfigureStandaloneFunctionsApplicationInsights(hostingContext.Configuration); // <-- magic happens here
-    })
-    .ConfigureFunctionsWebApplication(worker =>
-    {
-        // additional worker configuration
-    })
-    .Build();
-```
-
-v2
-```csharp
-var builder = FunctionsApplication.CreateBuilder(args);
-
-// should be called before "ConfigureFunctionsWebApplication"
-builder.ConfigureStandaloneApplicationInsights(); // <-- now magic happens here
-
-// should be used for HTTP triggered APIs
-builder.ConfigureFunctionsWebApplication();
-
-// additional worker configuration
+launchSettings.json
+```json
+{
+  "profiles": {
+    "AzureFunctions.Worker": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7045",
+      "launchBrowser": false,
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development",
+        "APPCONFIG_ENDPOINT": "https://<app-config-domain>.azconfig.io" // <-- notifies host to load Azure App Configuration
+      }
+    }
+  }
+}
 ```

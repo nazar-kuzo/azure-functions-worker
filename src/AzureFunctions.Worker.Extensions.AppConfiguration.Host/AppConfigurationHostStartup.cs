@@ -12,6 +12,11 @@ public class AppConfigurationHostStartup : IWebJobsConfigurationStartup
 {
     public void Configure(WebJobsBuilderContext context, IWebJobsConfigurationBuilder builder)
     {
+        if (!IsAppConfigurationEnabled())
+        {
+            return;
+        }
+
         if (Environment.GetEnvironmentVariable("APPCONFIG_ENDPOINT") is string appConfigEndpoint)
         {
             // TODO: add option for credentials local cache to improve performance
@@ -31,6 +36,21 @@ public class AppConfigurationHostStartup : IWebJobsConfigurationStartup
                     keyVaultOptions.SetCredential(credentials);
                 });
             });
+        }
+
+        static bool IsAppConfigurationEnabled()
+        {
+            if (Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") == "Development")
+            {
+                return true;
+            }
+
+            if (Environment.GetEnvironmentVariable("APPCONFIG_EXTENSION_ENABLED") is string extensionEnabled)
+            {
+                return extensionEnabled.Equals("True", StringComparison.InvariantCultureIgnoreCase);
+            }
+
+            return false;
         }
     }
 }

@@ -17,6 +17,7 @@
   },
   "extensions": {
     "durableTask": {
+      "hubName": "%DurableTask:HubName%",
       "tracing": {
         "distributedTracingEnabled": true,
         "version": "V2"

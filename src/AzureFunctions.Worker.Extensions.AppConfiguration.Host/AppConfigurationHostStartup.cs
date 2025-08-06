@@ -36,6 +36,9 @@ public class AppConfigurationHostStartup : IWebJobsConfigurationStartup
                     keyVaultOptions.SetCredential(credentials);
                 });
             });
+
+            // ensures that app configuration properties wont override local environment settings
+            ChangeAppConfigurationSourcePriority(builder.ConfigurationBuilder.Sources);
         }
 
         static bool IsAppConfigurationEnabled()
@@ -51,6 +54,14 @@ public class AppConfigurationHostStartup : IWebJobsConfigurationStartup
             }
 
             return false;
+        }
+
+        static void ChangeAppConfigurationSourcePriority(IList<IConfigurationSource> configSources)
+        {
+            var appConfigSource = configSources[^1];
+
+            configSources.RemoveAt(configSources.Count - 1);
+            configSources.Insert(configSources.Count - 1, appConfigSource);
         }
     }
 }

@@ -3,6 +3,8 @@ using AzureFunctions.Worker.Extensions.AppConfiguration.Host;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.AzureAppConfiguration;
+using Microsoft.Extensions.Configuration.EnvironmentVariables;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 
@@ -14,28 +16,38 @@ public class AppConfigurationHostStartup : IWebJobsStartup, IWebJobsConfiguratio
 {
     public void Configure(WebJobsBuilderContext context, IWebJobsConfigurationBuilder builder)
     {
-        if (TryGetAppConfigurationEndpoint() is string appConfigEndpoint)
+        if (TryGetAppConfigurationEndpoint() is string appConfigEndpoint &&
+            Uri.TryCreate(appConfigEndpoint, UriKind.Absolute, out var appConfigUri))
         {
-            // TODO: add option for credentials local cache to improve performance
-            var credentials = new DefaultAzureCredential(new DefaultAzureCredentialOptions
-            {
-                ExcludeEnvironmentCredential = true,
-                ExcludeWorkloadIdentityCredential = true,
-            });
+            var credentialOptions = new DefaultAzureCredentialOptions();
 
-            builder.ConfigurationBuilder.AddAzureAppConfiguration(appConfigOptions =>
+            if (Environment.GetEnvironmentVariable("APPCONFIG_TENANT") is string tenantId)
             {
-                // TODO: add configuration filtering by tags
-                appConfigOptions.Connect(new Uri(appConfigEndpoint), credentials);
+                credentialOptions.TenantId = tenantId;
+            }
 
-                appConfigOptions.ConfigureKeyVault(keyVaultOptions =>
+            var credentials = new DefaultAzureCredential(credentialOptions);
+
+            var appConfigurationSource = CreateAzureAppConfigurationSource(
+                appConfigUri,
+                appConfigOptions =>
                 {
-                    keyVaultOptions.SetCredential(credentials);
+                    appConfigOptions.Connect(appConfigUri, credentials);
+
+                    appConfigOptions.ConfigureKeyVault(keyVaultOptions =>
+                    {
+                        keyVaultOptions.SetCredential(credentials);
+                    });
                 });
-            });
+
+            var environmentConfigurationSource = builder.ConfigurationBuilder.Sources
+                .OfType<EnvironmentVariablesConfigurationSource>()
+                .First();
 
             // ensures that app configuration properties wont override local environment settings
-            ChangeAppConfigurationSourcePriority(builder.ConfigurationBuilder.Sources);
+            builder.ConfigurationBuilder.Sources.Insert(
+                builder.ConfigurationBuilder.Sources.IndexOf(environmentConfigurationSource),
+                appConfigurationSource);
         }
 
         if (IsDevelopment())
@@ -61,17 +73,29 @@ public class AppConfigurationHostStartup : IWebJobsStartup, IWebJobsConfiguratio
             return null;
         }
 
-        static void ChangeAppConfigurationSourcePriority(IList<IConfigurationSource> configSources)
-        {
-            var appConfigSource = configSources[^1];
-
-            configSources.RemoveAt(configSources.Count - 1);
-            configSources.Insert(configSources.Count - 1, appConfigSource);
-        }
-
         static bool IsDevelopment()
         {
             return Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") == "Development";
+        }
+
+        static IConfigurationSource CreateAzureAppConfigurationSource(
+            Uri appConfigUri,
+            Action<AzureAppConfigurationOptions> action,
+            bool optional = false)
+        {
+            var appConfigurationSourceType = typeof(AzureAppConfigurationOptions).Assembly
+                .GetType("Microsoft.Extensions.Configuration.AzureAppConfiguration.AzureAppConfigurationSource")!;
+
+            var configurationSource = (IConfigurationSource) Activator.CreateInstance(appConfigurationSourceType, [action, optional])!;
+
+            if (IsDevelopment())
+            {
+                configurationSource = new CachedConfigurationSource(
+                    configurationSource,
+                    Environment.GetEnvironmentVariable("APPCONFIG_CACHE_ID") ?? appConfigUri.Host);
+            }
+
+            return configurationSource;
         }
     }
 

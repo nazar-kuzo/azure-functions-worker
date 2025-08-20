@@ -759,8 +759,7 @@
         "type": "Project",
         "dependencies": {
           "Microsoft.Azure.WebJobs": "[3.0.41, )",
-          "Microsoft.Extensions.Configuration.AzureAppConfiguration": "[8.3.0, )",
-          "Microsoft.Extensions.Configuration.UserSecrets": "[9.0.8, )"
+          "Microsoft.Extensions.Configuration.AzureAppConfiguration": "[8.3.0, )"
         }
       }
     },
@@ -1519,8 +1518,7 @@
         "type": "Project",
         "dependencies": {
           "Microsoft.Azure.WebJobs": "[3.0.41, )",
-          "Microsoft.Extensions.Configuration.AzureAppConfiguration": "[8.3.0, )",
-          "Microsoft.Extensions.Configuration.UserSecrets": "[9.0.8, )"
+          "Microsoft.Extensions.Configuration.AzureAppConfiguration": "[8.3.0, )"
         }
       }
     }

@@ -18,6 +18,9 @@ var builder = FunctionsApplication.CreateBuilder(args);
 // should be called before "ConfigureFunctionsWebApplication"
 builder.ConfigureStandaloneApplicationInsights();
 
+// connects to Azure App Configuration and caches settings locally
+builder.BootstrapAppConfiguration();
+
 // should be used for HTTP triggered APIs
 builder.ConfigureFunctionsWebApplication();
 

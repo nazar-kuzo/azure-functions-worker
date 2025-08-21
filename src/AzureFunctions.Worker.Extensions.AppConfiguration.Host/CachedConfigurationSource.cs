@@ -1,9 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.Json;
+﻿using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.Configuration.UserSecrets;
 using Microsoft.Extensions.FileProviders;
 
-namespace AzureFunctions.Worker.Extensions.AppConfiguration.Host;
+namespace Microsoft.Extensions.Configuration;
 
 /// <summary>
 /// Wraps Configuration Source with <see cref="JsonConfigurationSource"/> to cache result.
@@ -12,19 +11,18 @@ namespace AzureFunctions.Worker.Extensions.AppConfiguration.Host;
 /// </summary>
 internal sealed class CachedConfigurationSource : IConfigurationSource
 {
+    private static readonly JsonSerializerOptions CacheSerializerOptions = new() { WriteIndented = true };
+
     private readonly IConfigurationSource internalSource;
     private readonly string cacheFilePath;
     private readonly JsonConfigurationSource cacheSource;
 
     public CachedConfigurationSource(
         IConfigurationSource internalSource,
-        string cacheFileId)
+        string cacheId)
     {
         this.internalSource = internalSource;
-
-        this.cacheFilePath = PathHelper
-            .GetSecretsPathFromSecretsId(cacheFileId)
-            .Replace("secrets.json", $"{cacheFileId}.json");
+        this.cacheFilePath = PathHelper.GetSecretsPathFromSecretsId(cacheId);
 
         var directoryPath = Path.GetDirectoryName(this.cacheFilePath)!;
 
@@ -46,24 +44,37 @@ internal sealed class CachedConfigurationSource : IConfigurationSource
     {
         if (File.Exists(this.cacheFilePath))
         {
-            Task.Run(FlushConfigurationToFile);
+            Task.Run(LoadConfigurationToFile);
         }
         else
         {
-            FlushConfigurationToFile();
+            LoadConfigurationToFile();
         }
 
         return this.cacheSource.Build(builder);
 
-        void FlushConfigurationToFile()
+        void LoadConfigurationToFile()
         {
             var provider = this.internalSource.Build(builder);
 
-            provider.Load();
+            try
+            {
+                provider.Load();
 
-            using var stream = File.Open(this.cacheFilePath, FileMode.Create);
+                using var stream = File.Open(this.cacheFilePath, FileMode.Create);
 
-            JsonSerializer.Serialize(stream, provider.GetData());
+                JsonSerializer.Serialize(stream, provider.GetData(), CacheSerializerOptions);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"{nameof(CachedConfigurationSource)}: failed to load internal configuration");
+                Console.WriteLine(ex);
+            }
         }
+    }
+
+    public override string ToString()
+    {
+        return $"{typeof(CachedConfigurationSource).FullName}<{this.internalSource}>";
     }
 }

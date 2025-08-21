@@ -5,11 +5,10 @@
       "commandLineArgs": "--port 7045",
       "launchBrowser": false,
       "environmentVariables": {
-        "DOTNET_ENVIRONMENT": "Development"
+        "DOTNET_ENVIRONMENT": "Development",
         //"APPCONFIG_ENDPOINT": "https://myappconfig.azconfig.io",
         //"APPCONFIG_TENANT": "<tenant-id>",
-        //"APPCONFIG_CACHE_ID": "<cache-file>",
-        //"APPCONFIG_EXTENSION_ENABLED": "false"
+        //"APPCONFIG_EXTENSION_ENABLED": "false",
       }
     }
   }

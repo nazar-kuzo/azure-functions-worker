@@ -3,8 +3,6 @@ using AzureFunctions.Worker.Extensions.AppConfiguration.Host;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.AzureAppConfiguration;
-using Microsoft.Extensions.Configuration.EnvironmentVariables;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 
@@ -16,8 +14,9 @@ public class AppConfigurationHostStartup : IWebJobsStartup, IWebJobsConfiguratio
 {
     public void Configure(WebJobsBuilderContext context, IWebJobsConfigurationBuilder builder)
     {
-        if (TryGetAppConfigurationEndpoint() is string appConfigEndpoint &&
-            Uri.TryCreate(appConfigEndpoint, UriKind.Absolute, out var appConfigUri))
+        var isDevelopment = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") == "Development";
+
+        if (TryGetAppConfigurationEndpoint() is Uri appConfigEndpoint)
         {
             var credentialOptions = new DefaultAzureCredentialOptions();
 
@@ -26,31 +25,21 @@ public class AppConfigurationHostStartup : IWebJobsStartup, IWebJobsConfiguratio
                 credentialOptions.TenantId = tenantId;
             }
 
-            var credentials = new DefaultAzureCredential(credentialOptions);
-
-            var appConfigurationSource = CreateAzureAppConfigurationSource(
-                appConfigUri,
-                appConfigOptions =>
-                {
-                    appConfigOptions.Connect(appConfigUri, credentials);
-
-                    appConfigOptions.ConfigureKeyVault(keyVaultOptions =>
-                    {
-                        keyVaultOptions.SetCredential(credentials);
-                    });
-                });
-
-            var environmentConfigurationSource = builder.ConfigurationBuilder.Sources
-                .OfType<EnvironmentVariablesConfigurationSource>()
-                .First();
-
-            // ensures that app configuration properties wont override local environment settings
-            builder.ConfigurationBuilder.Sources.Insert(
-                builder.ConfigurationBuilder.Sources.IndexOf(environmentConfigurationSource),
-                appConfigurationSource);
+            try
+            {
+                builder.ConfigurationBuilder.AddAzureAppConfiguration(
+                    appConfigEndpoint,
+                    new DefaultAzureCredential(credentialOptions),
+                    useCache: isDevelopment);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"{nameof(AppConfigurationHostStartup)}: failed to initialize Azure App Configuration");
+                Console.WriteLine(ex);
+            }
         }
 
-        if (IsDevelopment())
+        if (isDevelopment)
         {
             // allows configuration binding outside "Values" scope in local.settings.json
             builder.ConfigurationBuilder.AddJsonFile(
@@ -60,47 +49,26 @@ public class AppConfigurationHostStartup : IWebJobsStartup, IWebJobsConfiguratio
                 reloadOnChange: true);
         }
 
-        static string? TryGetAppConfigurationEndpoint()
+        Uri? TryGetAppConfigurationEndpoint()
         {
-            if (IsDevelopment() ||
-                (Environment.GetEnvironmentVariable("APPCONFIG_EXTENSION_ENABLED") is string extensionEnabledValue &&
-                bool.TryParse(extensionEnabledValue, out var extensionEnabled) &&
-                extensionEnabled))
+            var extensionEnabledValue = Environment.GetEnvironmentVariable("APPCONFIG_EXTENSION_ENABLED");
+
+            if (isDevelopment || extensionEnabledValue?.Equals("true", StringComparison.InvariantCultureIgnoreCase) == true)
             {
-                return Environment.GetEnvironmentVariable("APPCONFIG_ENDPOINT");
+                var appConfigEndpoint = Environment.GetEnvironmentVariable("APPCONFIG_ENDPOINT");
+
+                return Uri.TryCreate(appConfigEndpoint, UriKind.Absolute, out var appConfigUri)
+                    ? appConfigUri
+                    : null;
             }
 
             return null;
-        }
-
-        static bool IsDevelopment()
-        {
-            return Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") == "Development";
-        }
-
-        static IConfigurationSource CreateAzureAppConfigurationSource(
-            Uri appConfigUri,
-            Action<AzureAppConfigurationOptions> action,
-            bool optional = false)
-        {
-            var appConfigurationSourceType = typeof(AzureAppConfigurationOptions).Assembly
-                .GetType("Microsoft.Extensions.Configuration.AzureAppConfiguration.AzureAppConfigurationSource")!;
-
-            var configurationSource = (IConfigurationSource) Activator.CreateInstance(appConfigurationSourceType, [action, optional])!;
-
-            if (IsDevelopment())
-            {
-                configurationSource = new CachedConfigurationSource(
-                    configurationSource,
-                    Environment.GetEnvironmentVariable("APPCONFIG_CACHE_ID") ?? appConfigUri.Host);
-            }
-
-            return configurationSource;
         }
     }
 
     public void Configure(IWebJobsBuilder builder)
     {
+        // improves existing name resolver with ability to resolve nested settings
         builder.Services.AddSingleton<INameResolver, ImprovedNameResolver>();
     }
 }

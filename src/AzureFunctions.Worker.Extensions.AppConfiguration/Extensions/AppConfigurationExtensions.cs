@@ -19,7 +19,7 @@ public static class AppConfigurationExtensions
     /// <param name="configureAppConfigurationOptions">Action to configure <see cref="AzureAppConfigurationOptions"/></param>
     /// <param name="configureKeyVaultOptions">Action to configure <see cref="AzureAppConfigurationKeyVaultOptions"/></param>
     /// <returns><see cref="IHostApplicationBuilder"/> with additional configuration sources registered</returns>
-    public static IHostApplicationBuilder BootstrapAppConfiguration(
+    public static IHostApplicationBuilder LoadAppConfiguration(
         this IHostApplicationBuilder appBuilder,
         string appConfigEndpointVariableName = "APPCONFIG_ENDPOINT",
         TokenCredential? credential = null,

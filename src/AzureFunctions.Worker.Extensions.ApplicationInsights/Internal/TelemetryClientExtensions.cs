@@ -107,20 +107,14 @@ internal static partial class TelemetryClientExtensions
             telemetry.Id = activity.Id;
         }
 
-        foreach (var item in activity.Baggage)
+        foreach (var item in activity.Baggage.Where(item => !telemetry.Properties.ContainsKey(item.Key)))
         {
-            if (!telemetry.Properties.ContainsKey(item.Key))
-            {
-                telemetry.Properties.Add(item);
-            }
+            telemetry.Properties.Add(item);
         }
 
-        foreach (var item in activity.Tags)
+        foreach (var item in activity.Tags.Where(item => !telemetry.Properties.ContainsKey(item.Key)))
         {
-            if (!telemetry.Properties.ContainsKey(item.Key))
-            {
-                telemetry.Properties.Add(item);
-            }
+            telemetry.Properties.Add(item);
         }
 
         return telemetry;

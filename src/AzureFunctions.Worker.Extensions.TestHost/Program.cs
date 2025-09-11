@@ -45,6 +45,8 @@ builder
         });
     });
 
+builder.ConfigureDurableTaskClient();
+
 builder.UseAspNetCoreMiddleware(app =>
 {
     app.UseExceptionHandler();

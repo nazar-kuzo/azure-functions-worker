@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureFunctions.Worker.Exten
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureFunctions.Worker.Extensions.Tests", "AzureFunctions.Worker.Extensions.Tests\AzureFunctions.Worker.Extensions.Tests.csproj", "{B23EADFE-9762-4D25-9D20-93C2AD67134B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureFunctions.Worker.Extensions.DurableTask.Client", "AzureFunctions.Worker.Extensions.DurableTask.Client\AzureFunctions.Worker.Extensions.DurableTask.Client.csproj", "{42F98AD4-3676-46D1-A82B-F19AB0DACB2C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +73,10 @@ Global
 		{B23EADFE-9762-4D25-9D20-93C2AD67134B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B23EADFE-9762-4D25-9D20-93C2AD67134B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B23EADFE-9762-4D25-9D20-93C2AD67134B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42F98AD4-3676-46D1-A82B-F19AB0DACB2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42F98AD4-3676-46D1-A82B-F19AB0DACB2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42F98AD4-3676-46D1-A82B-F19AB0DACB2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42F98AD4-3676-46D1-A82B-F19AB0DACB2C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

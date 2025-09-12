@@ -1,22 +1,33 @@
-﻿using AzureFunctions.Worker.Extensions.DurableTask.Client.Internal;
+﻿using System.Diagnostics;
+using AzureFunctions.Worker.Extensions.DurableTask.Client.Internal;
 using DurableTask.AzureStorage;
 using DurableTask.Core;
+using DurableTask.Core.History;
 using DurableTask.Core.Query;
 
 namespace Microsoft.Azure.Functions.Worker.Extensions.DurableTask;
 
-public sealed class DurableTaskClient(
-    IOptions<DurableTaskClientOptions> durableTaskClientOptions,
-    SystemTextJsonDataConverter dataConverter)
+public sealed class DurableTaskClient
 {
-    private readonly TaskHubClient taskHubClient = new(
-        new AzureStorageOrchestrationService(new()
+    public DurableTaskClient(
+        IOptions<DurableTaskClientOptions> durableTaskClientOptions,
+        SystemTextJsonDataConverter dataConverter)
+    {
+        this.durableTaskClientOptions = durableTaskClientOptions;
+        this.dataConverter = dataConverter;
+        this.serviceClient = new AzureStorageOrchestrationService(new()
         {
             StorageAccountClientProvider = new(durableTaskClientOptions.Value.ConnectionString),
             TaskHubName = durableTaskClientOptions.Value.TaskHubName,
             ThrowExceptionOnInvalidDedupeStatus = durableTaskClientOptions.Value.ThrowExceptionOnInvalidOverridableStatus,
-        }),
-        dataConverter);
+        });
+        this.taskHubClient = new(this.serviceClient, dataConverter);
+    }
+
+    private readonly IOptions<DurableTaskClientOptions> durableTaskClientOptions;
+    private readonly SystemTextJsonDataConverter dataConverter;
+    private readonly IOrchestrationServiceClient serviceClient;
+    private readonly TaskHubClient taskHubClient;
 
     public async Task<IEnumerable<OrchestrationState>> ListInstancesAsync(
         string? instanceIdPrefix = null,
@@ -26,13 +37,11 @@ public sealed class DurableTaskClient(
     {
         var result = Enumerable.Empty<OrchestrationState>();
 
-        var queryClient = (IOrchestrationServiceQueryClient) this.taskHubClient.ServiceClient;
-
         var pageResult = default(OrchestrationQueryResult);
 
         do
         {
-            pageResult = await queryClient.GetOrchestrationWithQueryAsync(
+            pageResult = await ((IOrchestrationServiceQueryClient) this.serviceClient).GetOrchestrationWithQueryAsync(
                 new OrchestrationQuery
                 {
                     PageSize = 1000,
@@ -73,13 +82,29 @@ public sealed class DurableTaskClient(
         string? instanceId,
         T? input)
     {
-        var orchestrationInstance = await this.taskHubClient.CreateOrchestrationInstanceAsync(
-            orchestratorFunctionName,
-            version: string.Empty,
-            instanceId,
-            input,
-            tags: null,
-            durableTaskClientOptions.Value.StatusesNotToOverride);
+        var orchestrationInstance = new OrchestrationInstance
+        {
+            InstanceId = instanceId ?? Guid.NewGuid().ToString("N"),
+            ExecutionId = Guid.NewGuid().ToString("N"),
+        };
+
+        var inputJson = input is null ? null : this.dataConverter.Serialize(input);
+
+        await this.serviceClient.CreateTaskOrchestrationAsync(
+            new TaskMessage
+            {
+                OrchestrationInstance = orchestrationInstance,
+                Event = new ExecutionStartedEvent(-1, inputJson)
+                {
+                    Name = orchestratorFunctionName,
+                    OrchestrationInstance = orchestrationInstance,
+                    Version = string.Empty,
+                    ParentTraceContext = Activity.Current?.Id == null
+                        ? null
+                        : new(Activity.Current.Id, Activity.Current.TraceStateString),
+                },
+            },
+            [.. this.durableTaskClientOptions.Value.StatusesNotToOverride]);
 
         return orchestrationInstance.InstanceId;
     }
@@ -96,7 +121,7 @@ public sealed class DurableTaskClient(
 
     public async Task RaiseEventAsync(string instanceId, string eventName, object? eventData = null)
     {
-        if (durableTaskClientOptions.Value.ThrowStatusExceptionsOnRaiseEvent)
+        if (this.durableTaskClientOptions.Value.ThrowStatusExceptionsOnRaiseEvent)
         {
             var orchestration = await GetOrchestrationInstanceStateAsync(instanceId);
 

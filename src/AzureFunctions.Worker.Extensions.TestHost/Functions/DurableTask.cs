@@ -1,6 +1,7 @@
 ﻿using DurableTask.Core;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Extensions.DurableTask;
 using DurableClientAttribute = Microsoft.Azure.Functions.Worker.Extensions.DurableTask.DurableClientAttribute;
@@ -17,14 +18,22 @@ public sealed class DurableTask(IOptions<JsonOptions> jsonOptions)
     {
         return (await durableTaskClient
             .ListInstancesAsync(prefix))
-            .Select(orchestration => new Orchestration
-            {
-                Id = orchestration.OrchestrationInstance.InstanceId,
-                OrchestratinFunction = orchestration.Name,
-                RuntimeStatus = orchestration.OrchestrationStatus,
-                CustomStatus = JsonSerializer
-                    .Deserialize<JsonElement>(orchestration.Status, jsonOptions.Value.JsonSerializerOptions),
-            });
+            .Select(orchestration => Orchestration.FromOrchestrationState(orchestration, jsonOptions.Value.JsonSerializerOptions));
+    }
+
+    [Function(nameof(DurableTask) + "_" + nameof(SartNewInstance))]
+    public async Task<Orchestration> SartNewInstance(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "POST", Route = "durable-task/instances")] HttpRequest request,
+        [DurableClient] DurableTaskClient durableTaskClient,
+        [FromQuery, Required] string orchestratorFunctionName,
+        [FromQuery] string? instanceId = null,
+        [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] JsonElement? input = null)
+    {
+        instanceId = await durableTaskClient.StartNewAsync(orchestratorFunctionName, instanceId, input);
+
+        var orchestration = await durableTaskClient.GetStatusAsync(instanceId);
+
+        return Orchestration.FromOrchestrationState(orchestration!, jsonOptions.Value.JsonSerializerOptions);
     }
 }
 
@@ -38,4 +47,19 @@ public class Orchestration
     public OrchestrationStatus RuntimeStatus { get; set; }
 
     public JsonElement? CustomStatus { get; set; }
+
+    public static Orchestration FromOrchestrationState(
+        OrchestrationState orchestration,
+        JsonSerializerOptions serializerOptions)
+    {
+        return new Orchestration
+        {
+            Id = orchestration.OrchestrationInstance.InstanceId,
+            OrchestratinFunction = orchestration.Name,
+            RuntimeStatus = orchestration.OrchestrationStatus,
+            CustomStatus = orchestration.Status == null
+                ? null
+                : JsonSerializer.Deserialize<JsonElement>(orchestration.Status, serializerOptions),
+        };
+    }
 }

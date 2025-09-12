@@ -13,6 +13,7 @@
     "LogLevel": {
       "Default": "Information",
       "Microsoft.AspNetCore": "Warning",
+      "Microsoft.DurableTask.Worker.Orchestrations": "Warning",
       "AzureFunctions": "Trace"
     }
   }

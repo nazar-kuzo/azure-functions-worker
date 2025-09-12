@@ -108,7 +108,10 @@ public sealed class DurableTaskClient
         return orchestrationInstance.InstanceId;
     }
 
-    public async Task<OrchestrationState?> WaitForOrchestrationAsync(string instanceId, TimeSpan timeout, CancellationToken cancellationToken)
+    public async Task<OrchestrationState?> WaitForOrchestrationAsync(
+        string instanceId,
+        TimeSpan timeout,
+        CancellationToken cancellationToken = default)
     {
         return await this.taskHubClient.WaitForOrchestrationAsync(
             new OrchestrationInstance { InstanceId = instanceId },

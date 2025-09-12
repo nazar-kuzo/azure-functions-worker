@@ -18,12 +18,20 @@ internal class FunctionRequestTelemetryMiddleware(
     HttpRequestActivityCoordinator? activityCoordinator = null)
     : IFunctionsWorkerMiddleware
 {
-    private readonly ConcurrentDictionary<string, bool> httpTriggerFunctions = new();
+    private readonly ConcurrentDictionary<string, string[]> functionTriggers = new();
 
     public async Task Invoke(FunctionContext context, FunctionExecutionDelegate next)
     {
+        // durable functions distributed logging is handled on the host
+        if (FunctionContainsTriggers("orchestrationTrigger", "activityTrigger"))
+        {
+            await next(context);
+
+            return;
+        }
+
         var hostActivity = Activity.Current!;
-        var shouldDelegateRequestActivity = activityCoordinator is not null && IsHttpTriggerFunction();
+        var shouldDelegateRequestActivity = activityCoordinator is not null && FunctionContainsTriggers("httpTrigger");
 
         using var requestActivity = telemetryClient.StartRequestOperation(hostActivity);
 
@@ -68,13 +76,15 @@ internal class FunctionRequestTelemetryMiddleware(
             }
         }
 
-        bool IsHttpTriggerFunction()
+        bool FunctionContainsTriggers(params string[] expectedTriggers)
         {
-            return this.httpTriggerFunctions.GetOrAdd(
-                context.FunctionId,
-                static (_, context) => context.FunctionDefinition.InputBindings
-                    .Any(binding => binding.Value.Type.Equals("httpTrigger", StringComparison.OrdinalIgnoreCase)),
-                context);
+            return this.functionTriggers
+                .GetOrAdd(
+                    context.FunctionId,
+                    static (_, context) => [.. context.FunctionDefinition.InputBindings.Select(binding => binding.Value.Type)],
+                    context)
+                .Intersect(expectedTriggers, StringComparer.OrdinalIgnoreCase)
+                .Any();
         }
     }
 }

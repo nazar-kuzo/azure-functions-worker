@@ -49,17 +49,7 @@ public static class WorkerExtensions
 
         worker.Logging.AddConfiguration(worker.Configuration.GetSection("Logging"));
 
-        // remove default logger filter rules
-        worker.Logging.Services.Configure<LoggerFilterOptions>(options =>
-        {
-            var applicationInsightsLoggerProviderName = typeof(ApplicationInsightsLoggerProvider).FullName;
-
-            if (options.Rules is List<LoggerFilterRule> rules)
-            {
-                // remove all default rules set by SDK
-                rules.RemoveAll(rule => rule.ProviderName == applicationInsightsLoggerProviderName);
-            }
-        });
+        worker.RemoveDefaultLoggerFilterRules();
 
         worker.UseMiddleware<FunctionRequestTelemetryMiddleware>();
 
@@ -76,5 +66,24 @@ public static class WorkerExtensions
                 worker.Services.Remove(telemetryModuleDescriptor);
             }
         }
+    }
+
+    /// <summary>
+    /// Fixes out of the box Application Insights behavior that adds a default logging filter
+    /// that instructs ILogger to capture only Warning and more severe logs.
+    /// </summary>
+    /// <param name="worker">Functions application builder</param>
+    public static void RemoveDefaultLoggerFilterRules(this FunctionsApplicationBuilder worker)
+    {
+        worker.Logging.Services.Configure<LoggerFilterOptions>(options =>
+        {
+            var applicationInsightsLoggerProviderName = typeof(ApplicationInsightsLoggerProvider).FullName;
+
+            if (options.Rules is List<LoggerFilterRule> rules)
+            {
+                // remove all default rules set by SDK
+                rules.RemoveAll(rule => rule.ProviderName == applicationInsightsLoggerProviderName);
+            }
+        });
     }
 }

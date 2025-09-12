@@ -322,8 +322,8 @@
       },
       "Microsoft.Azure.Functions.Worker.Extensions.DurableTask": {
         "type": "Transitive",
-        "resolved": "1.6.1",
-        "contentHash": "HmKP1ilq7zYnpjRTrc4XpHf55HuRzF9Hc1hBJgUqNoEyQk6UCfo+wc5Cq7tYeqy1mLWF6yUFdydwN+d5awJ0pg==",
+        "resolved": "1.7.1",
+        "contentHash": "WpV/dDUHErDBll8cWd+/5OzfQW5rMit8UuEd4ixG7dnboieTvpJ/lNf7YjF4/wTHV1K+8GRNr84xWiKQnFfFaQ==",
         "dependencies": {
           "Grpc.Net.Client": "2.70.0",
           "Microsoft.Azure.Functions.Worker.Core": "1.16.0",
@@ -871,8 +871,8 @@
       },
       "Microsoft.OpenApi": {
         "type": "Transitive",
-        "resolved": "1.6.23",
-        "contentHash": "tZ1I0KXnn98CWuV8cpI247A17jaY+ILS9vvF7yhI0uPPEqF4P1d7BWL5Uwtel10w9NucllHB3nTkfYTAcHAh8g=="
+        "resolved": "1.6.25",
+        "contentHash": "ZahSqNGtNV7N0JBYS/IYXPkLVexL/AZFxo6pqxv6A7Uli7Q7zfitNjkaqIcsV73Ukzxi4IlJdyDgcQiMXiH8cw=="
       },
       "Microsoft.SourceLink.Common": {
         "type": "Transitive",
@@ -900,43 +900,43 @@
       },
       "Swashbuckle.AspNetCore": {
         "type": "Transitive",
-        "resolved": "9.0.3",
-        "contentHash": "Akk4oFgy0ST8Q8pZTfPbrt045tWNyMMiKhlbYjG3qnjQZLz645IL5vhQm7NLicc2sAAQ+vftArIlsYWFevmb2g==",
+        "resolved": "9.0.4",
+        "contentHash": "4hghaogMoS87Ivjj8s7aGuGsxrsjXZpjNvahLsN+zSLrZQcV8zQyiBweBd9AXC1sGkeNYb9/hbeS1EXrZ/hKjQ==",
         "dependencies": {
           "Microsoft.Extensions.ApiDescription.Server": "8.0.0",
-          "Swashbuckle.AspNetCore.Swagger": "9.0.3",
-          "Swashbuckle.AspNetCore.SwaggerGen": "9.0.3",
-          "Swashbuckle.AspNetCore.SwaggerUI": "9.0.3"
+          "Swashbuckle.AspNetCore.Swagger": "9.0.4",
+          "Swashbuckle.AspNetCore.SwaggerGen": "9.0.4",
+          "Swashbuckle.AspNetCore.SwaggerUI": "9.0.4"
         }
       },
       "Swashbuckle.AspNetCore.Annotations": {
         "type": "Transitive",
-        "resolved": "9.0.3",
-        "contentHash": "YqrsOYqw5TQ5PBsc1eQS4M9LGyxICq6bL+933qbh8xI42uUpIA/YhNb08fVFEvPnxQSTTeYPIomh1QUVNUDorg==",
+        "resolved": "9.0.4",
+        "contentHash": "3A1WdbCnGiz/h5DcfkU0kPWUvuf3ubOq4G3x/eMLZ+bM0W2PTnS5n/1XS1P125qiFvzDhOyaWNO0U7+ePxeIuA==",
         "dependencies": {
-          "Swashbuckle.AspNetCore.SwaggerGen": "9.0.3"
+          "Swashbuckle.AspNetCore.SwaggerGen": "9.0.4"
         }
       },
       "Swashbuckle.AspNetCore.Swagger": {
         "type": "Transitive",
-        "resolved": "9.0.3",
-        "contentHash": "CGpkZDWj1g/yH/0wYkxUtBhiFo5TY/Esq2fS0vlBvLOs1UL2Jzef9tdtYmTdd3zBPtnMyXQcsXjMt9yCxz4VaA==",
+        "resolved": "9.0.4",
+        "contentHash": "syU8U4Eg3DfhU+BBeDUh66erwDsYOhp82InXbrOsqWP3qoOfQbBtePcTetkLNanovYHYX40alZBE6gQQFtBZkQ==",
         "dependencies": {
-          "Microsoft.OpenApi": "1.6.23"
+          "Microsoft.OpenApi": "1.6.25"
         }
       },
       "Swashbuckle.AspNetCore.SwaggerGen": {
         "type": "Transitive",
-        "resolved": "9.0.3",
-        "contentHash": "STqjhw1TZiEGmIRgE6jcJUOcgU/Fjquc6dP4GqbuwBzqWZAWr/9T7FZOGWYEwKnmkMplzlUNepGHwnUrfTP0fw==",
+        "resolved": "9.0.4",
+        "contentHash": "GnCikaq7kagEckGGsrVnKl2icRQebyr14/7s3T/rQQO7edOIXkxtjTOJZqbazOxaTXBDCDdSInMiYbMQhFnE5Q==",
         "dependencies": {
-          "Swashbuckle.AspNetCore.Swagger": "9.0.3"
+          "Swashbuckle.AspNetCore.Swagger": "9.0.4"
         }
       },
       "Swashbuckle.AspNetCore.SwaggerUI": {
         "type": "Transitive",
-        "resolved": "9.0.3",
-        "contentHash": "DgJKJASz5OAygeKv2+N0FCZVhQylESqLXrtrRAqIT0vKpX7t5ImJ1FL6+6OqxKiamGkL0jchRXR8OgpMSsMh8w=="
+        "resolved": "9.0.4",
+        "contentHash": "2ugT2OvZsKHqk/2rMDmuqDuFmtix0NvzlXxAfnfHROVMTovbx7Z0UsOQHZa462DBTgdBFnR2Ss6wm4fypfymdA=="
       },
       "System.ClientModel": {
         "type": "Transitive",
@@ -1314,13 +1314,13 @@
       "azurefunctions.worker.extensions.durabletask": {
         "type": "Project",
         "dependencies": {
-          "Microsoft.Azure.Functions.Worker.Extensions.DurableTask": "[1.6.1, )"
+          "Microsoft.Azure.Functions.Worker.Extensions.DurableTask": "[1.7.1, )"
         }
       },
       "azurefunctions.worker.extensions.durabletask.client": {
         "type": "Project",
         "dependencies": {
-          "DurableTask.Client.AzureStorage": "[2.0.29, )",
+          "DurableTask.Client.AzureStorage": "[2.0.30, )",
           "Microsoft.Azure.Functions.Worker": "[2.0.0, )",
           "Microsoft.Azure.Functions.Worker.Extensions.Abstractions": "[1.3.0, )"
         }
@@ -1328,9 +1328,9 @@
       "azurefunctions.worker.extensions.swashbuckle": {
         "type": "Project",
         "dependencies": {
-          "AzureFunctions.Worker.Extensions.AspNetCore": "[2.0.29, )",
-          "Swashbuckle.AspNetCore": "[9.0.3, )",
-          "Swashbuckle.AspNetCore.Annotations": "[9.0.3, )"
+          "AzureFunctions.Worker.Extensions.AspNetCore": "[2.0.30, )",
+          "Swashbuckle.AspNetCore": "[9.0.4, )",
+          "Swashbuckle.AspNetCore.Annotations": "[9.0.4, )"
         }
       },
       "durabletask.client.azurestorage": {
@@ -1661,8 +1661,8 @@
       },
       "Microsoft.Azure.Functions.Worker.Extensions.DurableTask": {
         "type": "Transitive",
-        "resolved": "1.6.1",
-        "contentHash": "HmKP1ilq7zYnpjRTrc4XpHf55HuRzF9Hc1hBJgUqNoEyQk6UCfo+wc5Cq7tYeqy1mLWF6yUFdydwN+d5awJ0pg==",
+        "resolved": "1.7.1",
+        "contentHash": "WpV/dDUHErDBll8cWd+/5OzfQW5rMit8UuEd4ixG7dnboieTvpJ/lNf7YjF4/wTHV1K+8GRNr84xWiKQnFfFaQ==",
         "dependencies": {
           "Grpc.Net.Client": "2.70.0",
           "Microsoft.Azure.Functions.Worker.Core": "1.16.0",
@@ -2210,8 +2210,8 @@
       },
       "Microsoft.OpenApi": {
         "type": "Transitive",
-        "resolved": "1.6.23",
-        "contentHash": "tZ1I0KXnn98CWuV8cpI247A17jaY+ILS9vvF7yhI0uPPEqF4P1d7BWL5Uwtel10w9NucllHB3nTkfYTAcHAh8g=="
+        "resolved": "1.6.25",
+        "contentHash": "ZahSqNGtNV7N0JBYS/IYXPkLVexL/AZFxo6pqxv6A7Uli7Q7zfitNjkaqIcsV73Ukzxi4IlJdyDgcQiMXiH8cw=="
       },
       "Microsoft.SourceLink.Common": {
         "type": "Transitive",
@@ -2239,43 +2239,43 @@
       },
       "Swashbuckle.AspNetCore": {
         "type": "Transitive",
-        "resolved": "9.0.3",
-        "contentHash": "Akk4oFgy0ST8Q8pZTfPbrt045tWNyMMiKhlbYjG3qnjQZLz645IL5vhQm7NLicc2sAAQ+vftArIlsYWFevmb2g==",
+        "resolved": "9.0.4",
+        "contentHash": "4hghaogMoS87Ivjj8s7aGuGsxrsjXZpjNvahLsN+zSLrZQcV8zQyiBweBd9AXC1sGkeNYb9/hbeS1EXrZ/hKjQ==",
         "dependencies": {
           "Microsoft.Extensions.ApiDescription.Server": "9.0.0",
-          "Swashbuckle.AspNetCore.Swagger": "9.0.3",
-          "Swashbuckle.AspNetCore.SwaggerGen": "9.0.3",
-          "Swashbuckle.AspNetCore.SwaggerUI": "9.0.3"
+          "Swashbuckle.AspNetCore.Swagger": "9.0.4",
+          "Swashbuckle.AspNetCore.SwaggerGen": "9.0.4",
+          "Swashbuckle.AspNetCore.SwaggerUI": "9.0.4"
         }
       },
       "Swashbuckle.AspNetCore.Annotations": {
         "type": "Transitive",
-        "resolved": "9.0.3",
-        "contentHash": "YqrsOYqw5TQ5PBsc1eQS4M9LGyxICq6bL+933qbh8xI42uUpIA/YhNb08fVFEvPnxQSTTeYPIomh1QUVNUDorg==",
+        "resolved": "9.0.4",
+        "contentHash": "3A1WdbCnGiz/h5DcfkU0kPWUvuf3ubOq4G3x/eMLZ+bM0W2PTnS5n/1XS1P125qiFvzDhOyaWNO0U7+ePxeIuA==",
         "dependencies": {
-          "Swashbuckle.AspNetCore.SwaggerGen": "9.0.3"
+          "Swashbuckle.AspNetCore.SwaggerGen": "9.0.4"
         }
       },
       "Swashbuckle.AspNetCore.Swagger": {
         "type": "Transitive",
-        "resolved": "9.0.3",
-        "contentHash": "CGpkZDWj1g/yH/0wYkxUtBhiFo5TY/Esq2fS0vlBvLOs1UL2Jzef9tdtYmTdd3zBPtnMyXQcsXjMt9yCxz4VaA==",
+        "resolved": "9.0.4",
+        "contentHash": "syU8U4Eg3DfhU+BBeDUh66erwDsYOhp82InXbrOsqWP3qoOfQbBtePcTetkLNanovYHYX40alZBE6gQQFtBZkQ==",
         "dependencies": {
-          "Microsoft.OpenApi": "1.6.23"
+          "Microsoft.OpenApi": "1.6.25"
         }
       },
       "Swashbuckle.AspNetCore.SwaggerGen": {
         "type": "Transitive",
-        "resolved": "9.0.3",
-        "contentHash": "STqjhw1TZiEGmIRgE6jcJUOcgU/Fjquc6dP4GqbuwBzqWZAWr/9T7FZOGWYEwKnmkMplzlUNepGHwnUrfTP0fw==",
+        "resolved": "9.0.4",
+        "contentHash": "GnCikaq7kagEckGGsrVnKl2icRQebyr14/7s3T/rQQO7edOIXkxtjTOJZqbazOxaTXBDCDdSInMiYbMQhFnE5Q==",
         "dependencies": {
-          "Swashbuckle.AspNetCore.Swagger": "9.0.3"
+          "Swashbuckle.AspNetCore.Swagger": "9.0.4"
         }
       },
       "Swashbuckle.AspNetCore.SwaggerUI": {
         "type": "Transitive",
-        "resolved": "9.0.3",
-        "contentHash": "DgJKJASz5OAygeKv2+N0FCZVhQylESqLXrtrRAqIT0vKpX7t5ImJ1FL6+6OqxKiamGkL0jchRXR8OgpMSsMh8w=="
+        "resolved": "9.0.4",
+        "contentHash": "2ugT2OvZsKHqk/2rMDmuqDuFmtix0NvzlXxAfnfHROVMTovbx7Z0UsOQHZa462DBTgdBFnR2Ss6wm4fypfymdA=="
       },
       "System.ClientModel": {
         "type": "Transitive",
@@ -2653,13 +2653,13 @@
       "azurefunctions.worker.extensions.durabletask": {
         "type": "Project",
         "dependencies": {
-          "Microsoft.Azure.Functions.Worker.Extensions.DurableTask": "[1.6.1, )"
+          "Microsoft.Azure.Functions.Worker.Extensions.DurableTask": "[1.7.1, )"
         }
       },
       "azurefunctions.worker.extensions.durabletask.client": {
         "type": "Project",
         "dependencies": {
-          "DurableTask.Client.AzureStorage": "[2.0.29, )",
+          "DurableTask.Client.AzureStorage": "[2.0.30, )",
           "Microsoft.Azure.Functions.Worker": "[2.0.0, )",
           "Microsoft.Azure.Functions.Worker.Extensions.Abstractions": "[1.3.0, )"
         }
@@ -2667,9 +2667,9 @@
       "azurefunctions.worker.extensions.swashbuckle": {
         "type": "Project",
         "dependencies": {
-          "AzureFunctions.Worker.Extensions.AspNetCore": "[2.0.29, )",
-          "Swashbuckle.AspNetCore": "[9.0.3, )",
-          "Swashbuckle.AspNetCore.Annotations": "[9.0.3, )"
+          "AzureFunctions.Worker.Extensions.AspNetCore": "[2.0.30, )",
+          "Swashbuckle.AspNetCore": "[9.0.4, )",
+          "Swashbuckle.AspNetCore.Annotations": "[9.0.4, )"
         }
       },
       "durabletask.client.azurestorage": {

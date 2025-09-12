@@ -4,9 +4,9 @@
     "net8.0": {
       "Microsoft.Azure.Functions.Worker.Extensions.DurableTask": {
         "type": "Direct",
-        "requested": "[1.6.1, )",
-        "resolved": "1.6.1",
-        "contentHash": "HmKP1ilq7zYnpjRTrc4XpHf55HuRzF9Hc1hBJgUqNoEyQk6UCfo+wc5Cq7tYeqy1mLWF6yUFdydwN+d5awJ0pg==",
+        "requested": "[1.7.1, )",
+        "resolved": "1.7.1",
+        "contentHash": "WpV/dDUHErDBll8cWd+/5OzfQW5rMit8UuEd4ixG7dnboieTvpJ/lNf7YjF4/wTHV1K+8GRNr84xWiKQnFfFaQ==",
         "dependencies": {
           "Grpc.Net.Client": "2.70.0",
           "Microsoft.Azure.Functions.Worker.Core": "1.16.0",
@@ -594,9 +594,9 @@
     "net9.0": {
       "Microsoft.Azure.Functions.Worker.Extensions.DurableTask": {
         "type": "Direct",
-        "requested": "[1.6.1, )",
-        "resolved": "1.6.1",
-        "contentHash": "HmKP1ilq7zYnpjRTrc4XpHf55HuRzF9Hc1hBJgUqNoEyQk6UCfo+wc5Cq7tYeqy1mLWF6yUFdydwN+d5awJ0pg==",
+        "requested": "[1.7.1, )",
+        "resolved": "1.7.1",
+        "contentHash": "WpV/dDUHErDBll8cWd+/5OzfQW5rMit8UuEd4ixG7dnboieTvpJ/lNf7YjF4/wTHV1K+8GRNr84xWiKQnFfFaQ==",
         "dependencies": {
           "Grpc.Net.Client": "2.70.0",
           "Microsoft.Azure.Functions.Worker.Core": "1.16.0",

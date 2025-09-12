@@ -23,6 +23,8 @@ namespace Microsoft.Extensions.DependencyInjection;
 /// </summary>
 public static class WorkerExtensions
 {
+    private static bool isAspNetCoreMiddlewareRegistered = false;
+
     /// <summary>
     /// Enables AspNetCore MVC model binding for Azure functions
     /// parameter binding and exposes AspNetCore related Function metadata
@@ -56,6 +58,8 @@ public static class WorkerExtensions
         });
 
         worker.UseWhen<AspNetCoreIntegrationMiddleware>(context => context.GetHttpContext() is not null);
+
+        worker.UseAspNetCoreMiddleware(_ => { });
 
         var mvcBuilder = worker.Services
             .AddMvcCore()
@@ -120,26 +124,31 @@ public static class WorkerExtensions
             return ActivatorUtilities.CreateInstance<AspNetCoreProxyMiddleware>(serviceProvider, app.Build());
         });
 
-        // let internal UseEndpoints middleware to suppress unhandled authorization
-        worker.Services.PostConfigure<RouteOptions>(routeOptions =>
+        if (!isAspNetCoreMiddlewareRegistered)
         {
-            routeOptions.SuppressCheckForUnhandledSecurityMetadata = true;
-        });
+            isAspNetCoreMiddlewareRegistered = true;
 
-        worker.Use(next =>
-        {
-            return functionContext =>
+            // let internal UseEndpoints middleware to suppress unhandled authorization
+            worker.Services.PostConfigure<RouteOptions>(routeOptions =>
             {
-                if (functionContext.GetHttpContext() is not null)
-                {
-                    return functionContext.InstanceServices
-                        .GetRequiredService<AspNetCoreProxyMiddleware>()
-                        .Invoke(functionContext, next);
-                }
+                routeOptions.SuppressCheckForUnhandledSecurityMetadata = true;
+            });
 
-                return next.Invoke(functionContext);
-            };
-        });
+            worker.Use(next =>
+            {
+                return functionContext =>
+                {
+                    if (functionContext.GetHttpContext() is not null)
+                    {
+                        return functionContext.InstanceServices
+                            .GetRequiredService<AspNetCoreProxyMiddleware>()
+                            .Invoke(functionContext, next);
+                    }
+
+                    return next.Invoke(functionContext);
+                };
+            });
+        }
 
         return worker;
     }

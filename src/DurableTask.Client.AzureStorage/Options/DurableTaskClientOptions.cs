@@ -1,7 +1,7 @@
 ﻿using DurableTask.Core;
 using DurableTask.Core.Exceptions;
 
-namespace Microsoft.Azure.Functions.Worker.Extensions.DurableTask;
+namespace DurableTask.Client;
 
 /// <summary>
 /// Configuration options for the Durable Task Client extension.

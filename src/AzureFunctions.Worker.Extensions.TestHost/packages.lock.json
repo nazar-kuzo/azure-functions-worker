@@ -1320,7 +1320,7 @@
       "azurefunctions.worker.extensions.durabletask.client": {
         "type": "Project",
         "dependencies": {
-          "Microsoft.Azure.DurableTask.AzureStorage": "[2.4.0, )",
+          "DurableTask.Client.AzureStorage": "[2.0.29, )",
           "Microsoft.Azure.Functions.Worker": "[2.0.0, )",
           "Microsoft.Azure.Functions.Worker.Extensions.Abstractions": "[1.3.0, )"
         }
@@ -1331,6 +1331,12 @@
           "AzureFunctions.Worker.Extensions.AspNetCore": "[2.0.29, )",
           "Swashbuckle.AspNetCore": "[9.0.3, )",
           "Swashbuckle.AspNetCore.Annotations": "[9.0.3, )"
+        }
+      },
+      "durabletask.client.azurestorage": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.Azure.DurableTask.AzureStorage": "[2.4.0, )"
         }
       }
     },
@@ -2653,7 +2659,7 @@
       "azurefunctions.worker.extensions.durabletask.client": {
         "type": "Project",
         "dependencies": {
-          "Microsoft.Azure.DurableTask.AzureStorage": "[2.4.0, )",
+          "DurableTask.Client.AzureStorage": "[2.0.29, )",
           "Microsoft.Azure.Functions.Worker": "[2.0.0, )",
           "Microsoft.Azure.Functions.Worker.Extensions.Abstractions": "[1.3.0, )"
         }
@@ -2664,6 +2670,12 @@
           "AzureFunctions.Worker.Extensions.AspNetCore": "[2.0.29, )",
           "Swashbuckle.AspNetCore": "[9.0.3, )",
           "Swashbuckle.AspNetCore.Annotations": "[9.0.3, )"
+        }
+      },
+      "durabletask.client.azurestorage": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.Azure.DurableTask.AzureStorage": "[2.4.0, )"
         }
       }
     }

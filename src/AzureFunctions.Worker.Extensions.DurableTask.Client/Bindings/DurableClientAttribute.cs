@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Reflection;
 using AzureFunctions.Worker.Extensions.DurableTask.Client.Internal;
+using DurableTask.Client;
 using Microsoft.Azure.Functions.Worker.Converters;
 using Microsoft.Extensions.DependencyInjection;
 

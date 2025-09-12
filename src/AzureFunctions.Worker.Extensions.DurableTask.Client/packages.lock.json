@@ -2,20 +2,6 @@
   "version": 1,
   "dependencies": {
     "net8.0": {
-      "Microsoft.Azure.DurableTask.AzureStorage": {
-        "type": "Direct",
-        "requested": "[2.4.0, )",
-        "resolved": "2.4.0",
-        "contentHash": "tkmwleBtxK0aF3jJggx7yGynUDvNUiSwhY7oCc/RbgwYcRNdQMyG96YJTg/yhVKQGgkPK/TC40F9OaTfiuGh1g==",
-        "dependencies": {
-          "Azure.Data.Tables": "12.11.0",
-          "Azure.Storage.Blobs": "12.24.0",
-          "Azure.Storage.Queues": "12.22.0",
-          "Microsoft.Azure.DurableTask.Core": "3.3.0",
-          "Microsoft.Bcl.AsyncInterfaces": "6.0.0",
-          "System.Linq.Async": "6.0.1"
-        }
-      },
       "Microsoft.Azure.Functions.Worker": {
         "type": "Direct",
         "requested": "[2.0.0, )",
@@ -145,6 +131,19 @@
         "contentHash": "XbRegnfDrWoXZJ4GGdJat+KXnmCCkR6XQmWnIZxxIjphyZkWZgI0FN1PtGXU4RZ5a5C85qg1cscz1ju2biVXGg==",
         "dependencies": {
           "Grpc.Core.Api": "2.65.0"
+        }
+      },
+      "Microsoft.Azure.DurableTask.AzureStorage": {
+        "type": "Transitive",
+        "resolved": "2.4.0",
+        "contentHash": "tkmwleBtxK0aF3jJggx7yGynUDvNUiSwhY7oCc/RbgwYcRNdQMyG96YJTg/yhVKQGgkPK/TC40F9OaTfiuGh1g==",
+        "dependencies": {
+          "Azure.Data.Tables": "12.11.0",
+          "Azure.Storage.Blobs": "12.24.0",
+          "Azure.Storage.Queues": "12.22.0",
+          "Microsoft.Azure.DurableTask.Core": "3.3.0",
+          "Microsoft.Bcl.AsyncInterfaces": "6.0.0",
+          "System.Linq.Async": "6.0.1"
         }
       },
       "Microsoft.Azure.DurableTask.Core": {
@@ -622,23 +621,15 @@
         "type": "Transitive",
         "resolved": "4.5.4",
         "contentHash": "zteT+G8xuGu6mS+mzDzYXbzS7rd3K6Fjb9RiZlYlJPam2/hU7JCBZBVEcywNuR+oZ1ncTvc/cq0faRr3P01OVg=="
+      },
+      "durabletask.client.azurestorage": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.Azure.DurableTask.AzureStorage": "[2.4.0, )"
+        }
       }
     },
     "net9.0": {
-      "Microsoft.Azure.DurableTask.AzureStorage": {
-        "type": "Direct",
-        "requested": "[2.4.0, )",
-        "resolved": "2.4.0",
-        "contentHash": "tkmwleBtxK0aF3jJggx7yGynUDvNUiSwhY7oCc/RbgwYcRNdQMyG96YJTg/yhVKQGgkPK/TC40F9OaTfiuGh1g==",
-        "dependencies": {
-          "Azure.Data.Tables": "12.11.0",
-          "Azure.Storage.Blobs": "12.24.0",
-          "Azure.Storage.Queues": "12.22.0",
-          "Microsoft.Azure.DurableTask.Core": "3.3.0",
-          "Microsoft.Bcl.AsyncInterfaces": "6.0.0",
-          "System.Linq.Async": "6.0.1"
-        }
-      },
       "Microsoft.Azure.Functions.Worker": {
         "type": "Direct",
         "requested": "[2.0.0, )",
@@ -768,6 +759,19 @@
         "contentHash": "XbRegnfDrWoXZJ4GGdJat+KXnmCCkR6XQmWnIZxxIjphyZkWZgI0FN1PtGXU4RZ5a5C85qg1cscz1ju2biVXGg==",
         "dependencies": {
           "Grpc.Core.Api": "2.65.0"
+        }
+      },
+      "Microsoft.Azure.DurableTask.AzureStorage": {
+        "type": "Transitive",
+        "resolved": "2.4.0",
+        "contentHash": "tkmwleBtxK0aF3jJggx7yGynUDvNUiSwhY7oCc/RbgwYcRNdQMyG96YJTg/yhVKQGgkPK/TC40F9OaTfiuGh1g==",
+        "dependencies": {
+          "Azure.Data.Tables": "12.11.0",
+          "Azure.Storage.Blobs": "12.24.0",
+          "Azure.Storage.Queues": "12.22.0",
+          "Microsoft.Azure.DurableTask.Core": "3.3.0",
+          "Microsoft.Bcl.AsyncInterfaces": "6.0.0",
+          "System.Linq.Async": "6.0.1"
         }
       },
       "Microsoft.Azure.DurableTask.Core": {
@@ -1245,6 +1249,12 @@
         "type": "Transitive",
         "resolved": "4.5.4",
         "contentHash": "zteT+G8xuGu6mS+mzDzYXbzS7rd3K6Fjb9RiZlYlJPam2/hU7JCBZBVEcywNuR+oZ1ncTvc/cq0faRr3P01OVg=="
+      },
+      "durabletask.client.azurestorage": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.Azure.DurableTask.AzureStorage": "[2.4.0, )"
+        }
       }
     }
   }

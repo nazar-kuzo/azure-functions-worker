@@ -1,11 +1,10 @@
 ﻿using System.Diagnostics;
-using AzureFunctions.Worker.Extensions.DurableTask.Client.Internal;
 using DurableTask.AzureStorage;
 using DurableTask.Core;
 using DurableTask.Core.History;
 using DurableTask.Core.Query;
 
-namespace Microsoft.Azure.Functions.Worker.Extensions.DurableTask;
+namespace DurableTask.Client;
 
 public sealed class DurableTaskClient
 {

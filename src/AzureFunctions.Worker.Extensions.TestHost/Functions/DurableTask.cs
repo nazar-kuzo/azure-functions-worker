@@ -1,9 +1,9 @@
-﻿using DurableTask.Core;
+﻿using DurableTask.Client;
+using DurableTask.Core;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.Azure.Functions.Worker.Extensions.DurableTask;
 using DurableClientAttribute = Microsoft.Azure.Functions.Worker.Extensions.DurableTask.DurableClientAttribute;
 
 namespace AzureFunctions.Worker.Extensions.TestHost.Functions;

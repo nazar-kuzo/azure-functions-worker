@@ -1,6 +1,6 @@
 ﻿using DurableTask.Core.Serializing;
 
-namespace AzureFunctions.Worker.Extensions.DurableTask.Client.Internal;
+namespace DurableTask.Client;
 
 /// <summary>
 /// System Text JSON data converter that uses default worker JSON serializer options.
@@ -9,6 +9,9 @@ namespace AzureFunctions.Worker.Extensions.DurableTask.Client.Internal;
 public sealed class SystemTextJsonDataConverter(
     IOptions<JsonSerializerOptions> jsonSerializerOptions) : DataConverter
 {
+    private readonly JsonSerializerOptions indentedSerializerOptions =
+        new(jsonSerializerOptions.Value) { WriteIndented = true };
+
     public override string Serialize(object value)
     {
         return JsonSerializer.Serialize(value, jsonSerializerOptions.Value);
@@ -16,11 +19,7 @@ public sealed class SystemTextJsonDataConverter(
 
     public override string Serialize(object value, bool formatted)
     {
-        var serializerOptions = formatted
-            ? new JsonSerializerOptions(jsonSerializerOptions.Value) { WriteIndented = true }
-            : jsonSerializerOptions.Value;
-
-        return JsonSerializer.Serialize(value, serializerOptions);
+        return JsonSerializer.Serialize(value, formatted ? this.indentedSerializerOptions : jsonSerializerOptions.Value);
     }
 
     public override object Deserialize(string data, Type objectType)

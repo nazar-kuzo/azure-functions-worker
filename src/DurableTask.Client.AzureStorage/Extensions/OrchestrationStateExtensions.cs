@@ -1,6 +1,6 @@
 ﻿using DurableTask.Core;
 
-namespace Microsoft.Azure.Functions.Worker.Extensions.DurableTask;
+namespace DurableTask.Client;
 
 public static class OrchestrationStateExtensions
 {

@@ -7,7 +7,7 @@
     "AzureFunctionsJobHost:logging:logLevel:Function": "Information"
   },
   "DurableTask": {
-    "HubName": "TestHubName"
+    "TaskHubName": "TestHubName"
   },
   "Logging": {
     "LogLevel": {

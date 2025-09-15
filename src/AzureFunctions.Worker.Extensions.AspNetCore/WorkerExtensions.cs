@@ -23,8 +23,6 @@ namespace Microsoft.Extensions.DependencyInjection;
 /// </summary>
 public static class WorkerExtensions
 {
-    private static bool isAspNetCoreMiddlewareRegistered = false;
-
     /// <summary>
     /// Enables AspNetCore MVC model binding for Azure functions
     /// parameter binding and exposes AspNetCore related Function metadata
@@ -124,9 +122,9 @@ public static class WorkerExtensions
             return ActivatorUtilities.CreateInstance<AspNetCoreProxyMiddleware>(serviceProvider, app.Build());
         });
 
-        if (!isAspNetCoreMiddlewareRegistered)
+        if (!worker.Properties.ContainsKey("IsAspNetCoreMiddlewareRegistered"))
         {
-            isAspNetCoreMiddlewareRegistered = true;
+            worker.Properties["IsAspNetCoreMiddlewareRegistered"] = true;
 
             // let internal UseEndpoints middleware to suppress unhandled authorization
             worker.Services.PostConfigure<RouteOptions>(routeOptions =>

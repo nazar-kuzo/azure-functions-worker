@@ -4,14 +4,14 @@
     "net8.0": {
       "Microsoft.Azure.DurableTask.AzureStorage": {
         "type": "Direct",
-        "requested": "[2.4.0, )",
-        "resolved": "2.4.0",
-        "contentHash": "tkmwleBtxK0aF3jJggx7yGynUDvNUiSwhY7oCc/RbgwYcRNdQMyG96YJTg/yhVKQGgkPK/TC40F9OaTfiuGh1g==",
+        "requested": "[2.5.0, )",
+        "resolved": "2.5.0",
+        "contentHash": "p2yiMSX/Auo4io6fohqN3jVetA4qggsXlMQ8ZR0NjhsXSBCFh/eRULmEny3/yYn6LNnSO94csM3JiEydY1tl/w==",
         "dependencies": {
           "Azure.Data.Tables": "12.11.0",
           "Azure.Storage.Blobs": "12.24.0",
           "Azure.Storage.Queues": "12.22.0",
-          "Microsoft.Azure.DurableTask.Core": "3.3.0",
+          "Microsoft.Azure.DurableTask.Core": "3.4.0",
           "Microsoft.Bcl.AsyncInterfaces": "6.0.0",
           "System.Linq.Async": "6.0.1"
         }
@@ -97,8 +97,8 @@
       },
       "Microsoft.Azure.DurableTask.Core": {
         "type": "Transitive",
-        "resolved": "3.3.0",
-        "contentHash": "6muGZ0bxOCfjte3XLrFk8fNhD/HX/n0OY67JV1BhJ4DtUzqVYaVej6Er0cFJhsxUf9d03Y/w2ZYisth74oHlPA==",
+        "resolved": "3.4.0",
+        "contentHash": "R7CgQI/E08SeT07mRTfqQXBZjFYeEB8mi7qpmFNdL0ryQyndLBIy/AxTx6k3wCD2SETFOflyPXxMgY8SU76kCQ==",
         "dependencies": {
           "Castle.Core": "5.0.0",
           "Microsoft.Extensions.Logging.Abstractions": "6.0.1",
@@ -271,14 +271,14 @@
     "net9.0": {
       "Microsoft.Azure.DurableTask.AzureStorage": {
         "type": "Direct",
-        "requested": "[2.4.0, )",
-        "resolved": "2.4.0",
-        "contentHash": "tkmwleBtxK0aF3jJggx7yGynUDvNUiSwhY7oCc/RbgwYcRNdQMyG96YJTg/yhVKQGgkPK/TC40F9OaTfiuGh1g==",
+        "requested": "[2.5.0, )",
+        "resolved": "2.5.0",
+        "contentHash": "p2yiMSX/Auo4io6fohqN3jVetA4qggsXlMQ8ZR0NjhsXSBCFh/eRULmEny3/yYn6LNnSO94csM3JiEydY1tl/w==",
         "dependencies": {
           "Azure.Data.Tables": "12.11.0",
           "Azure.Storage.Blobs": "12.24.0",
           "Azure.Storage.Queues": "12.22.0",
-          "Microsoft.Azure.DurableTask.Core": "3.3.0",
+          "Microsoft.Azure.DurableTask.Core": "3.4.0",
           "Microsoft.Bcl.AsyncInterfaces": "6.0.0",
           "System.Linq.Async": "6.0.1"
         }
@@ -364,8 +364,8 @@
       },
       "Microsoft.Azure.DurableTask.Core": {
         "type": "Transitive",
-        "resolved": "3.3.0",
-        "contentHash": "6muGZ0bxOCfjte3XLrFk8fNhD/HX/n0OY67JV1BhJ4DtUzqVYaVej6Er0cFJhsxUf9d03Y/w2ZYisth74oHlPA==",
+        "resolved": "3.4.0",
+        "contentHash": "R7CgQI/E08SeT07mRTfqQXBZjFYeEB8mi7qpmFNdL0ryQyndLBIy/AxTx6k3wCD2SETFOflyPXxMgY8SU76kCQ==",
         "dependencies": {
           "Castle.Core": "5.0.0",
           "Microsoft.Extensions.Logging.Abstractions": "6.0.1",

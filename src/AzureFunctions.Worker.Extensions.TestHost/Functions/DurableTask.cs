@@ -27,9 +27,10 @@ public sealed class DurableTask(IOptions<JsonOptions> jsonOptions)
         [DurableClient] DurableTaskClient durableTaskClient,
         [FromQuery, Required] string orchestratorFunctionName,
         [FromQuery] string? instanceId = null,
+        [FromQuery] string? version = null,
         [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] JsonElement? input = null)
     {
-        instanceId = await durableTaskClient.StartNewAsync(orchestratorFunctionName, instanceId, input);
+        instanceId = await durableTaskClient.StartNewAsync(orchestratorFunctionName, instanceId, input, version);
 
         var orchestration = await durableTaskClient.GetStatusAsync(instanceId);
 

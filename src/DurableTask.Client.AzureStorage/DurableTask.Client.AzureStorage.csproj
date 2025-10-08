@@ -3,6 +3,9 @@
     <PackageId>DurableTask.Client.AzureStorage</PackageId>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
     <PackageIcon>icon.png</PackageIcon>
+    <PackageReleaseNotes>
+      - added versioning support
+    </PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

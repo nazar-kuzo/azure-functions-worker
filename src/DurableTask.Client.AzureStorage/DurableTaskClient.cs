@@ -79,7 +79,8 @@ public sealed class DurableTaskClient
     public async Task<string> StartNewAsync<T>(
         string orchestratorFunctionName,
         string? instanceId,
-        T? input)
+        T? input,
+        string? version = null)
     {
         var orchestrationInstance = new OrchestrationInstance
         {
@@ -97,7 +98,7 @@ public sealed class DurableTaskClient
                 {
                     Name = orchestratorFunctionName,
                     OrchestrationInstance = orchestrationInstance,
-                    Version = string.Empty,
+                    Version = version ?? string.Empty,
                     ParentTraceContext = Activity.Current?.Id == null
                         ? null
                         : new(Activity.Current.Id, Activity.Current.TraceStateString),
@@ -110,12 +111,12 @@ public sealed class DurableTaskClient
 
     public async Task<OrchestrationState?> WaitForOrchestrationAsync(
         string instanceId,
-        TimeSpan timeout,
+        TimeSpan? timeout = null,
         CancellationToken cancellationToken = default)
     {
         return await this.taskHubClient.WaitForOrchestrationAsync(
             new OrchestrationInstance { InstanceId = instanceId },
-            timeout,
+            timeout ?? Timeout.InfiniteTimeSpan,
             cancellationToken);
     }
 

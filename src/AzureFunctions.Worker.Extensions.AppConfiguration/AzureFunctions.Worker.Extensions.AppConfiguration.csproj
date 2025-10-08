@@ -27,7 +27,7 @@
   <ItemGroup>
     <AssemblyAttribute Include="Microsoft.Azure.Functions.Worker.Extensions.Abstractions.ExtensionInformationAttribute">
       <_Parameter1>AzureFunctions.Worker.Extensions.AppConfiguration.Host</_Parameter1>
-      <_Parameter2>$(Version)</_Parameter2>
+      <_Parameter2>$(AppConfigurationHostVersion)</_Parameter2>
       <_Parameter3>true</_Parameter3>
       <_Parameter3_IsLiteral>true</_Parameter3_IsLiteral>
     </AssemblyAttribute>

@@ -18,6 +18,7 @@
   "extensions": {
     "durableTask": {
       "hubName": "%DurableTask:TaskHubName%",
+      //"defaultVersion": "1.0.0",
       "tracing": {
         "distributedTracingEnabled": true,
         "version": "V2"

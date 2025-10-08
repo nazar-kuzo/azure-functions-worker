@@ -4,6 +4,7 @@
     <PackageId>AzureFunctions.Worker.Extensions.AppConfiguration.Host</PackageId>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
     <PackageIcon>icon.png</PackageIcon>
+    <Version>$(AppConfigurationHostVersion)</Version>
     <PackageReleaseNotes>
     </PackageReleaseNotes>
   </PropertyGroup>

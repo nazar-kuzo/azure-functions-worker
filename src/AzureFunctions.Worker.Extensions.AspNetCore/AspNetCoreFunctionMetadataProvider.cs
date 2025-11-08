@@ -6,13 +6,14 @@ using Microsoft.Extensions.Configuration;
 
 namespace AzureFunctions.Worker.Extensions.AspNetCore;
 
+// TODO: migrate to IFunctionMetadataTransformer that will convert default metadata to AspNetCoreFunctionMetadata
 /// <summary>
-/// Wraps built-in <see cref="IFunctionMetadataProvider"/> provider to return custom <see cref="AspNetCoreFunctionMetadata"/>.
+/// Wraps built-in <see cref="IFunctionMetadataManager"/> provider to return custom <see cref="AspNetCoreFunctionMetadata"/>.
 /// </summary>
-/// <param name="functionMetadataProvider">Built-in <see cref="IFunctionMetadataProvider"/></param>
+/// <param name="functionMetadataManager">Built-in <see cref="IFunctionMetadataManager"/></param>
 /// <param name="configuration">Configuration</param>
 public sealed partial class AspNetCoreFunctionMetadataProvider(
-    IFunctionMetadataProvider functionMetadataProvider,
+    IFunctionMetadataManager functionMetadataManager,
     IConfiguration configuration)
 {
     private FrozenDictionary<string, AspNetCoreFunctionMetadata>? metadata;
@@ -53,7 +54,7 @@ public sealed partial class AspNetCoreFunctionMetadataProvider(
             PropertyNameCaseInsensitive = true,
         };
 
-        return functionMetadataProvider
+        return functionMetadataManager
             .GetFunctionMetadataAsync(scriptRoot)
             .GetAwaiter()
             .GetResult()

@@ -4,16 +4,16 @@
     "net8.0": {
       "Microsoft.Azure.Functions.Worker.Extensions.DurableTask": {
         "type": "Direct",
-        "requested": "[1.8.0, )",
-        "resolved": "1.8.0",
-        "contentHash": "jJwF3KO7pbb8lNonqcfFTUCX0zvA7S4EmXjGJ6nX5xqP2Sw0HV0Tr21NnDP8lSqDyiAXkIkAJJkxD5DIwVuDRQ==",
+        "requested": "[1.9.0, )",
+        "resolved": "1.9.0",
+        "contentHash": "tX+FybLfY1bGJ5ty8ad8ZSDVkOpEghCwV5f5PEHBldDiwVpWyTtijTx7kYEK2AIZNN42nE9RG6MmJN2DZELfzQ==",
         "dependencies": {
           "Grpc.Net.Client": "2.70.0",
           "Microsoft.Azure.Functions.Worker.Core": "2.0.0",
           "Microsoft.Azure.Functions.Worker.Extensions.Abstractions": "1.3.0",
           "Microsoft.DurableTask.Analyzers": "0.1.0",
-          "Microsoft.DurableTask.Client.Grpc": "1.15.0",
-          "Microsoft.DurableTask.Worker.Grpc": "1.15.0",
+          "Microsoft.DurableTask.Client.Grpc": "1.16.1",
+          "Microsoft.DurableTask.Worker.Grpc": "1.16.1",
           "Microsoft.Extensions.Caching.Memory": "6.0.3",
           "System.Text.Json": "8.0.5"
         }
@@ -92,8 +92,8 @@
       },
       "Microsoft.Azure.DurableTask.Core": {
         "type": "Transitive",
-        "resolved": "3.4.0",
-        "contentHash": "R7CgQI/E08SeT07mRTfqQXBZjFYeEB8mi7qpmFNdL0ryQyndLBIy/AxTx6k3wCD2SETFOflyPXxMgY8SU76kCQ==",
+        "resolved": "3.5.1",
+        "contentHash": "CdI6Cwf0G7rt7qON7H1qJgaw+BBB8zBeeHYn0G70MgUyG/v2fizzjoz/RCaNgtjOxnAJyFHYkhKWS65GSF3JmQ==",
         "dependencies": {
           "Castle.Core": "5.0.0",
           "Microsoft.Extensions.Logging.Abstractions": "6.0.1",
@@ -129,10 +129,10 @@
       },
       "Microsoft.DurableTask.Abstractions": {
         "type": "Transitive",
-        "resolved": "1.15.0",
-        "contentHash": "o95E4O1qz5wlB310TCbCR4cjCyczeg+tfhZw5IBMUUAMmB0XOeiQbMvN52k2FK82PXzmcLbkgnob0hax/bct8A==",
+        "resolved": "1.16.1",
+        "contentHash": "3bpA/wcYqAG+ZoHHZ+D6Fkw4J+uTnT8XOJZ2H1Ujy5xFdsV9nE0cc/f55Y34EpZ5qN58IrpYu4WI9mWWF9lRdA==",
         "dependencies": {
-          "Microsoft.Azure.DurableTask.Core": "3.4.0",
+          "Microsoft.Azure.DurableTask.Core": "3.5.1",
           "Microsoft.Bcl.AsyncInterfaces": "6.0.0",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "6.0.0",
           "Microsoft.Extensions.Logging.Abstractions": "6.0.2",
@@ -147,28 +147,28 @@
       },
       "Microsoft.DurableTask.Client": {
         "type": "Transitive",
-        "resolved": "1.15.0",
-        "contentHash": "MrmSde1XIvKSDacl6vHsbg2clWdEfEt25cj9NoGiNsvf+QPudU0O8ICEkJ2OQS/UpwNQEyvtT7Bu6YNY45jUtQ==",
+        "resolved": "1.16.1",
+        "contentHash": "CXoAKlvutylDtrrNfZ0WPN5vnnc0AD4wH0Hperz5cS5mmN9K5HA8Zj18/hvdTijBzVtgXTG74YRdjW+I9/SeAg==",
         "dependencies": {
-          "Microsoft.DurableTask.Abstractions": "1.15.0",
+          "Microsoft.DurableTask.Abstractions": "1.16.1",
           "Microsoft.Extensions.Options": "6.0.1"
         }
       },
       "Microsoft.DurableTask.Client.Grpc": {
         "type": "Transitive",
-        "resolved": "1.15.0",
-        "contentHash": "h79apD+zAULJ3lD5qSE/TpBqc2yoDkFUFo2dTIh6l3xXNOjWMdAl9b2PewBKhr55XO6t7Hcs22hZDC3lujUT2w==",
+        "resolved": "1.16.1",
+        "contentHash": "ctnUTa8fo0f4Y5nekozO2AmJh88nhYA33HcYKQkgZZ8Ixt/4fINTjiW0k2Odpglit8qTU0DdH3ELjSF06DeFJQ==",
         "dependencies": {
-          "Microsoft.DurableTask.Client": "1.15.0",
-          "Microsoft.DurableTask.Grpc": "1.15.0",
+          "Microsoft.DurableTask.Client": "1.16.1",
+          "Microsoft.DurableTask.Grpc": "1.16.1",
           "Microsoft.Extensions.Configuration.Abstractions": "6.0.0",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "6.0.0"
         }
       },
       "Microsoft.DurableTask.Grpc": {
         "type": "Transitive",
-        "resolved": "1.15.0",
-        "contentHash": "jKtaLpchguW8gFNsmQ6qUI0jzMXeGKdD+6syVjcpD19J4F6JHhI+sSjg0lfXsFYvhYjCMAQQQisMYCjUq0M+ww==",
+        "resolved": "1.16.1",
+        "contentHash": "TktuaKM+8nYg1hi9Sy/JGlgbaMBM6VPJn6VjTjZi7FrRsP01VUfw0WPTsJxhi7hxB54lRm8dkMv6JA4VkPHbNQ==",
         "dependencies": {
           "Google.Protobuf": "3.21.12",
           "Grpc.Net.Client": "2.67.0"
@@ -176,10 +176,10 @@
       },
       "Microsoft.DurableTask.Worker": {
         "type": "Transitive",
-        "resolved": "1.15.0",
-        "contentHash": "+LGmv3RaY1uUMiygJnGAAbdcZe1xrKxH+zCsdHGpFD6uw9IqHAxlIO19GA7+UxTgsR0axc3QqmBThMEFnN3gsw==",
+        "resolved": "1.16.1",
+        "contentHash": "9hGghITsLeu2TbDJl6fmVxy7v+Vhw497sjurWtm7JagpadPrKINT2jNt4QbtoRhrcC+5dZyb/kXkatzdnh/+tw==",
         "dependencies": {
-          "Microsoft.DurableTask.Abstractions": "1.15.0",
+          "Microsoft.DurableTask.Abstractions": "1.16.1",
           "Microsoft.Extensions.Caching.Memory": "6.0.3",
           "Microsoft.Extensions.Hosting.Abstractions": "6.0.1",
           "Microsoft.Extensions.Options": "6.0.1",
@@ -188,12 +188,12 @@
       },
       "Microsoft.DurableTask.Worker.Grpc": {
         "type": "Transitive",
-        "resolved": "1.15.0",
-        "contentHash": "hTFE99CbzFNZc39nUc9rXjAL0MoTQK7rRZF119k2gMyr0XVy9VbWENmhpkjqjjloexvbjqb4/X2ozz0pZyym+w==",
+        "resolved": "1.16.1",
+        "contentHash": "g2VGxEJyGZnra66ZFRjuJmwee8iMWO8+oltuVRG3k6mTlylgTGNImALDgcOlRdggBzJRndjjtHEFVLM2GEk+ZQ==",
         "dependencies": {
-          "Microsoft.DurableTask.Abstractions": "1.15.0",
-          "Microsoft.DurableTask.Grpc": "1.15.0",
-          "Microsoft.DurableTask.Worker": "1.15.0"
+          "Microsoft.DurableTask.Abstractions": "1.16.1",
+          "Microsoft.DurableTask.Grpc": "1.16.1",
+          "Microsoft.DurableTask.Worker": "1.16.1"
         }
       },
       "Microsoft.Extensions.Caching.Abstractions": {
@@ -633,16 +633,16 @@
     "net9.0": {
       "Microsoft.Azure.Functions.Worker.Extensions.DurableTask": {
         "type": "Direct",
-        "requested": "[1.8.0, )",
-        "resolved": "1.8.0",
-        "contentHash": "jJwF3KO7pbb8lNonqcfFTUCX0zvA7S4EmXjGJ6nX5xqP2Sw0HV0Tr21NnDP8lSqDyiAXkIkAJJkxD5DIwVuDRQ==",
+        "requested": "[1.9.0, )",
+        "resolved": "1.9.0",
+        "contentHash": "tX+FybLfY1bGJ5ty8ad8ZSDVkOpEghCwV5f5PEHBldDiwVpWyTtijTx7kYEK2AIZNN42nE9RG6MmJN2DZELfzQ==",
         "dependencies": {
           "Grpc.Net.Client": "2.70.0",
           "Microsoft.Azure.Functions.Worker.Core": "2.0.0",
           "Microsoft.Azure.Functions.Worker.Extensions.Abstractions": "1.3.0",
           "Microsoft.DurableTask.Analyzers": "0.1.0",
-          "Microsoft.DurableTask.Client.Grpc": "1.15.0",
-          "Microsoft.DurableTask.Worker.Grpc": "1.15.0",
+          "Microsoft.DurableTask.Client.Grpc": "1.16.1",
+          "Microsoft.DurableTask.Worker.Grpc": "1.16.1",
           "Microsoft.Extensions.Caching.Memory": "6.0.3",
           "System.Text.Json": "8.0.5"
         }
@@ -721,8 +721,8 @@
       },
       "Microsoft.Azure.DurableTask.Core": {
         "type": "Transitive",
-        "resolved": "3.4.0",
-        "contentHash": "R7CgQI/E08SeT07mRTfqQXBZjFYeEB8mi7qpmFNdL0ryQyndLBIy/AxTx6k3wCD2SETFOflyPXxMgY8SU76kCQ==",
+        "resolved": "3.5.1",
+        "contentHash": "CdI6Cwf0G7rt7qON7H1qJgaw+BBB8zBeeHYn0G70MgUyG/v2fizzjoz/RCaNgtjOxnAJyFHYkhKWS65GSF3JmQ==",
         "dependencies": {
           "Castle.Core": "5.0.0",
           "Microsoft.Extensions.Logging.Abstractions": "6.0.1",
@@ -758,10 +758,10 @@
       },
       "Microsoft.DurableTask.Abstractions": {
         "type": "Transitive",
-        "resolved": "1.15.0",
-        "contentHash": "o95E4O1qz5wlB310TCbCR4cjCyczeg+tfhZw5IBMUUAMmB0XOeiQbMvN52k2FK82PXzmcLbkgnob0hax/bct8A==",
+        "resolved": "1.16.1",
+        "contentHash": "3bpA/wcYqAG+ZoHHZ+D6Fkw4J+uTnT8XOJZ2H1Ujy5xFdsV9nE0cc/f55Y34EpZ5qN58IrpYu4WI9mWWF9lRdA==",
         "dependencies": {
-          "Microsoft.Azure.DurableTask.Core": "3.4.0",
+          "Microsoft.Azure.DurableTask.Core": "3.5.1",
           "Microsoft.Bcl.AsyncInterfaces": "6.0.0",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "6.0.0",
           "Microsoft.Extensions.Logging.Abstractions": "6.0.2",
@@ -776,28 +776,28 @@
       },
       "Microsoft.DurableTask.Client": {
         "type": "Transitive",
-        "resolved": "1.15.0",
-        "contentHash": "MrmSde1XIvKSDacl6vHsbg2clWdEfEt25cj9NoGiNsvf+QPudU0O8ICEkJ2OQS/UpwNQEyvtT7Bu6YNY45jUtQ==",
+        "resolved": "1.16.1",
+        "contentHash": "CXoAKlvutylDtrrNfZ0WPN5vnnc0AD4wH0Hperz5cS5mmN9K5HA8Zj18/hvdTijBzVtgXTG74YRdjW+I9/SeAg==",
         "dependencies": {
-          "Microsoft.DurableTask.Abstractions": "1.15.0",
+          "Microsoft.DurableTask.Abstractions": "1.16.1",
           "Microsoft.Extensions.Options": "6.0.1"
         }
       },
       "Microsoft.DurableTask.Client.Grpc": {
         "type": "Transitive",
-        "resolved": "1.15.0",
-        "contentHash": "h79apD+zAULJ3lD5qSE/TpBqc2yoDkFUFo2dTIh6l3xXNOjWMdAl9b2PewBKhr55XO6t7Hcs22hZDC3lujUT2w==",
+        "resolved": "1.16.1",
+        "contentHash": "ctnUTa8fo0f4Y5nekozO2AmJh88nhYA33HcYKQkgZZ8Ixt/4fINTjiW0k2Odpglit8qTU0DdH3ELjSF06DeFJQ==",
         "dependencies": {
-          "Microsoft.DurableTask.Client": "1.15.0",
-          "Microsoft.DurableTask.Grpc": "1.15.0",
+          "Microsoft.DurableTask.Client": "1.16.1",
+          "Microsoft.DurableTask.Grpc": "1.16.1",
           "Microsoft.Extensions.Configuration.Abstractions": "6.0.0",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "6.0.0"
         }
       },
       "Microsoft.DurableTask.Grpc": {
         "type": "Transitive",
-        "resolved": "1.15.0",
-        "contentHash": "jKtaLpchguW8gFNsmQ6qUI0jzMXeGKdD+6syVjcpD19J4F6JHhI+sSjg0lfXsFYvhYjCMAQQQisMYCjUq0M+ww==",
+        "resolved": "1.16.1",
+        "contentHash": "TktuaKM+8nYg1hi9Sy/JGlgbaMBM6VPJn6VjTjZi7FrRsP01VUfw0WPTsJxhi7hxB54lRm8dkMv6JA4VkPHbNQ==",
         "dependencies": {
           "Google.Protobuf": "3.21.12",
           "Grpc.Net.Client": "2.67.0"
@@ -805,10 +805,10 @@
       },
       "Microsoft.DurableTask.Worker": {
         "type": "Transitive",
-        "resolved": "1.15.0",
-        "contentHash": "+LGmv3RaY1uUMiygJnGAAbdcZe1xrKxH+zCsdHGpFD6uw9IqHAxlIO19GA7+UxTgsR0axc3QqmBThMEFnN3gsw==",
+        "resolved": "1.16.1",
+        "contentHash": "9hGghITsLeu2TbDJl6fmVxy7v+Vhw497sjurWtm7JagpadPrKINT2jNt4QbtoRhrcC+5dZyb/kXkatzdnh/+tw==",
         "dependencies": {
-          "Microsoft.DurableTask.Abstractions": "1.15.0",
+          "Microsoft.DurableTask.Abstractions": "1.16.1",
           "Microsoft.Extensions.Caching.Memory": "6.0.3",
           "Microsoft.Extensions.Hosting.Abstractions": "6.0.1",
           "Microsoft.Extensions.Options": "6.0.1",
@@ -817,12 +817,12 @@
       },
       "Microsoft.DurableTask.Worker.Grpc": {
         "type": "Transitive",
-        "resolved": "1.15.0",
-        "contentHash": "hTFE99CbzFNZc39nUc9rXjAL0MoTQK7rRZF119k2gMyr0XVy9VbWENmhpkjqjjloexvbjqb4/X2ozz0pZyym+w==",
+        "resolved": "1.16.1",
+        "contentHash": "g2VGxEJyGZnra66ZFRjuJmwee8iMWO8+oltuVRG3k6mTlylgTGNImALDgcOlRdggBzJRndjjtHEFVLM2GEk+ZQ==",
         "dependencies": {
-          "Microsoft.DurableTask.Abstractions": "1.15.0",
-          "Microsoft.DurableTask.Grpc": "1.15.0",
-          "Microsoft.DurableTask.Worker": "1.15.0"
+          "Microsoft.DurableTask.Abstractions": "1.16.1",
+          "Microsoft.DurableTask.Grpc": "1.16.1",
+          "Microsoft.DurableTask.Worker": "1.16.1"
         }
       },
       "Microsoft.Extensions.Caching.Abstractions": {

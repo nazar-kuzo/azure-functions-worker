@@ -69,7 +69,7 @@ public static class WorkerExtensions
         {
             swaggerOptionsSetup?.Invoke(swaggerOptions);
 
-            swaggerOptions.RouteTemplate = $"{RoutePrefix}/{{documentName}}/swagger.json";
+            swaggerOptions.RouteTemplate = $"/api{swaggerOptions.RouteTemplate}";
         });
 
         app.UseSwaggerUI(uiOptions =>

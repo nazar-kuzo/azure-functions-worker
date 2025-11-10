@@ -3,6 +3,9 @@
     <PackageId>AzureFunctions.Worker.Extensions.Swashbuckle</PackageId>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
     <PackageIcon>icon.png</PackageIcon>
+    <PackageReleaseNotes>
+      - fixed swagger route template to support yaml docs
+    </PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

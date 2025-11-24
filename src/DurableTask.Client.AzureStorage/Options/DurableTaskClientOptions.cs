@@ -1,4 +1,6 @@
-﻿using DurableTask.Core;
+﻿using Azure.Core;
+using Azure.Identity;
+using DurableTask.Core;
 using DurableTask.Core.Exceptions;
 
 namespace DurableTask.Client;
@@ -6,7 +8,7 @@ namespace DurableTask.Client;
 /// <summary>
 /// Configuration options for the Durable Task Client extension.
 /// </summary>
-public class DurableTaskClientOptions
+public class DurableTaskClientOptions : IValidatableObject
 {
     private static readonly OrchestrationStatus[] NonRunningStates =
     [
@@ -16,8 +18,17 @@ public class DurableTaskClientOptions
     /// <summary>
     /// Gets or sets the Azure Storage connection string.
     /// </summary>
-    [Required]
-    public required string ConnectionString { get; set; }
+    public string? ConnectionString { get; set; }
+
+    /// <summary>
+    /// Gets or sets the Azure Storage connection string.
+    /// </summary>
+    public string? AccountName { get; set; }
+
+    /// <summary>
+    /// Gets or sets the Azure Storage connection string.
+    /// </summary>
+    public TokenCredential TokenCredential { get; set; } = new DefaultAzureCredential();
 
     /// <summary>
     /// Gets or sets the name of the task hub. This value is used to group related storage resources.
@@ -48,6 +59,17 @@ public class DurableTaskClientOptions
 
     internal OrchestrationStatus[] StatusesNotToOverride =>
         this.OverridableExistingInstanceStates == OverridableStates.NonRunningStates ? NonRunningStates : [];
+
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    {
+        if (string.IsNullOrEmpty(this.ConnectionString) && string.IsNullOrEmpty(this.AccountName))
+        {
+            yield return new ValidationResult($"At least one of authorization options should be provided: " +
+                $"\"{nameof(this.ConnectionString)}\" or \"{nameof(this.AccountName)}\" with \"{nameof(this.TokenCredential)}\"");
+        }
+
+        yield return ValidationResult.Success!;
+    }
 }
 
 [OptionsValidator]

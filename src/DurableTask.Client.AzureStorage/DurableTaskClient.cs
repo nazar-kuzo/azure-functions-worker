@@ -16,7 +16,9 @@ public sealed class DurableTaskClient
         this.dataConverter = dataConverter;
         this.serviceClient = new AzureStorageOrchestrationService(new()
         {
-            StorageAccountClientProvider = new(durableTaskClientOptions.Value.ConnectionString),
+            StorageAccountClientProvider = !string.IsNullOrEmpty(this.durableTaskClientOptions.Value.AccountName)
+                ? new(durableTaskClientOptions.Value.AccountName!, durableTaskClientOptions.Value.TokenCredential!)
+                : new(durableTaskClientOptions.Value.ConnectionString!),
             TaskHubName = durableTaskClientOptions.Value.TaskHubName,
             ThrowExceptionOnInvalidDedupeStatus = durableTaskClientOptions.Value.ThrowExceptionOnInvalidOverridableStatus,
         });

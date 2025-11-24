@@ -6,12 +6,12 @@ using Microsoft.Extensions.Configuration;
 
 namespace AzureFunctions.Worker.Extensions.AspNetCore;
 
-// TODO: migrate to IFunctionMetadataTransformer that will convert default metadata to AspNetCoreFunctionMetadata
 /// <summary>
 /// Wraps built-in <see cref="IFunctionMetadataManager"/> provider to return custom <see cref="AspNetCoreFunctionMetadata"/>.
 /// </summary>
 /// <param name="functionMetadataManager">Built-in <see cref="IFunctionMetadataManager"/></param>
 /// <param name="configuration">Configuration</param>
+// TODO: migrate to IFunctionMetadataTransformer that will convert default metadata to AspNetCoreFunctionMetadata
 public sealed partial class AspNetCoreFunctionMetadataProvider(
     IFunctionMetadataManager functionMetadataManager,
     IConfiguration configuration)

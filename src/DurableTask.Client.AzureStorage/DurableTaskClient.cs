@@ -6,7 +6,7 @@ using DurableTask.Core.Query;
 
 namespace DurableTask.Client;
 
-public sealed class DurableTaskClient
+public class DurableTaskClient
 {
     public DurableTaskClient(
         IOptions<DurableTaskClientOptions> durableTaskClientOptions,
@@ -30,7 +30,7 @@ public sealed class DurableTaskClient
     private readonly IOrchestrationServiceClient serviceClient;
     private readonly TaskHubClient taskHubClient;
 
-    public async Task<IEnumerable<OrchestrationState>> ListInstancesAsync(
+    public virtual async Task<IEnumerable<OrchestrationState>> ListInstancesAsync(
         string? instanceIdPrefix = null,
         ICollection<OrchestrationStatus>? runtimeStatuses = null,
         bool fetchInputsAndOutputs = false,
@@ -60,25 +60,25 @@ public sealed class DurableTaskClient
         return result;
     }
 
-    public async Task<OrchestrationState?> GetStatusAsync(string instanceId, bool showHistory = false)
+    public virtual async Task<OrchestrationState?> GetStatusAsync(string instanceId, bool showHistory = false)
     {
         return (await this.taskHubClient.ServiceClient
             .GetOrchestrationStateAsync(instanceId, showHistory))
             .FirstOrDefault();
     }
 
-    public Task<string> StartNewAsync(string orchestratorFunctionName, string? instanceId = null)
+    public virtual Task<string> StartNewAsync(string orchestratorFunctionName, string? instanceId = null)
     {
         return this.StartNewAsync<object>(orchestratorFunctionName, instanceId, input: null);
     }
 
-    public Task<string> StartNewAsync<T>(string orchestratorFunctionName, T input)
+    public virtual Task<string> StartNewAsync<T>(string orchestratorFunctionName, T input)
         where T : class
     {
         return this.StartNewAsync<object>(orchestratorFunctionName, instanceId: null, input);
     }
 
-    public async Task<string> StartNewAsync<T>(
+    public virtual async Task<string> StartNewAsync<T>(
         string orchestratorFunctionName,
         string? instanceId,
         T? input,
@@ -111,7 +111,7 @@ public sealed class DurableTaskClient
         return orchestrationInstance.InstanceId;
     }
 
-    public async Task<OrchestrationState?> WaitForOrchestrationAsync(
+    public virtual async Task<OrchestrationState?> WaitForOrchestrationAsync(
         string instanceId,
         TimeSpan? timeout = null,
         CancellationToken cancellationToken = default)
@@ -122,12 +122,12 @@ public sealed class DurableTaskClient
             cancellationToken);
     }
 
-    public Task TerminateAsync(string instanceId, string reason)
+    public virtual Task TerminateAsync(string instanceId, string reason)
     {
         return this.taskHubClient.TerminateInstanceAsync(new OrchestrationInstance { InstanceId = instanceId }, reason);
     }
 
-    public async Task RaiseEventAsync(string instanceId, string eventName, object? eventData = null)
+    public virtual async Task RaiseEventAsync(string instanceId, string eventName, object? eventData = null)
     {
         if (this.durableTaskClientOptions.Value.ThrowStatusExceptionsOnRaiseEvent)
         {

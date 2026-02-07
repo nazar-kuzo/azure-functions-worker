@@ -13,12 +13,10 @@ namespace AzureFunctions.Worker.Extensions.AspNetCore.Internal.Middlewares;
 /// Worker middleware that integrates AspNetCore middlewares into the execution pipeline
 /// </summary>
 /// <param name="httpContextAccessor">Http context accessor</param>
-/// <param name="actionContextAccessor">Action context accessor</param>
 /// <param name="actionResultTypeMapper">AspNetCore ActionResult type mapper</param>
 /// <param name="metadataProvider">AspNetCore function metadata provider</param>
 internal class AspNetCoreIntegrationMiddleware(
     IHttpContextAccessor httpContextAccessor,
-    IActionContextAccessor actionContextAccessor,
     IActionResultTypeMapper actionResultTypeMapper,
     AspNetCoreFunctionMetadataProvider metadataProvider)
     : IFunctionsWorkerMiddleware
@@ -39,7 +37,7 @@ internal class AspNetCoreIntegrationMiddleware(
         // enables IHttpContextAccessor support
         httpContextAccessor.HttpContext = httpContext;
 
-        actionContextAccessor.ActionContext = new ActionContext
+        var actionContext = new ActionContext
         {
             HttpContext = httpContext,
             ActionDescriptor = functionMetadata.ActionDescriptor,
@@ -63,31 +61,15 @@ internal class AspNetCoreIntegrationMiddleware(
                     functionMetadata.HttpResultDataType is null &&
                     !httpContext.Response.HasStarted)
                 {
-                    await new NoContentResult().ExecuteResultAsync(actionContextAccessor.ActionContext);
+                    await new NoContentResult().ExecuteResultAsync(actionContext);
 
                     return;
                 }
 
-                if (invocationResult.Value is not null &&
-                    invocationResult.Value is not HttpResponseData &&
-                    invocationResult.Value is not IActionResult)
+                if (ShouldMapResultValue(invocationResult.Value))
                 {
                     invocationResult.Value = actionResultTypeMapper
                         .Convert(invocationResult.Value, functionMetadata.HttpResultDataType!);
-                }
-
-                // TODO: remove this code once https://github.com/Azure/azure-functions-dotnet-worker/issues/2682 is fixed
-                if (invocationResult.Value is IActionResult actionResult)
-                {
-                    await actionResult.ExecuteResultAsync(actionContextAccessor.ActionContext);
-
-                    invocationResult.Value = null;
-                }
-                else if (invocationResult.Value is IResult result)
-                {
-                    await result.ExecuteAsync(httpContext);
-
-                    invocationResult.Value = null;
                 }
             }
             else
@@ -96,27 +78,19 @@ internal class AspNetCoreIntegrationMiddleware(
                     .GetOutputBindings<object?>()
                     .FirstOrDefault(binding => binding.Name == functionMetadata.HttpResultBinding.Name);
 
-                if (outputBindingData?.Value is not null &&
-                    outputBindingData.Value is not HttpResponseData &&
-                    outputBindingData.Value is not IActionResult)
+                if (outputBindingData is not null &&
+                    ShouldMapResultValue(outputBindingData.Value))
                 {
                     outputBindingData.Value = actionResultTypeMapper
                         .Convert(outputBindingData.Value, functionMetadata.HttpResultDataType!);
                 }
+            }
 
-                // TODO: remove this code once https://github.com/Azure/azure-functions-dotnet-worker/issues/2682 is fixed
-                if (outputBindingData?.Value is IActionResult actionResult)
-                {
-                    await actionResult.ExecuteResultAsync(actionContextAccessor.ActionContext);
-
-                    outputBindingData.Value = Enumerable.Empty<object>();
-                }
-                else if (outputBindingData?.Value is IResult result)
-                {
-                    await result.ExecuteAsync(httpContext);
-
-                    outputBindingData.Value = Enumerable.Empty<object>();
-                }
+            static bool ShouldMapResultValue(object? result)
+            {
+                return result is not null &&
+                    result is not HttpResponseData &&
+                    result is not IActionResult;
             }
         }
     }

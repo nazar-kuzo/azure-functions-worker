@@ -2,7 +2,7 @@ using System.Net.Mime;
 using System.Reflection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
@@ -36,7 +36,6 @@ public static class WorkerExtensions
         string? faviconFileName = null)
     {
         var swaggerGenOptions = app.ApplicationServices.GetRequiredService<IOptions<SwaggerGenOptions>>();
-        var actionContextAccessor = app.ApplicationServices.GetRequiredService<IActionContextAccessor>();
 
         app.Use(next => httpContext =>
         {
@@ -58,7 +57,11 @@ public static class WorkerExtensions
                         FileDownloadName = faviconFileName,
                     };
 
-                    return actionResult.ExecuteResultAsync(actionContextAccessor.ActionContext!);
+                    return actionResult.ExecuteResultAsync(new ActionContext
+                    {
+                        HttpContext = httpContext,
+                        RouteData = httpContext.GetRouteData(),
+                    });
                 }
             }
 

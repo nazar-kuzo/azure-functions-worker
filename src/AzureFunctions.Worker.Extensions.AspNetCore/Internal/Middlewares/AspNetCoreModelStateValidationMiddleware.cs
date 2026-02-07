@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Converters;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,9 +18,7 @@ namespace AzureFunctions.Worker.Extensions.AspNetCore.Internal.Middlewares;
 /// <param name="parameterBinder">AspNet core function parameter binder</param>
 /// <param name="functionMetadataProvider">Function metadata provider</param>
 /// <param name="mvcOptions">Mvc options</param>
-/// <param name="actionContextAccessor">Action context accessor</param>
 internal class AspNetCoreModelStateValidationMiddleware(
-    IActionContextAccessor actionContextAccessor,
     ParameterBinder parameterBinder,
     AspNetCoreFunctionMetadataProvider functionMetadataProvider,
     IOptions<MvcOptions> mvcOptions) : IMiddleware
@@ -35,20 +34,28 @@ internal class AspNetCoreModelStateValidationMiddleware(
     {
         var functionContext = context.GetFunctionContext()!;
 
-        var metadata = functionMetadataProvider.GetFunctionMetadata(functionContext.FunctionDefinition.Name);
+        var functionMetadata = functionMetadataProvider.GetFunctionMetadata(functionContext.FunctionDefinition.Name);
 
-        if (metadata.AspNetCoreParameters.Length == 0)
+        if (functionMetadata.AspNetCoreParameters.Length == 0)
         {
             await next(context);
 
             return;
         }
 
-        var actionContext = actionContextAccessor.ActionContext!;
-        var cacheBindingInput = CreateBindingInputCacheSetter(functionContext);
-        var actionParameters = new Dictionary<string, object?>(metadata.AspNetCoreParameters.Length);
+        var httpContext = functionContext.GetHttpContext()!;
 
-        foreach (var parameterInfo in metadata.AspNetCoreParameters)
+        var actionContext = new ActionContext
+        {
+            HttpContext = httpContext,
+            ActionDescriptor = functionMetadata.ActionDescriptor,
+            RouteData = httpContext.GetRouteData(),
+        };
+
+        var cacheBindingInput = CreateBindingInputCacheSetter(functionContext);
+        var actionParameters = new Dictionary<string, object?>(functionMetadata.AspNetCoreParameters.Length);
+
+        foreach (var parameterInfo in functionMetadata.AspNetCoreParameters)
         {
             try
             {

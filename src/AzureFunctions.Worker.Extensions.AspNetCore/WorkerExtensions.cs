@@ -41,7 +41,6 @@ public static class WorkerExtensions
 
         worker.Services.AddHttpContextAccessor();
 
-        worker.Services.TryAddSingleton<IActionContextAccessor, ActionContextAccessor>();
         worker.Services.TryAddSingleton<AspNetCoreFunctionMetadataProvider>();
         worker.Services.AddSingleton<IActionDescriptorProvider, FunctionActionDescriptorProvider>();
         worker.Services.AddTransient<IApplicationModelProvider, FunctionApplicationModelProvider>();

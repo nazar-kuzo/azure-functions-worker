@@ -18,6 +18,9 @@
   "extensions": {
     "durableTask": {
       "hubName": "%DurableTask:TaskHubName%",
+      "storageProvider": {
+        "connectionName": "DurableTask:ConnectionString"
+      },
       //"defaultVersion": "1.0.0",
       "tracing": {
         "distributedTracingEnabled": true,

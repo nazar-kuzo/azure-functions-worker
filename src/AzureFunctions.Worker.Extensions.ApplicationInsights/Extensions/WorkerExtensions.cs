@@ -1,4 +1,5 @@
-﻿using AzureFunctions.Worker.Extensions.ApplicationInsights.Internal;
+﻿using System.Diagnostics;
+using AzureFunctions.Worker.Extensions.ApplicationInsights.Internal;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.ApplicationInsights.WorkerService;
 using Microsoft.AspNetCore.Hosting;
@@ -64,6 +65,14 @@ public static class WorkerExtensions
             if (telemetryModuleDescriptor is not null)
             {
                 worker.Services.Remove(telemetryModuleDescriptor);
+
+                // ensures that function telemetry provider will create host activity
+                ActivitySource.AddActivityListener(new()
+                {
+                    ShouldListenTo = source => source.Name.StartsWith("Microsoft.Azure.Functions.Worker"),
+                    Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllData,
+                    SampleUsingParentId = (ref ActivityCreationOptions<string> _) => ActivitySamplingResult.AllData,
+                });
             }
         }
     }

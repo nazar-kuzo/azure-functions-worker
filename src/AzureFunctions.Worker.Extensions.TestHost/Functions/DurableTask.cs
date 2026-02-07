@@ -25,11 +25,18 @@ public sealed class DurableTask(IOptions<JsonOptions> jsonOptions)
     public async Task<Orchestration> SartNewInstance(
         [HttpTrigger(AuthorizationLevel.Anonymous, "POST", Route = "durable-task/instances")] HttpRequest request,
         [DurableClient] DurableTaskClient durableTaskClient,
-        [FromQuery, Required] string orchestratorFunctionName,
+        [FromQuery, Required] string orchestratorFunctionName = "DurableTasks_Orchestration",
         [FromQuery] string? instanceId = null,
         [FromQuery] string? version = null,
         [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] JsonElement? input = null)
     {
+        input ??= JsonElement.Parse(""""
+        {
+            "name": "Name",
+            "email": "some@email.com"
+        }
+        """");
+
         instanceId = await durableTaskClient.StartNewAsync(orchestratorFunctionName, instanceId, input, version);
 
         var orchestration = await durableTaskClient.GetStatusAsync(instanceId);

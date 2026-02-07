@@ -8,14 +8,9 @@ public sealed class DurableTasks
 {
     [Function(nameof(DurableTasks) + "_" + nameof(Orchestration))]
     public async Task Orchestration(
-        [OrchestrationTrigger] TaskOrchestrationContext context)
+        [OrchestrationTrigger] TaskOrchestrationContext context,
+        UserInfo user)
     {
-        var user = new UserInfo
-        {
-            Name = "Name",
-            Email = "some@email.com",
-        };
-
         await context.CallSubOrchestratorAsync(() =>
             this.ExplicitInputUserInfoOrchestration(OrchestrationContext.Default, user));
 

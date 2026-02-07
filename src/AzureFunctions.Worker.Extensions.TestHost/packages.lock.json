@@ -717,7 +717,7 @@
       "azurefunctions.worker.extensions.durabletask.client": {
         "type": "Project",
         "dependencies": {
-          "DurableTask.Client.AzureStorage": "[2.2.3, )",
+          "DurableTask.Client.AzureStorage": "[2.3.0, )",
           "Microsoft.Azure.Functions.Worker": "[2.51.0, )",
           "Microsoft.Azure.Functions.Worker.Extensions.Abstractions": "[1.3.0, )"
         }
@@ -725,7 +725,7 @@
       "azurefunctions.worker.extensions.swashbuckle": {
         "type": "Project",
         "dependencies": {
-          "AzureFunctions.Worker.Extensions.AspNetCore": "[2.2.3, )",
+          "AzureFunctions.Worker.Extensions.AspNetCore": "[2.3.0, )",
           "Swashbuckle.AspNetCore": "[10.1.2, )",
           "Swashbuckle.AspNetCore.Annotations": "[10.1.2, )"
         }
@@ -1794,7 +1794,7 @@
       "azurefunctions.worker.extensions.durabletask.client": {
         "type": "Project",
         "dependencies": {
-          "DurableTask.Client.AzureStorage": "[2.2.3, )",
+          "DurableTask.Client.AzureStorage": "[2.3.0, )",
           "Microsoft.Azure.Functions.Worker": "[2.51.0, )",
           "Microsoft.Azure.Functions.Worker.Extensions.Abstractions": "[1.3.0, )"
         }
@@ -1802,7 +1802,7 @@
       "azurefunctions.worker.extensions.swashbuckle": {
         "type": "Project",
         "dependencies": {
-          "AzureFunctions.Worker.Extensions.AspNetCore": "[2.2.3, )",
+          "AzureFunctions.Worker.Extensions.AspNetCore": "[2.3.0, )",
           "Swashbuckle.AspNetCore": "[10.1.2, )",
           "Swashbuckle.AspNetCore.Annotations": "[10.1.2, )"
         }
@@ -2871,7 +2871,7 @@
       "azurefunctions.worker.extensions.durabletask.client": {
         "type": "Project",
         "dependencies": {
-          "DurableTask.Client.AzureStorage": "[2.2.3, )",
+          "DurableTask.Client.AzureStorage": "[2.3.0, )",
           "Microsoft.Azure.Functions.Worker": "[2.51.0, )",
           "Microsoft.Azure.Functions.Worker.Extensions.Abstractions": "[1.3.0, )"
         }
@@ -2879,7 +2879,7 @@
       "azurefunctions.worker.extensions.swashbuckle": {
         "type": "Project",
         "dependencies": {
-          "AzureFunctions.Worker.Extensions.AspNetCore": "[2.2.3, )",
+          "AzureFunctions.Worker.Extensions.AspNetCore": "[2.3.0, )",
           "Swashbuckle.AspNetCore": "[10.1.2, )",
           "Swashbuckle.AspNetCore.Annotations": "[10.1.2, )"
         }

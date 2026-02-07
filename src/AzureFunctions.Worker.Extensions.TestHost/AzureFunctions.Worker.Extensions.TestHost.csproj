@@ -4,6 +4,7 @@
     <AzureFunctionsVersion>v4</AzureFunctionsVersion>
     <OutputType>Exe</OutputType>
     <UserSecretsId>32715e8f-0f9a-40ba-9f6f-7bf9ba1fce45</UserSecretsId>
+    <IsPackable>False</IsPackable>
   </PropertyGroup>
   
   <ItemGroup>

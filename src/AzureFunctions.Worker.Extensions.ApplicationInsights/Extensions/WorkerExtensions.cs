@@ -51,6 +51,7 @@ public static class WorkerExtensions
         worker.Logging.AddConfiguration(worker.Configuration.GetSection("Logging"));
 
         worker.RemoveDefaultLoggerFilterRules();
+        worker.AddFunctionContextAccessor();
 
         worker.UseMiddleware<FunctionRequestTelemetryMiddleware>();
 
@@ -80,11 +81,15 @@ public static class WorkerExtensions
     /// <summary>
     /// Enables access to the current function execution context within Azure Functions.
     /// </summary>
-    /// <param name="services">The IServiceCollection to which the IFunctionContextAccessor service will be added. Cannot be null.</param>
-    /// <returns>The IServiceCollection instance with the IFunctionContextAccessor service registered.</returns>
-    public static IServiceCollection AddFunctionContextAccessor(this IServiceCollection services)
+    /// <param name="worker">Functions application builder</param>
+    /// <returns>Functions application builder for chaining methods</returns>
+    public static FunctionsApplicationBuilder AddFunctionContextAccessor(this FunctionsApplicationBuilder worker)
     {
-        return services.AddSingleton<IFunctionContextAccessor, FunctionContextAccessor>();
+        worker.UseMiddleware<FunctionContextAccessorMiddleware>();
+
+        worker.Services.AddSingleton<IFunctionContextAccessor, FunctionContextAccessor>();
+
+        return worker;
     }
 
     /// <summary>
@@ -92,7 +97,8 @@ public static class WorkerExtensions
     /// that instructs ILogger to capture only Warning and more severe logs.
     /// </summary>
     /// <param name="worker">Functions application builder</param>
-    public static void RemoveDefaultLoggerFilterRules(this FunctionsApplicationBuilder worker)
+    /// <returns>Functions application builder for chaining methods</returns>
+    public static FunctionsApplicationBuilder RemoveDefaultLoggerFilterRules(this FunctionsApplicationBuilder worker)
     {
         worker.Logging.Services.Configure<LoggerFilterOptions>(options =>
         {
@@ -104,5 +110,7 @@ public static class WorkerExtensions
                 rules.RemoveAll(rule => rule.ProviderName == applicationInsightsLoggerProviderName);
             }
         });
+
+        return worker;
     }
 }

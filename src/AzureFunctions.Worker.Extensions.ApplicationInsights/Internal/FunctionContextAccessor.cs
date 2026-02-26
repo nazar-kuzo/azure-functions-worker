@@ -1,3 +1,5 @@
+using Microsoft.Azure.Functions.Worker.Middleware;
+
 namespace Microsoft.Azure.Functions.Worker;
 
 internal sealed class FunctionContextAccessor : IFunctionContextAccessor
@@ -38,4 +40,23 @@ public interface IFunctionContextAccessor
     /// Returns <see langword="null" /> if there is no active <see cref="FunctionContext" />.
     /// </summary>
     FunctionContext? FunctionContext { get; internal set; }
+}
+
+internal class FunctionContextAccessorMiddleware(
+    IFunctionContextAccessor functionContextAccessor)
+    : IFunctionsWorkerMiddleware
+{
+    public async Task Invoke(FunctionContext context, FunctionExecutionDelegate next)
+    {
+        functionContextAccessor.FunctionContext = context;
+
+        try
+        {
+            await next(context);
+        }
+        finally
+        {
+            functionContextAccessor.FunctionContext = null;
+        }
+    }
 }

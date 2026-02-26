@@ -78,6 +78,16 @@ public static class WorkerExtensions
     }
 
     /// <summary>
+    /// Enables access to the current function execution context within Azure Functions.
+    /// </summary>
+    /// <param name="services">The IServiceCollection to which the IFunctionContextAccessor service will be added. Cannot be null.</param>
+    /// <returns>The IServiceCollection instance with the IFunctionContextAccessor service registered.</returns>
+    public static IServiceCollection AddFunctionContextAccessor(this IServiceCollection services)
+    {
+        return services.AddSingleton<IFunctionContextAccessor, FunctionContextAccessor>();
+    }
+
+    /// <summary>
     /// Fixes out of the box Application Insights behavior that adds a default logging filter
     /// that instructs ILogger to capture only Warning and more severe logs.
     /// </summary>

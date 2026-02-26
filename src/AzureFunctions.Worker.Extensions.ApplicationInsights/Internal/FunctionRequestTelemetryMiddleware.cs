@@ -12,9 +12,11 @@ namespace AzureFunctions.Worker.Extensions.ApplicationInsights.Internal;
 /// Request telemetry could be hijacked by HTTP middleware if function is triggered by HTTP
 /// </summary>
 /// <param name="telemetryClient">Telemetry client</param>
+/// <param name="functionContextAccessor">Function context accessor</param>
 /// <param name="activityCoordinator">Function activity coordinator. Could be null if &quot;enableHttpRequestMapping&quot; is set to false</param>
 internal class FunctionRequestTelemetryMiddleware(
     TelemetryClient telemetryClient,
+    IFunctionContextAccessor functionContextAccessor,
     HttpRequestActivityCoordinator? activityCoordinator = null)
     : IFunctionsWorkerMiddleware
 {
@@ -22,10 +24,14 @@ internal class FunctionRequestTelemetryMiddleware(
 
     public async Task Invoke(FunctionContext context, FunctionExecutionDelegate next)
     {
+        functionContextAccessor.FunctionContext = context;
+
         // durable functions distributed logging is handled on the host
         if (FunctionContainsTriggers("orchestrationTrigger", "activityTrigger"))
         {
             await next(context);
+
+            functionContextAccessor.FunctionContext = null;
 
             return;
         }
@@ -33,7 +39,7 @@ internal class FunctionRequestTelemetryMiddleware(
         var hostActivity = Activity.Current!;
         var shouldDelegateRequestActivity = activityCoordinator is not null && FunctionContainsTriggers("httpTrigger");
 
-        using var requestActivity = telemetryClient.StartRequestOperation(hostActivity);
+        var requestActivity = telemetryClient.StartRequestOperation(hostActivity);
 
         var requestTelemetry = requestActivity.Telemetry;
 
@@ -74,6 +80,10 @@ internal class FunctionRequestTelemetryMiddleware(
             {
                 requestTelemetry.Properties.TryAdd(property.Key, property.Value);
             }
+
+            requestActivity.Dispose();
+
+            functionContextAccessor.FunctionContext = null;
         }
 
         bool FunctionContainsTriggers(params string[] expectedTriggers)

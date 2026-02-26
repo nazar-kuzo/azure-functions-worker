@@ -1,11 +1,12 @@
 ﻿using System.Collections.Concurrent;
 using System.Linq.Expressions;
 using System.Reflection;
+using AzureFunctions.Worker.Extensions.DurableTask.Internal;
 using Microsoft.Azure.Functions.Worker;
 
-namespace AzureFunctions.Worker.Extensions.DurableTask.Internal;
+namespace Microsoft.DurableTask;
 
-internal static class ExpressionExtensions
+public static class ExpressionExtensions
 {
     private static readonly ConcurrentDictionary<MethodInfo, string> FunctionNames = new();
 

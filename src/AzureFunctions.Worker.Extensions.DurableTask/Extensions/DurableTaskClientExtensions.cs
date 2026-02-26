@@ -1,5 +1,4 @@
 ﻿using System.Linq.Expressions;
-using AzureFunctions.Worker.Extensions.DurableTask.Internal;
 using Microsoft.DurableTask;
 using Microsoft.DurableTask.Client;
 

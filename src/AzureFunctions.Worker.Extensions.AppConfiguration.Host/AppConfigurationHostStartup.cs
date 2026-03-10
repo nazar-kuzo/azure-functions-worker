@@ -3,6 +3,7 @@ using AzureFunctions.Worker.Extensions.AppConfiguration.Host;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 
@@ -30,7 +31,19 @@ public class AppConfigurationHostStartup : IWebJobsStartup, IWebJobsConfiguratio
                 builder.ConfigurationBuilder.AddAzureAppConfiguration(
                     appConfigEndpoint,
                     new DefaultAzureCredential(credentialOptions),
-                    useCache: isDevelopment);
+                    useCache: isDevelopment,
+                    appConfig =>
+                    {
+                        if (Environment.GetEnvironmentVariable("APPCONFIG_SELECT") is string selectString)
+                        {
+                            foreach (var filter in selectString.Split(";", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries))
+                            {
+                                var parts = filter.Split(",", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+
+                                appConfig.Select(parts[0], parts.ElementAtOrDefault(1) ?? LabelFilter.Null);
+                            }
+                        }
+                    });
             }
             catch (Exception ex)
             {

@@ -8,6 +8,7 @@
         "DOTNET_ENVIRONMENT": "Development",
         //"APPCONFIG_ENDPOINT": "https://myappconfig.azconfig.io",
         //"APPCONFIG_TENANT": "<tenant-id>",
+        //"APPCONFIG_SELECT": "*;*,Label"
         //"APPCONFIG_EXTENSION_ENABLED": "false",
       }
     }

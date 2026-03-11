@@ -18,6 +18,7 @@ public class AppConfigurationHostTests
 
         Environment.SetEnvironmentVariable("DOTNET_ENVIRONMENT", "Development");
         Environment.SetEnvironmentVariable("APPCONFIG_ENDPOINT", "https://myappconfig.azconfig.io");
+        Environment.SetEnvironmentVariable("APPCONFIG_SELECT", "^Prefix:*;*,Label");
 
         configuration.ConfigurationBuilder.AddEnvironmentVariables();
 

@@ -38,9 +38,22 @@ public class AppConfigurationHostStartup : IWebJobsStartup, IWebJobsConfiguratio
                         {
                             foreach (var filter in selectString.Split(";", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries))
                             {
-                                var parts = filter.Split(",", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+                                var (keyFilter, labelFilter) = filter.Split(",", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
 
-                                appConfig.Select(parts[0], parts.ElementAtOrDefault(1) ?? LabelFilter.Null);
+                                var prefix = default(string);
+
+                                if (keyFilter!.StartsWith('^'))
+                                {
+                                    keyFilter = keyFilter[1..];
+                                    prefix = keyFilter.TrimEnd('*');
+                                }
+
+                                appConfig.Select(keyFilter, labelFilter ?? LabelFilter.Null);
+
+                                if (prefix is not null)
+                                {
+                                    appConfig.TrimKeyPrefix(prefix);
+                                }
                             }
                         }
                     });

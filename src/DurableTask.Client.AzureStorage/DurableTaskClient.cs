@@ -3,6 +3,7 @@ using DurableTask.AzureStorage;
 using DurableTask.Core;
 using DurableTask.Core.History;
 using DurableTask.Core.Query;
+using DurableTask.Core.Tracing;
 
 namespace DurableTask.Client;
 
@@ -92,6 +93,17 @@ public class DurableTaskClient
 
         var inputJson = input is null ? null : this.dataConverter.Serialize(input);
 
+        var traceContext = default(DistributedTraceContext);
+
+        if (Activity.Current != null)
+        {
+            string traceId = Activity.Current.TraceId.ToHexString();
+            string newParentId = ActivitySpanId.CreateRandom().ToHexString();
+            string flags = ((int) Activity.Current.ActivityTraceFlags).ToString("x2");
+
+            traceContext = new($"00-{traceId}-{newParentId}-{flags}", Activity.Current.TraceStateString);
+        }
+
         await this.serviceClient.CreateTaskOrchestrationAsync(
             new TaskMessage
             {
@@ -101,9 +113,7 @@ public class DurableTaskClient
                     Name = orchestratorFunctionName,
                     OrchestrationInstance = orchestrationInstance,
                     Version = version ?? string.Empty,
-                    ParentTraceContext = Activity.Current?.Id == null
-                        ? null
-                        : new(Activity.Current.Id, Activity.Current.TraceStateString),
+                    ParentTraceContext = traceContext,
                 },
             },
             [.. this.durableTaskClientOptions.Value.StatusesNotToOverride]);

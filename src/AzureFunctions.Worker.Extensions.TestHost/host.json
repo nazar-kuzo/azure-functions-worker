@@ -5,6 +5,7 @@
     "logLevel": {
       "default": "Warning",
       "Function": "None",
+      "Azure.Core": "Error",
       "Host.Results": "None"
     },
     "applicationInsights": {

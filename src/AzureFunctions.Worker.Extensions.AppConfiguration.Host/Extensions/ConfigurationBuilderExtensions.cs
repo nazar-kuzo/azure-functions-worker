@@ -47,13 +47,23 @@ internal static class ConfigurationBuilderExtensions
                 filePath: useCacheFile);
         }
 
-        var environmentConfigurationSource = builder.Sources
-            .OfType<EnvironmentVariablesConfigurationSource>()
-            .First();
+        int? environmentConfigurationSourceIndex = null;
+
+        for (int index = 0; index < builder.Sources.Count; index++)
+        {
+            var source = builder.Sources[index];
+
+            if (source is EnvironmentVariablesConfigurationSource ||
+                source.GetType().Name == "ScriptEnvironmentVariablesConfigurationSource")
+            {
+                environmentConfigurationSourceIndex = index;
+                break;
+            }
+        }
 
         // ensures that app configuration properties wont override local environment settings
         builder.Sources.Insert(
-            builder.Sources.IndexOf(environmentConfigurationSource),
+            environmentConfigurationSourceIndex ?? builder.Sources.Count - 1,
             appConfigurationSource);
 
         return builder;

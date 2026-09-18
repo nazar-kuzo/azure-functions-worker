@@ -21,6 +21,21 @@ public class AppConfigurationHostStartup : IWebJobsStartup, IWebJobsConfiguratio
         {
             var credentialOptions = new DefaultAzureCredentialOptions();
 
+            if (Environment.GetEnvironmentVariable("DISABLE_ENVIRONMENT_CREDENTIAL")?.Equals("true", StringComparison.InvariantCultureIgnoreCase) == true)
+            {
+                credentialOptions.ExcludeEnvironmentCredential = true;
+            }
+
+            if (Environment.GetEnvironmentVariable("DISABLE_WORKLOAD_IDENTITY")?.Equals("true", StringComparison.InvariantCultureIgnoreCase) == true)
+            {
+                credentialOptions.ExcludeWorkloadIdentityCredential = true;
+            }
+
+            if (Environment.GetEnvironmentVariable("DISABLE_MANAGED_IDENTITY")?.Equals("true", StringComparison.InvariantCultureIgnoreCase) == true)
+            {
+                credentialOptions.ExcludeManagedIdentityCredential = true;
+            }
+
             if (Environment.GetEnvironmentVariable("APPCONFIG_TENANT") is string tenantId)
             {
                 credentialOptions.TenantId = tenantId;

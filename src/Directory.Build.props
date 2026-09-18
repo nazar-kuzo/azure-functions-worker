@@ -34,8 +34,8 @@
     <NeutralLanguage>en-US</NeutralLanguage>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <Version>2.3.4</Version>
-    <AppConfigurationHostVersion>2.3.4</AppConfigurationHostVersion>
+    <Version>2.3.6</Version>
+    <AppConfigurationHostVersion>2.3.6</AppConfigurationHostVersion>
     <FileVersion>$(Version)</FileVersion>
     <AssemblyVersion>$(Version)</AssemblyVersion>
     <PackageReleaseNotes>

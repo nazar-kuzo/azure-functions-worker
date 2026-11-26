@@ -15,8 +15,7 @@ namespace AzureFunctions.Worker.Extensions.AspNetCore.Internal;
 /// <param name="controllerEndpointDataSource">AspNetCore Controller endpoint data source</param>
 internal class AspNetCoreFunctionEndpointDataSource(
     EndpointDataSource functionEndpointDataSource,
-    EndpointDataSource controllerEndpointDataSource
-    ) : EndpointDataSource
+    EndpointDataSource controllerEndpointDataSource) : EndpointDataSource
 {
     private readonly object @lock = new();
 

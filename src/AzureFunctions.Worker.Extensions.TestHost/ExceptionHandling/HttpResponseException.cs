@@ -5,6 +5,7 @@ namespace AzureFunctions.Worker.Extensions.TestHost.ExceptionHandling;
 /// <summary>
 /// Client application exception with ability to specify <see cref="StatusCode"/> in response.
 /// </summary>
+/// <param name="message">Message</param>
 public abstract class HttpResponseException(string message) : Exception(message)
 {
     public virtual int StatusCode { get; }

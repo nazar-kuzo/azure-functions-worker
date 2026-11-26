@@ -12,8 +12,6 @@ public sealed class OrchestrationContext : TaskOrchestrationContext
     /// </summary>
     public static readonly TaskOrchestrationContext Default = new OrchestrationContext();
 
-    internal object? Input { get; set; }
-
     /// <summary>
     /// Creates <see cref="TaskOrchestrationContext"/> stub with 1 parameter
     /// </summary>
@@ -88,6 +86,8 @@ public sealed class OrchestrationContext : TaskOrchestrationContext
     public override DateTime CurrentUtcDateTime => throw new NotImplementedException();
 
     public override bool IsReplaying => throw new NotImplementedException();
+
+    internal object? Input { get; set; }
 
     protected override ILoggerFactory LoggerFactory => throw new NotImplementedException();
 

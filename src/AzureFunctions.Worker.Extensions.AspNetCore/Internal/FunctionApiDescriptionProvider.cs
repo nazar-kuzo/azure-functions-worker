@@ -8,6 +8,8 @@ namespace AzureFunctions.Worker.Extensions.AspNetCore.Internal;
 /// Patches generated API descriptions to fix return
 /// type of HTTP triggered functions with multiple outputs
 /// </summary>
+/// <param name="modelMetadataProvider">Model Metadata Provider</param>
+/// <param name="functionMetadataProvider">Function Metadata Provider</param>
 internal class FunctionApiDescriptionProvider(
     IModelMetadataProvider modelMetadataProvider,
     AspNetCoreFunctionMetadataProvider functionMetadataProvider)

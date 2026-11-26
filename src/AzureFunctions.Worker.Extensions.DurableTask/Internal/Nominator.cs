@@ -6,7 +6,12 @@ namespace AzureFunctions.Worker.Extensions.DurableTask.Internal;
 /// Performs bottom-up analysis to determine which nodes can possibly
 /// be part of an evaluated sub-tree.
 /// </summary>
-internal sealed class Nominator(Expression expression, Predicate<Expression> shouldEvaluate) : ExpressionVisitor
+/// <param name="expression">Expression</param>
+/// <param name="shouldEvaluate">Should Evaluate</param>
+internal sealed class Nominator(
+    Expression expression,
+    Predicate<Expression> shouldEvaluate)
+    : ExpressionVisitor
 {
     private readonly HashSet<Expression> candidates = [];
 

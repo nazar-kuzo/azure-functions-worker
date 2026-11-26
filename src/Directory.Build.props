@@ -18,6 +18,10 @@
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
 
+  <ItemGroup>
+    <SourceLinkGitHubHost Include="github-nkuzo" ContentUrl="https://raw.githubusercontent.com" />
+  </ItemGroup>
+
   <PropertyGroup>
     <NoWarn>1591</NoWarn>
     <DocumentationFile>Properties\$(MSBuildProjectName).xml</DocumentationFile>

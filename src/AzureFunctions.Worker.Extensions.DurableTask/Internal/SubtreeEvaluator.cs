@@ -5,6 +5,7 @@ namespace AzureFunctions.Worker.Extensions.DurableTask.Internal;
 /// <summary>
 /// Evaluates and replaces sub-trees when first candidate is reached (top-down)
 /// </summary>
+/// <param name="expression">Expression</param>
 internal sealed class SubtreeEvaluator(Expression expression) : ExpressionVisitor
 {
     private readonly HashSet<Expression> candidates =
